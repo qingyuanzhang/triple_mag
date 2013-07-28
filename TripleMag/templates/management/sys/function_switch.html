@@ -1,0 +1,73 @@
+{% extends 'management/sys/sys_base.html'%}
+
+{% load i18n admin_static %}
+{% load url from future %}
+{% block panel%}
+<div>
+    <h1>功能开关</h1>
+    <p>
+        <label>会员登录</label>
+        {%if ValueSetting.switch_member_login %} <a class="green button" href="{%url 'function_switch'%}?function_choose=switch_member_login_f">
+        已打开
+        </a> {%else%} <a class="red button" href="{%url 'function_switch'%}?function_choose=switch_member_login_t">
+        已关闭
+        </a> {%endif%} </p>
+    <p>
+        <label>股票交易</label>
+        {%if ValueSetting.switch_stock %} <a class="green button"  href="{%url 'function_switch'%}?function_choose=switch_stock_f">
+		已打开
+        </a> {%else%} <a class="red button" href="{%url 'function_switch'%}?function_choose=switch_stock_t">
+        已关闭
+        </a> {%endif%} </p>
+    <p>
+        <label>报单中心功能</label>
+        {%if ValueSetting.switch_store_declare %} <a class="green button"  href="{%url 'function_switch'%}?function_choose=switch_store_declare_f">
+        已打开
+        </a> {%else%} <a class="red button" href="{%url 'function_switch'%}?function_choose=switch_store_declare_t">
+        已关闭
+        </a> {%endif%} </p>
+    <p>
+        <label>商城</label>
+        {%if ValueSetting.switch_mall %} <a class="green button"  href="{%url 'function_switch'%}?function_choose=switch_mall_f">
+        已打开
+        </a> {%else%} <a class="red button" href="{%url 'function_switch'%}?function_choose=switch_mall_t">
+        已关闭
+        </a> {%endif%} </p>
+    <p>
+        <label>商城注册</label>
+        {%if ValueSetting.switch_mall_sign_in %} <a class="green button"  href="{%url 'function_switch'%}?function_choose=switch_mall_sign_in_f">
+        已打开
+        </a> {%else%} <a class="red button" href="{%url 'function_switch'%}?function_choose=switch_mall_sign_in_t">
+        已关闭
+        </a> {%endif%} </p>
+    <li><a href="{%url 'make_day_check' %}">模拟经过一日</a></li>
+   <!--<li><a href="{%url 'test_data'%}">添加测试数据</a></li>
+    <li><a href="{%url 'a_bonus_settlement'%}">产品销售结算</a></li>
+    <li><a href="{%url 'c_bonus_settlement'%}">商城结算并发放</a></li>
+    <div class="to-modify">{{password_form.password_1st.errors}}</div>
+    <p>
+        <a class="modalInput float-right" rel="#pw1_confirm">清空数据</a>
+        
+        <div class="modal" id="pw1_confirm">
+            
+            <form id="confirm_form" action="{%url 'clean_data'%}" method="POST" >
+                {% csrf_token %}
+                
+                <h2>操作确认</h2>
+                <p>请再输入一次密码.<span class="now-price">此操作不可以恢复，请确认已备份全部数据！</span>
+                </p>
+                <input type="password" name="password_1st" />
+                <p>
+                    <input type="submit" value="确认重置">
+                    <a class="red button" href="" >确认重置 </a>
+                    <input type="button" class="close" value="取消" />
+                </p>-->
+            </form>
+        </div>
+        <script>
+var triggers = $(".modalInput").overlay({
+});
+		</script>
+    </p>
+</div>
+{% endblock %} 

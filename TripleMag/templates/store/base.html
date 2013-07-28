@@ -1,0 +1,240 @@
+{% extends 'member/base.html'%}
+
+{% load url from future %}
+{% load i18n %}
+
+{% block title%}
+
+    报单中心首页
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+{% block page-banner %}
+
+<div class="page-banner-store"></div>
+
+{% endblock %}
+
+{% block nav-1 %}
+
+<div id="nav-1">
+
+    <div>
+
+        <p><a href="{%url 'stock_index'%}">↑股票</a></p>
+
+        <p><a href="{%url 'member'%}">←主页</a>|<a href="{%url 'mall_index'%}">商城→</a></p>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block nav %}
+
+<ol id="nav-2">
+
+    <li><a href="{%url 'store_index' %}">1、报单中心</a></li>
+
+    <li><a href="{%url 'stuff_list'%}">2、订货中心</a></li>
+
+</ol>
+
+{% endblock %}
+
+
+
+
+
+{% block content %}
+
+
+<div class="content-w67">
+<div class="content-h100">
+<a href="{%url 'store_index' %}"><h1 class="selected">报单中心</h1></a>
+
+<a href="{%url 'stuff_list'%}"><h1 class="notselected">订货中心</h1></a>
+<div class="clear"></div>
+
+<div class="content-1of3-wrapper">
+
+    <div class ="content-1of3"> {%include right%} </div>
+
+</div>
+
+
+
+</div>
+</div>
+
+
+<div class="content-w33">
+<div class="content-h50">
+<h2>报单功能</h2>
+<div class="content-2of3-wrapper">
+
+    <div class ="content-1of3"> {% block right_up %}
+
+        {% endblock %} </div>
+
+</div>
+</div>
+<div class="content-h50">
+<h2>账户信息</h2>
+    <div class="dec-money-alt" title="报单账户可用于报单和添加会员。">
+
+
+
+        <h4>报单账户余额</h4>
+
+
+
+        <p>{{UserBasic.store_order}}元</p>
+
+
+
+    </div>
+
+    <div class="dec-money-alt" title="订货账户可用于订货。">
+
+
+
+        <h4>订货账户余额</h4>
+
+
+
+        <p>{{UserBasic.store_cash}}元</p>
+
+
+
+    </div>
+</div>
+</div>
+
+
+<script src="/static/js/validations.js"></script> 
+
+<script type="text/javascript">
+
+    function to_charge(_this){
+
+        if(!_this.checked){
+
+            $("#recharge_store").fadeOut()
+
+            $(".amount").val("")
+
+        }
+
+        else{
+
+            $("#recharge_store").fadeIn()
+
+        }
+
+    }
+
+    function charge(style){
+
+		var inputs = $("#recharge_amount").validator({
+
+            message: '<span></span>',
+
+            position: 'top left',
+
+            inputEvent: 'change' ,
+
+            lang: 'cn' ,
+
+            offset: [0, 20]
+
+        });
+
+  		if(inputs.data("validator").checkValidity())
+
+		{
+
+			if ( parseFloat( "{{UserBasic.cash}}" ) < parseFloat( $("#recharge_amount").val() ) )
+
+			{
+
+				alert("您的现金账户余额不足。");
+
+				return ;
+
+			}
+
+			else
+
+			{
+
+	            $.ajaxSettings.cache = false ;
+
+
+
+	        $.ajaxSettings.async = false;
+
+				var amount = $("#recharge_amount").val()
+
+				var password_2nd = $("#id_password_2nd").val()
+
+				$.getJSON("{%url 'store_charge'%}",
+
+					{'amount':amount,'style':style,'password_2nd':password_2nd},
+
+					function(data){
+
+						if(data == '0'){
+
+							alert("充值失败");
+
+						}
+
+						else if (data == '1'){
+
+location.reload()
+
+						}
+
+						else if(data== '2'){
+
+						    alert(data)
+
+						    $("#error1").html("二级密码错误")
+
+						    alert(data)
+
+						}
+
+					});
+
+			}
+
+		}
+
+    }
+
+	
+
+	$.tools.validator.fn("#withdraw_form [name=amount]", {"cn":'您的现金账户余额不足。'} , function (input, value)
+
+	{
+
+		return parseFloat("{{UserBasic.cash}}") >= value ;
+
+	});
+
+    
+
+</script> 
+
+{% endblock %} 

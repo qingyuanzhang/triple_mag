@@ -1,0 +1,58 @@
+{% extends 'management/base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block title%}
+查看会员信息
+{% endblock%}
+
+{% block page-banner %}
+<div class="page-banner-management"></div>
+{% endblock %}
+
+{% block nav-1 %}
+
+<div id="nav-1">
+
+    <p><a href="{%if user.is_superuser%}{%url 'management_index' %}{% else %}{%url 'management_member_index'%}{% endif %}">↑主页</a></p>
+
+</div>
+
+{% endblock %}
+
+{% block content-main %}
+        <h1>奖金</h1>
+        <a href="{%url 'extracting_rate'%}">拨出率统计</a>
+        <h2>产品销售</h2>
+        <a class="white button"  href="{%url 'management_a_bonus_counter'%}">产品销售奖金中心</a> <a class="blue button" href="{%url 'management_a_bonus_detail' %}">产品销售奖金详情与发放</a> 
+<!--        <a href="{%url 'management_day_perform_record'%}">每日业绩查看＃</a>-->
+        <!--<h2>期权股</h2>
+        <a class="white button" href="">期权股奖金中心</a>-->
+        <h2>商城</h2>
+        <a class="white button" href="{%url 'management_c_bonus_counter'%}">商城奖金中心</a> <a class="blue button" href="{%url 'management_c_bonus_detail' %}">商城奖金发放</a> <a href="{%url 'management_extra_bonus'%}">福利奖查看＃</a> 
+    {%if user.is_superuser %}
+        <h1>会员管理</h1>
+        <p><a class="orange button" href="{%url 'management_add_member' %}">添加会员＋</a></p>
+        <p><a class="white button" href="{% url 'management_search_member' %}">查看会员和报单中心列表＃</a></p>
+        <p><a href="{%url 'management_application' %}">申请中心＃</a></p>
+        <p><a href="{%url 'management_trans_records' %}">转帐记录＃</a></p>
+        <p><a href="{%url 'management_withdraw' %}">提现记录＃</a></p>
+        <p><a href="{%url 'search_fuc'%}">万能搜索</a></p>
+        <p><a href="{%url 'member_void'%}">空点会员列表</a></p>
+<!--        <h1>货物</h1>
+        <ul>
+            <li><a href="{%url 'manage_stuff_type'%}">货物中心</a></li> <li><a href="{%url 'manage_store_order_records'%}">订单查看</a></li>
+        </ul>-->
+        <h1>基础数值</h1>
+        <a href="{%url 'a_web_value_setting'%}">产品销售数值设定</a>
+    {%else %}
+    <h1>订单和记录</h1>
+    <p><a class="orange button" href="{%url 'user_account_my_order' %}?pag=1">商城订单</a></p>
+    <p><a class="white button" href="{% url 'stuff_order_records' %}">货物订单</a></p>
+    <p><a class="white button" href="{% url 'management_search_member' %}">查看会员和报单中心列表＃</a></p>
+    <p><a href="{%url 'member_void'%}">空点会员列表</a></p>
+    <p><a href="{%url 'management_withdraw' %}">提现记录＃</a></p>
+    <p><a href="{%url 'management_trans_records' %}">转帐记录＃</a></p>
+    <p><a href="{% url 'management_stock_record' %}">股票交易记录</a></p>
+    {% endif %}
+
+{% endblock %} 

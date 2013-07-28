@@ -1,0 +1,18 @@
+{% load i18n admin_static %}
+{% load url from future %}
+
+<h1>修改货物类型</h1>
+<form enctype="multipart/form-data" id="signup_form" method="post" action="{%url 'change_stuff_type' %}" >
+{% csrf_token %}
+<div>
+<p><label>编号</label>{{StuffType.id}}</p>
+</div>
+<div>
+<div><label>货物类型的名称</label><input name='name' type="input" id="id_name" value='{{StuffType.name}}'></div>
+<div><label>货物的简介</label><textarea id="id_detail" rows="10" cols="40" name="detail">{{StuffType.detail}}</textarea></div>
+</div>
+<div class="actions">
+    <input type="submit" class="btn primary" name="change" value="修改货物类型">
+    <!--<a href="{%url 'change_stuff_type' %}"><input type="submit" value="返回"></a>-->
+</div>
+</form>

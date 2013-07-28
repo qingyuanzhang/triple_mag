@@ -1,0 +1,109 @@
+{% extends 'management/sys/sys_base.html'%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block panel%}
+<form action="{%url 'a_web_value_setting'%}" method="POST">
+{% csrf_token %}
+<input class="green button float-right" type="submit" value="设置" name="set_values">
+<div id="A-web-setting-div">
+	<h1>产品销售数值设定</h1>
+	<p>
+        <label class="label-header">默认一级密码</label>
+        {{ValueSetting.password_1nd}}
+        <input type="text" maxlength="20" name="password_1nd" value="{{ValueSetting.password_1nd}}" id="id_password_1nd" />
+    	<div class="clear"></div>
+    </p>
+    <p>
+        <label class="label-header">默认二级密码</label>
+        {{ValueSetting.password_2nd}}
+        <input type="text" maxlength="20" name="password_2nd" value="{{ValueSetting.password_2nd}}" id="id_password_2nd" />
+    	<div class="clear"></div>
+    </p>
+    <p>
+        <label class="float-left label-header">提现纳税</label>
+        {{ValueSetting.withdraw_rate}}
+        <input type="range" name="withdraw_rate" value="{{ValueSetting.withdraw_rate}}" id="id_withdraw_rate" min="0" max="0.99" step="0.0001">
+    	<div class="clear"></div>
+    </p>
+    <p>
+        <label class="float-left label-header">中心店服务费</label>
+        {{ValueSetting.declare_central_rate}}
+        <input type="range" name="declare_central_rate" value="{{ValueSetting.declare_central_rate}}" id="id_declare_central_rate" min="0" max="0.99" step="0.0001">
+    	<div class="clear"></div>
+    </p>
+    <p>
+        <label class="float-left label-header">社区店服务费</label>
+        {{ValueSetting.declare_normal_rate}}
+        <input type="range" name="declare_normal_rate" value="{{ValueSetting.declare_normal_rate}}" id="id_declare_normal_rate" min="0" max="0.99" step="0.0001">
+    	<div class="clear"></div>
+    </p>
+    <p>
+        <label class="float-left label-header">产品销售纳税比例</label>
+        {{ValueSetting.bonus_tax_rate}}
+        <input type="range" name="bonus_tax_rate" value="{{ValueSetting.bonus_tax_rate}}" id="id_bonus_tax_rate" min="0" max="0.99" step="0.01">
+    	<div class="clear"></div>
+    </p>
+    <p>
+        <label class="float-left label-header">重复消费比例</label>
+        {{ValueSetting.repo_rate}}
+        <input type="range" name="repo_rate" value="{{ValueSetting.repo_rate}}" id="id_repo_rate" min="0" max="0.99" step="0.0001">
+    	<div class="clear"></div>
+    </p>
+    <p>
+        <label class="float-left label-header">回本奖比例</label>
+        {{ValueSetting.recost_rate}}
+        <input type="range" name="recost_rate" value="{{ValueSetting.recost_rate}}" id="id_recost_rate" min="0" max="0.99" step="0.0001">
+    	<div class="clear"></div>
+    </p>
+    <p>
+        <label class="float-left label-header">互助奖比例</label>
+        {{ValueSetting.comhelp_rate}}
+        <input type="range" name="comhelp_rate" value="{{ValueSetting.comhelp_rate}}" id="id_comhelp_rate" min="0" max="0.99" step="0.0001">
+    	<div class="clear"></div>
+    </p>
+
+    <p>
+        <label class="float-left label-header">一级互助奖直荐人数最小值</label>
+        {{ValueSetting.comhelp_1st_min}}
+        <input type="range" name="comhelp_1st_min" value="{{ValueSetting.comhelp_1st_min}}" id="id_comhelp_1st_min" min="0" max="30" step="0.01">
+    	<div class="clear"></div>
+    </p>
+    <p>
+        <label class="float-left label-header">二级互助奖直荐人数最小值</label>
+        {{ValueSetting.comhelp_2nd_min}}
+        <input type="range" name="comhelp_2nd_min" value="{{ValueSetting.comhelp_2nd_min}}" id="id_comhelp_2nd_min" min="0" max="30" step="0.01">
+    	<div class="clear"></div>
+    </p>
+    <p>
+        <label class="float-left label-header">三级互助奖直荐人数最小值</label>
+        {{ValueSetting.comhelp_3rd_min}}
+        <input type="range" name="comhelp_3rd_min" value="{{ValueSetting.comhelp_3rd_min}}" id="id_comhelp_3rd_min" min="0" max="30" step="0.01">
+    	<div class="clear"></div>
+    </p>
+</div>
+<div id="A-web-setting-adv-div">
+	{% for lvm in MemberLvMoney %}
+	<h3>{{lvm.name}}</h3>
+        <p>
+            <label class="label-header float-left" level="{{lvm.id}}">金额</label>
+            <input type="range" name="money" value="{{lvm.money}}" min="1000" max="100000" step="1000">{{lvm.money}}
+            <div class="clear"></div>
+        </p>
+        <p>
+            <label class="label-header float-left" level="{{lvm.id}}">日封顶</label>
+            <input type="range" name="day_max" value="{{lvm.day_max}}" min="100" max="100000" step="100">{{lvm.day_max}}
+            <div class="clear"></div>
+        </p>
+        <p>
+            <label class="label-header float-left" level="{{lvm.id}}">小区</label>
+            <input type="range" name="low_percentage" value="{{lvm.low_percentage}}" min="0.01" max="0.99" step="0.01">{{lvm.low_percentage}}
+            <div class="clear"></div>
+        </p>
+    {% endfor %}
+</div>
+<script>
+	$("#A-web-setting-div input:range").rangeinput() ;
+	$("#A-web-setting-adv-div input:range").rangeinput() ;
+</script>
+</form>
+{% endblock %}

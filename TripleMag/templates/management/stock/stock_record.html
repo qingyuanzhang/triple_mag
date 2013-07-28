@@ -1,0 +1,34 @@
+{% extends 'management/stock/stock_base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block content%}
+
+<div class="content-w100">
+
+<div class="content-h100">
+
+<a href="{%url 'management_member_index' %}"><h1 class="{%if request.session.subject == 'manage_memeber'%}selected{%else%}notselected{%endif%}">会员与报单中心管理</h1></a>
+{%if user.is_superuser%}
+<a href="{%url 'manage_stuff_type'%}"><h1 class="{%if request.session.subject == 'manage_stuff'%}selected{%else%}notselected{%endif%}">货物管理</h1></a>
+
+<a href="{%url 'management_mall_index' %}"><h1 class="{%if request.session.subject == 'manage_mall'%}selected{%else%}notselected{%endif%}">商城管理</h1></a>
+
+<a href="{%url 'management_stock_index' %}"><h1 class="{%if request.session.subject == 'manage_stock'%}selected{%else%}notselected{%endif%}">股票管理</h1></a>
+
+<a href="{%url 'management_sys_index' %}"><h1 class="{%if request.session.subject == 'manage_sys'%}selected{%else%}notselected{%endif%}">系统管理</h1></a>
+{%endif%}
+<div class="clear"></div>
+<div class="content-1of1-wrapper">
+<div class="content-1of3">
+<h1>股票交易记录查询</h1>
+<a class="red button" href="{%url 'management_income_record'%}">股票来源记录</a>
+<a class="blue button" href="{%url 'management_stock_record'%}">股票售出记录</a>
+<a class="blue button" href="{%url 'management_stock_bonus'%}">股票奖金记录</a>
+{% include include_template %}
+</div>
+</div>
+</div>
+</div>
+
+
+{% endblock %}

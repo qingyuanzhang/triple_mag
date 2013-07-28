@@ -1,0 +1,63 @@
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+<div class="content-w33" style="position: absolute; right: 0px; top: 104px;">
+
+    <div class="content-h0">
+
+    <h2>系统数据
+
+    </h2>
+
+<!--    <li><a href="">数据导出</a></li>
+
+    <li><a href="">管理员操作日志</a></li>
+
+    <li><a href="">会员活动日志</a></li>-->
+
+    <ul>
+
+    <li><a href="{%url 'a_web_value_setting'%}">产品销售数值设定</a></li>
+
+    <li><a href="{%url 'management_stock_index' %}#last-get-rate">期权股数值设定</a></li>
+
+    <li><a href="{%url 'c_web_value_setting'%}">商城数值设定</a></li>
+
+    </ul>
+
+    </div>
+
+    <div class="content-h0">
+
+    <h2>杂项</h2>
+
+    <ul>
+
+    <li><a href="{%url 'upload_file' %}">资料上传</a></li>
+
+    <li><a href="{%url 'admin_messages' %}">留言板</a></li>
+
+    <li><a href="{%url 'public_announcements'%}">发布公告</a></li>
+
+    <li><a href="{%url 'announcements_list' %}">企业公告查看</a></li>
+
+    </ul>
+
+    </div>
+
+     <div class="content-h0">
+
+    <h2>高级功能</h2>
+
+    <ul>
+
+    <li><a href="{%url 'function_switch'%}">高级功能</a></li>
+
+    </ul>
+
+    </div>
+
+        </div>
+
+

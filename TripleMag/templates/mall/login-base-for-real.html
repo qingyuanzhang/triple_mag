@@ -1,0 +1,81 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+{% load i18n admin_static %}
+
+        {% load url from future %}
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>人太易购</title>
+
+<link href="/static/styles.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="/static/js/jquery.js">
+
+        </script>
+
+<script src="/static/js/jquery.tools.min.js"></script>
+
+{% block my-resource %}
+
+        {% endblock %}
+
+</head>
+
+
+
+<body>
+
+<div id="container">
+
+    <div id="mall-banner">
+
+        <div class="wrap"> {%include 'mall/top_bar.html'%} </div>
+
+    </div>
+
+    <div class="wrap">
+
+        <div id="mall-header">
+
+            <div id="header-row">
+
+                <a href="/"><img id="mall-logo" src="/static/img/header.png" /></a>
+
+                {% block title-pic%}
+
+                {% endblock %}
+
+            </div>
+
+            <div class="clear"></div>
+
+        </div>
+
+    </div>
+
+    <div class="wrap">
+
+        <div id="main-block">
+
+                {% block main-block%}
+
+                {% endblock %}
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- end .container -->
+
+{%include "footer.html"%}
+
+</body>
+
+</html>

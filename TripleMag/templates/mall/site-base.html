@@ -1,0 +1,75 @@
+<!DOCTYPE HTML>
+<html>
+
+{% load url from future %}
+{% load i18n %}
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="keywords" http-equiv="Content-Type" content="人太,人太益康,人太益康网上商城">
+<title>人太易康网上商城</title>
+<link href="/static/styles.css" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="/static/js/jquery.js"></script>
+<script src="/static/js/jquery.tools.min.js"></script>
+<!--<script language="javascript">-->
+<!--    $(document).ready(function(){-->
+<!--        $("#category").load("{%url 'get_category'%}")-->
+<!--    })-->
+<!--</script>-->
+{% block my-resource%}
+{% endblock %}
+</head>
+
+<body>
+<div id="container">
+    <div id="mall-banner">
+        <div class="wrap"> {%include 'mall/top_bar.html'%} </div>
+    </div>
+    <div id="mall-header">
+        <div class="wrap">
+            <div id="header-row"> 
+                <a href="{%url 'rt_index'%}">
+                <img id="mall-logo" src="/static/img/header.png" />
+                </a>
+                <div id="right-bar">
+                	<span id="search_bar">
+                    	<input type="input" onkeypress="if(event.keyCode==13) {search(this);return false;}" id="search">
+                    	<input type="submit" value="　　" onclick="search()">
+                    </span>
+                    <a href="{%url 'apps_index'%}">
+                    	<img src="/static/img/my_page.png" />
+                    </a>
+                    {% if not user.is_superuser and not user.first_name = "finance" %}
+                    	<a href="{%url 'cart'%}" id="cart_content"><span id="in_cart_num">                    	{%if request.session.in_cart_num%}
+                    	{{request.session.in_cart_num}}
+                    	{%else%}
+                    	0
+                    	{%endif%}</span> </a> 
+                        
+                        
+                    {% endif %}
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="mall-nav">
+    <div class="wrap">
+        <div id="mall-nav-funda"> 
+            <img src="/static/img/categor_1.png" />
+            <!--<span id="selected-funda">所有商品分类</span> -->
+    	</div>
+    </div>
+</div>
+<div id="mall-content">
+    <div class="wrap">
+        {%include 'mall/category/category.html'%}
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
+<!-- end .container -->
+{%include "footer.html"%}
+
+</body>
+</html>

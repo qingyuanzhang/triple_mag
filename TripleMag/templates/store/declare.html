@@ -1,0 +1,85 @@
+            <h1>报单账户充值</h1>
+
+            <div class="dec-money-alt">
+
+                <h4>现金账户余额</h4>
+
+                <p>{{UserBasic.cash}}元</p>
+
+            </div>
+
+            <div class="dec-money-alt">
+
+                <h4>报单账户余额</h4>
+
+                <p>{{UserBasic.store_order}}元<!--<input type="checkbox" onclick="to_charge(this)"/>--></p>
+
+            </div>
+
+
+
+            <div id="recharge_store">
+
+                <p>
+
+                	<label>金额</label>
+
+                    <input id="recharge_amount" type="number" value="50" min="50" step="50" class="amount" />
+
+                    <input type="button" class="modalInput" rel="#confirm_recharge" onclick="check_recharge()" value="充值" />
+
+                </p>
+
+                <div class="modal" id="confirm_recharge">
+
+                    <div class="to-modify" id="error1">
+
+                    </div>
+
+                    <p>
+
+                        <label>现金账户余额</label>
+
+                        ￥<span class="now-price">{{UserBasic.cash}}</span></p>
+
+                    <p>
+
+                        <label>需要支付</label>
+
+                        ￥<span id="to_recharge" class="now-price"></span></p>
+
+                    <h3>请输入二级密码</h3>
+
+                    <input type="password" name="password_2nd" id="id_password_2nd"/>
+
+                    <p>
+
+                        <input type="button" name="store_order" onclick="charge('store_order')" value="充值" />
+
+                        <input type="button" class="close" value="取消" />
+
+                    </p>
+
+                </div>
+
+            </div>
+
+<script type="text/javascript">
+
+	var triggers = $(".modalInput").overlay({
+
+	});
+
+
+
+	function check_recharge()
+
+	{
+
+		$("#to_recharge").html( $("#recharge_amount").val() ) ;
+
+	}
+
+
+
+</script>

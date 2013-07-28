@@ -1,0 +1,293 @@
+<!--<!---->
+<!--You are free to copy and use this sample in accordance with the terms of the-->
+<!--Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)-->
+<!---->-->
+
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<!--  <head>-->
+<!--    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>-->
+<!--    <title>-->
+<!--      Google Visualization API Sample-->
+<!--    </title>-->
+<!--    <script type="text/javascript" src="http://www.google.com/jsapi"></script>-->
+<!--    <script type="text/javascript">-->
+<!--      google.load('visualization', '1', {packages: ['orgchart']});-->
+<!--    </script>-->
+<!--    <script type="text/javascript">-->
+<!--      function drawVisualization() {-->
+<!--        // Create and populate the data table.-->
+<!--        chart_data={{chart_data|safe}}-->
+<!--        alert(chart_data)-->
+<!--        var data = google.visualization.arrayToDataTable(chart_data);-->
+<!--      -->
+<!--        // Create and draw the visualization.-->
+<!--        new google.visualization.OrgChart(document.getElementById('visualization')).-->
+<!--            draw(data, {allowHtml: true});-->
+<!--      }-->
+<!--      -->
+
+<!--      google.setOnLoadCallback(drawVisualization);-->
+<!--    </script>-->
+<!--  </head>-->
+<!--  <body style="font-family: Arial;border: 0 none;">-->
+<!--    <div id="visualization" style="width: 300px; height: 300px;"></div>-->
+<!--  </body>-->
+<!--</html>-->
+
+
+
+<!--
+You are free to copy and use this sample in accordance with the terms of the
+Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
+-->
+
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<!--<head>-->
+<!--  <meta http-equiv="content-type" content="text/html; charset=utf-8" />-->
+<!--  <title>Google Visualization API Sample</title>-->
+<!--  <script type="text/javascript" src="http://www.google.com/jsapi"></script>-->
+<!--  <script type="text/javascript">-->
+<!--    google.load('visualization', '1', {packages: ['annotatedtimeline']});-->
+<!--    -->
+<!--    -->
+<!--    google.setOnLoadCallback(drawVisualization);-->
+<!--  </script>-->
+<!--</head>-->
+<!--<body style="font-family: Arial;border: 0 none;">-->
+<!--<div id="visualization" style="width: 800px; height: 400px;"></div>-->
+<!--</body>-->
+<!--</html>-->
+<!--​-->
+
+
+
+<!--
+You are free to copy and use this sample in accordance with the terms of the
+Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
+-->
+
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<!--  <head>-->
+<!--    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>-->
+<!--    <title>-->
+<!--      Google Visualization API Sample-->
+<!--    </title>-->
+<!--    <script type="text/javascript" src="http://www.google.com/jsapi"></script>-->
+<!--    <script type="text/javascript">-->
+<!--      google.load('visualization', '1', {packages: ['corechart']});-->
+<!--    </script>-->
+<!--    <script type="text/javascript">-->
+<!--      function drawVisualization() {-->
+<!--        // Create and populate the data table.-->
+<!--        var data = google.visualization.arrayToDataTable([-->
+<!--          ['x', 'Cats', 'Blanket 1', 'Blanket 2'],-->
+<!--          ['A',   1,       1,           0.5],-->
+<!--          ['B',   2,       0.5,         1],-->
+<!--          ['C',   4,       1,           0.5],-->
+<!--          ['D',   8,       0.5,         1],-->
+<!--          ['E',   7,       1,           0.5],-->
+<!--          ['F',   7,       0.5,         1],-->
+<!--          ['G',   8,       1,           0.5],-->
+<!--          ['H',   4,       0.5,         1],-->
+<!--          ['I',   2,       1,           0.5],-->
+<!--          ['J',   3.5,     0.5,         1],-->
+<!--          ['K',   3,       1,           0.5],-->
+<!--          ['L',   3.5,     0.5,         1],-->
+<!--          ['M',   1,       1,           0.5],-->
+<!--          ['N',   1,       0.5,         1]-->
+<!--        ]);-->
+<!--      -->
+<!--        // Create and draw the visualization.-->
+<!--        new google.visualization.LineChart(document.getElementById('visualization')).-->
+<!--            draw(data, {curveType: "function",-->
+<!--                        width: 500, height: 400,-->
+<!--                        vAxis: {maxValue: 10}}-->
+<!--                );-->
+<!--      }-->
+<!--      -->
+
+<!--      google.setOnLoadCallback(drawVisualization);-->
+<!--    </script>-->
+<!--  </head>-->
+<!--  <body style="font-family: Arial;border: 0 none;">-->
+<!--    <div id="visualization" style="width: 500px; height: 400px;"></div>-->
+<!--  </body>-->
+<!--</html>-->
+​
+
+
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<!--<head>-->
+<!--<script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
+<!--<script type="text/javascript">-->
+<!--    google.load("visualization", "1", { packages: ["corechart"] });-->
+<!--    google.setOnLoadCallback(drawChart);-->
+<!--    function drawChart() {-->
+<!--        var data = new google.visualization.DataTable();-->
+<!--        data.addColumn('string', Date);-->
+<!--        data.addColumn('number', '造訪流量');-->
+<!--        data.addColumn('number', '下載次數');-->
+<!--        data.addColumn('number', '按讚次數');-->
+<!--        data.addRows(12);-->
+<!--        data.setValue(0, 0, '一月');-->
+<!--        data.setValue(0, 1, 73);-->
+<!--        data.setValue(0, 2, 312);-->
+<!--        data.setValue(0, 3, 68);-->
+<!--        data.setValue(1, 0, '二月');-->
+<!--        data.setValue(1, 1, 99);-->
+<!--        data.setValue(1, 2, 13);-->
+<!--        data.setValue(1, 3, 67);-->
+<!--        data.setValue(2, 0, '三月');-->
+<!--        data.setValue(2, 1, 198);-->
+<!--        data.setValue(2, 2, 65);-->
+<!--        data.setValue(2, 3, 165);-->
+<!--        data.setValue(3, 0, '四月');-->
+<!--        data.setValue(3, 1, 263);-->
+<!--        data.setValue(3, 2, 100);-->
+<!--        data.setValue(3, 3, 222);-->
+<!--        data.setValue(4, 0, '五月');-->
+<!--        data.setValue(4, 1, 100);-->
+<!--        data.setValue(4, 2, 33);-->
+<!--        data.setValue(4, 3, 99);-->
+<!--        data.setValue(5, 0, '六月');-->
+<!--        data.setValue(5, 1, 99);-->
+<!--        data.setValue(5, 2, 22);-->
+<!--        data.setValue(5, 3, 81);-->
+<!--        data.setValue(6, 0, '七月');-->
+<!--        data.setValue(6, 1, 111);-->
+<!--        data.setValue(6, 2, 109);-->
+<!--        data.setValue(6, 3, 290);-->
+<!--        data.setValue(7, 0, '八月');-->
+<!--        data.setValue(7, 1, 43);-->
+<!--        data.setValue(7, 2, 87);-->
+<!--        data.setValue(7, 3, 14);-->
+<!--        data.setValue(8, 0, '九月');-->
+<!--        data.setValue(8, 1, 87);-->
+<!--        data.setValue(8, 2, 93);-->
+<!--        data.setValue(8, 3, 39);-->
+<!--        data.setValue(9, 0, '十月');-->
+<!--        data.setValue(9, 1, 43);-->
+<!--        data.setValue(9, 2, 54);-->
+<!--        data.setValue(9, 3, 188);-->
+<!--        data.setValue(10, 0, '十一月');-->
+<!--        data.setValue(10, 1, 123);-->
+<!--        data.setValue(10, 2, 200);-->
+<!--        data.setValue(10, 3, 90);-->
+<!--        data.setValue(11, 0, '十二月');-->
+<!--        data.setValue(11, 1, 55);-->
+<!--        data.setValue(11, 2, 77);-->
+<!--        data.setValue(11, 3, 99);-->
+<!--        var chart = new google.visualization.LineChart(document.getElementById('Div1'));-->
+<!--        chart.draw(data, { width:800, height: 600, title: '統計表' });-->
+<!--    } -->
+<!--    </script>-->
+<!--</head>-->
+<!--<body>-->
+<!--<div id="'Div1'">-->
+<!--</body>-->
+
+
+<!--​</html>-->
+
+
+
+
+<!--<html>-->
+<!--  <head>-->
+<!--    <script type="text/javascript" src="https://www.google.com/jsapi"></script>-->
+<!--    <script type="text/javascript" charset="utf-8">-->
+<!--      google.load("visualization", "1", {packages:["corechart"]});-->
+<!--      google.setOnLoadCallback(drawChart);-->
+<!--      function drawChart() {-->
+<!--        var data = google.visualization.arrayToDataTable([-->
+<!--          ['Year', 'Sales'],-->
+<!--          ['2004-010',  1000],-->
+<!--          ['2005',  1170],-->
+<!--          ['2006',  660],-->
+<!--          ['2007',  1030]-->
+<!--        ]);-->
+<!--        var options = {-->
+<!--          title: '股票曲线图'-->
+<!--        };-->
+
+<!--        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));-->
+<!--        chart.draw(data, options);-->
+<!--      }-->
+<!--    </script>-->
+<!--  </head>-->
+<!--  <body>-->
+<!--    <div id="chart_div" style="width: 900px; height: 500px;"></div>-->
+<!--  </body>-->
+<!--</html>-->
+
+
+
+<!--
+You are free to copy and use this sample in accordance with the terms of the
+Apache license (http://www.apache.org/licenses/LICENSE-2.0.html)
+-->
+
+<!--<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">-->
+<!--<html xmlns="http://www.w3.org/1999/xhtml">-->
+<!--  <head>-->
+<!--    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>-->
+<!--    <title>-->
+<!--      Google Visualization API Sample-->
+<!--    </title>-->
+<!--    <script type="text/javascript" src="http://www.google.com/jsapi"></script>-->
+<!--    <script type="text/javascript">-->
+<!--      google.load('visualization', '1', {packages: ['orgchart']});-->
+<!--    </script>-->
+<!--    <script type="text/javascript">-->
+<!--      function drawVisualization() {-->
+<!--        // Create and populate the data table.-->
+<!--        var data = google.visualization.arrayToDataTable([-->
+<!--          ['Name',                                                                 'Manager', 'Tooltip'],-->
+<!--          [{v: 'Mike', f: 'Mike<br/><font color="red"><i>Vice President<i></font>'}, null,      'The President'],-->
+<!--          [{v: 'Jim', f: 'Jim<br/><font color="red"><i>Vice President<i></font>'}, 'Mike',    null],-->
+<!--          ['Alice',                                                                'Mike',    null],-->
+<!--          ['Bob',                                                                  'Jim',     'Bob Sponge'],-->
+<!--          [null,'Bob',null],-->
+<!--          ['Carol',                                                                'Bob',     null]-->
+<!--        ]);-->
+<!--      -->
+<!--        // Create and draw the visualization.-->
+<!--        new google.visualization.OrgChart(document.getElementById('visualization')).-->
+<!--            draw(data, {allowHtml: true});-->
+<!--      }-->
+<!--      -->
+
+<!--      google.setOnLoadCallback(drawVisualization);-->
+<!--    </script>-->
+<!--  </head>-->
+<!--  <body style="font-family: Arial;border: 0 none;">-->
+<!--    <div id="visualization" style="width: 300px; height: 300px;"></div>-->
+<!--  </body>-->
+<!--</html>-->
+<!--​-->
+<html>
+  <head>
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['orgchart']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('string', 'Manager');
+        data.addColumn('string', 'ToolTip');
+        data.addRows({{chart_data|safe}});
+        var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+        chart.draw(data, {allowHtml:true});
+      }
+    </script>
+  </head>
+
+  <body>
+    <div id='chart_div'></div>
+  </body>
+</html>

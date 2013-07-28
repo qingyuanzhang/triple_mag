@@ -1,0 +1,18 @@
+{% extends 'store/base.html' %}
+{% block content %}
+
+{% load url from future %}
+{% load i18n %}
+<div class="content-w100">
+<div class="content-h100">
+<a href="{%url 'store_index' %}"><h1 class="selected">报单中心</h1></a>
+
+<a href="{%url 'stuff_list'%}"><h1 class="notselected">订货中心</h1></a>
+<div class="clear"></div>
+{%include 'includes/add_member.html'%}
+</div>
+</div>
+
+
+
+{% endblock %}

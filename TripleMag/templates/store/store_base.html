@@ -1,0 +1,13 @@
+{%extends 'store/base.html'%}
+{% load i18n %}
+{% load url from future %}
+{%block right_up %}
+<ul>
+    <h1>报单中心</h1>
+    <li><a href="{%url 'store_index'%}">报单账户充值</a></li>
+    <li><a href="{%url 'store_add_member'%}">添加会员</a></li>
+    <li><a href="{%url 'store_added_mem'%}">查看会员</a></li>
+</ul>
+{% endblock %}
+
+

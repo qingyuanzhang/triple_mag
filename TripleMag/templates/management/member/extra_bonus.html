@@ -1,0 +1,81 @@
+{% extends "management/base.html" %}
+{%block content-main %}
+
+<div class="content-1of3-wrapper-alt">
+<div class ="content-1of3">
+
+<h1>房奖统计</h1>
+{% if not HBonus %}
+没有记录
+{% else %}
+<table>
+<tr>
+<td>用户编号</td>
+<td>用户姓名</td>
+<td>奖金数量</td>
+</tr>
+
+{%for x,h_bonus in HBonus.items%}
+<td>{{h_bonus.number}}</td>
+<td>{{h_bonus.name}}</td>
+<td>{{h_bonus.amount}}</td>
+</tr>
+{% endfor %}
+</table>
+<tr>
+{% endif %}
+<!--<p><label>分红奖</label>{%if LBonus%}{{LBonus}}{%else%}无{%endif%}</p>
+<p><label>爱心奖</label>{%if SBonus%}{{SBonus}}{%else %}无{%endif%}</p>-->
+</div>
+</div>
+<div class="content-1of3-wrapper-alt">
+<div class ="content-1of3">
+<h1>车奖统计</h1>
+{% if not CBonus %}
+没有记录
+{% else %}
+
+<table>
+<tr>
+<td>用户编号</td>
+<td>用户姓名</td>
+<td>奖金数量</td>
+</tr>
+{% for x,y in CBonus.items%}
+<tr>
+<td>{{y.number}}</td>
+<td>{{y.name}}</td>
+<td>{{y.amount}}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endif %}
+</div>
+</div>
+<div class="content-1of3-wrapper-alt">
+<div class="content-1of3">
+<h1>旅游奖统计</h1>
+{% if not TBonus %}
+没有记录
+{% else %}
+<table>
+<tr>
+<td>用户编号</td>
+<td>用户姓名</td>
+<td>奖金数量</td>
+</tr>
+{%for x,t_bonus in TBonus.items %}
+<tr>
+<td>{{t_bonus.number}}</td>
+<td>{{t_bonus.name}}</td>
+<td>{{t_bonus.amount}}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endif %}
+</div>
+</div>
+
+{% endblock %}

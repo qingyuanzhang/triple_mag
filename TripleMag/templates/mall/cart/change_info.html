@@ -1,0 +1,205 @@
+{% extends "cart/base.html"%}
+{%block content%}
+<html xmlns="http://www.w3.org/1999/xhtml">
+<!--    {% include 'top_bar.html'%}-->
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="/static/change_password/info.do">
+        </script>
+        <title>
+            不愿走-修改密码
+        </title>
+        
+           <link href="/static/css/global_site_base.css" rel="stylesheet"
+        type="text/css">
+        <link href="/static/css/channel_index.css" rel="stylesheet"
+        type="text/css">
+        <script type="text/javascript" src="/static/js/jquery.js"></script>
+        <link href="/static/css/global_site_base.css" rel="stylesheet" type="text/css">
+        <link href="/static/my_order/ordercenter.css" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="http://image.yihaodianimg.com/statics/global/images/favicon.ico">
+        <!--js end-->
+        <link href="/static/address/global_site_simple.css" rel="stylesheet"type="text/css">
+<link href="/static/address/checkout.css" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="https://passport.yihaodian.com/images/favicon.ico">
+        <link href="/static/change_password/passport.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" async="" src="/static/change_password/ga.js">
+        
+        </script>
+
+
+        
+    </head>
+            <script type="text/javascript" src="/static/js/jquery.js">
+        </script>
+    <body>
+        <script type="text/javascript">
+        var pwd  = /[a-zA-Z0-9]{6,20}$/;
+        function change_info()
+        {
+            if ($("#old_password").val()=="")
+            {
+                alert("请输入原密码")
+            }
+            else if ( $("#password").val() =="")
+            {
+                alert("新密码不能为空")
+            }
+            else if ( $("#password").val() == $("#old_password").val())
+            {
+                alert("请输入不同的密码")
+                $("#password").attr("value","");
+                $("#password2").attr("value","");
+                }
+            else{
+            $.getJSON('/mall/user/ajax_change_info/',{'username':'{{user.username}}','old_pwd':$("#old_password").val(),
+            'new_pwd': $("#password").val()},function(result)
+            {
+                if(result == '1')
+                {
+                    alert("你的密码输入有误,请重新输入")
+                     $("#old_password").attr("value","");
+                }
+                else
+                {
+                    alert("修改成功")
+                    location.href = "/"
+                }
+            })}
+        }
+        function show_change_address_div()
+        {
+            $("#content").css("display","none")
+            $("#wrapper").css("display","block")
+        }        
+            function show_change_password_div()
+        {
+            $("#content").css("display","block")
+            $("#wrapper").css("display","none")
+        }
+
+        $(document).ready(function()
+        {
+
+                $("#password2").bind("blur", function(){
+                    if($("#password").attr("value") == $("#password2").attr("value"))
+                    {
+                    }
+                    else
+                    { 
+                        alert("2次密码不一样 请从新输入");
+                        $("#password").attr("value","");
+                        $("#password2").attr("value","");
+                    }
+                });
+                $("#password").bind("blur",function(){
+                    if (!pwd.test($(this).val()))
+                    {
+                        alert("请输入正确的密码")
+                        $("#password").attr("value","");
+                    }
+                    
+                })
+
+
+        });
+
+        
+        </script>
+        <script type="text/javascript" src="/static/change_password/jquery.cookie.js">
+        </script>
+        <script type="text/javascript" src="/static/change_password/tracker_top.js">
+        </script>
+        <script type="text/javascript" src="/static/change_password/tracker.js">
+        </script>
+        <div id="container" style ="display:block">
+            <form action="https://passport.yihaodian.com/passport/register.do" method="post"
+            name="registerform">
+                <input type="hidden" name="outSiteType" value="1">
+                <input type="hidden" name="user.referer" value="">
+                <input type="hidden" name="activities" value="0">
+                <input type="hidden" name="returnUrl" value="">
+                <div id="main">
+                <ul class="ul_tab mb10">
+                    <li class="orderTab on" id="doingOrder" onclick="show_change_password_div()">
+                        <s>
+                        </s>
+                        修改密码
+                    </li>
+                    <input type="hidden" id="doingOrderTotal" value="1">
+                    <li class="orderTab" id="cancelOrder" onclick="show_change_address_div()">
+                        <s>
+                        </s>
+                        修改收获地址
+                    </li>
+                    <input type="hidden" id="cancelOrderTotal" value="3">
+                </ul>
+                    <div id="content" style="display:block">
+                        <div class="regBox" id="innerContent">
+                            <div class="tBox">
+                                <p>
+                                    <label>
+                                        <em>
+                                            *
+                                        </em>
+                                        用户名：
+                                    </label>
+                                    <label style="width:100px">
+                                    {{user.username}}
+                                    </label>
+                                </p>
+                                <p>
+                                    <label>
+                                        <em>
+                                            *
+                                        </em>
+                                        原密码：
+                                    </label>
+                                    <input id="old_password" name="user.password" type="password" 
+                                    class="fl">
+                                </p>
+                                <p>
+                                    <label>
+                                        <em>
+                                            *
+                                        </em>
+                                        新密码：
+                                    </label>
+                                    <input id="password" name="user.password" type="password"
+                                    class="fl">
+                                    <span id="passwordDesc">
+                                    </span>
+                                    <span id="password_desc" class="extra">
+                                        6－20位字符，可由大小写英文、数字或符号组成
+                                    </span>
+                                </p>
+                                <p>
+                                    <label>
+                                        <em>
+                                            *
+                                        </em>
+                                        密码确认：
+                                    </label>
+                                    <input id="password2" name="password2" type="password" onblur=""
+                                    class="fl">
+                                    <span id="password2_desc" class="extra">
+                                        再次输入密码
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="warn agreeBox">
+                                <div class="btnBox">
+                                    <button class="btn" type="button" onclick="change_info()">
+                                        提交修改
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div id="wrapper" class="cartinfo mt10" style="display:none">
+        {% include "cart/receiver_info_check.html"%}
+        </div>
+{% endblock %}

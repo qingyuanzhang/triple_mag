@@ -1,0 +1,26 @@
+{% extends "member/base.html"%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block title %}
+企业公告查看
+{% endblock %} 
+{% block content%}
+<div class="content-w67">
+<div class ="content-1of3" id="detail"> 
+<h2>请选择公告查看</h2>
+</div>
+</div>
+<div class="content-w33">
+<div class ="content-1of3">
+<p><a href="javascript:history.back(-1)">返回上一页</a></p>
+{% include "announcements/announcement_list.html" %}
+</div>
+</div>
+<script type="text/javascript">
+function announcement_deatil(a_id){
+    $("#detail").load("{%url 'mem_announcements_detail' %}?announcement_id="+a_id)
+}
+</script>
+
+{% endblock %}
+

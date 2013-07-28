@@ -1,0 +1,235 @@
+.pop_win_bg {
+	background-color: #000;
+	z-index: 9999;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+
+.pop_win {
+	MARGIN: 10px 0;
+	border: 0 solid #FFF;
+	background-Color: #FFF;
+	z-index: 9999;
+	display: none;
+	position: absolute;
+	top: 60%;
+	left: 20%;
+}
+
+.pop_win .pop_win_title {
+	background-color: #9A0201;
+	color: #FFF;
+	margin: 0;
+	margin-bottom: 10px;
+	font-size: 12px;
+	position: relative;
+	padding-left: 5px;
+	height: 26px;
+	line-height: 26px;
+}
+
+.pop_win .pop_win_content {
+	color: #000;
+	margin: 0;
+	margin-bottom: 10px;
+	font-size: 14px;
+	position: relative;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+.pop_win .pop_win_title img {
+	position: absolute;
+	right: 5px;
+	top: 5px;
+	display: block;
+}
+
+.pop_win div {
+	z-index: 9999;
+	margin-bottom: 0;
+}
+
+.pop_win .pop_win_button {
+	width: 55px;
+	height: 25px;
+	line-height: 25px;
+	font-size: 14px;
+	background: url(../images/btn_action.png) no-repeat;
+	border: 0;
+	color: #FFF;
+	font-family: "宋体", "微软雅黑";
+	cursor: pointer;
+	margin: 10px;
+}
+.pop_win_button {
+	width: 55px;
+	height: 25px;
+	line-height: 25px;
+	font-size: 14px;
+	background: url(../images/btn_action.png) no-repeat;
+	border: 0;
+	color: #FFF;
+	font-family: "宋体", "微软雅黑";
+	cursor: pointer;
+	margin: 10px;
+}
+
+.popwinClose {
+	cursor: pointer;
+}
+
+.aptab {
+	position: absolute;
+	width: 478px;
+	height: auto;
+	background: url(../images/aptabbg.jpg) repeat-y;
+	z-index: 99;
+	left: 379px;
+	top: 380px;
+}
+
+.aptab_white {
+	position: absolute;
+	width: 478px;
+	height: auto;
+	background: url(../images/aptabbg2.jpg) repeat-y;
+	z-index: 99;
+	left: 379px;
+	top: 380px;
+}
+
+.aptab_header {
+	width: 478px;
+	height: 29px;
+	background: url(../images/aptab_header.jpg) no-repeat;
+	color: #FFF;
+}
+
+.aptab_header ul {
+	width: 478px;
+	height: 24px;
+	padding-top: 5px;
+	line-height: 24px;
+}
+
+.aptab_header_white {
+	width: 478px;
+	height: 26px;
+	line-height: 26px;
+	padding-top: 5px;
+	background: url(../images/aptab_header2.jpg) no-repeat;
+	color: #FFF;
+}
+
+.aptab_center {
+	width: 460px;
+	height: auto;
+	padding-left: 9px;
+	padding-right: 9px;
+}
+
+.aptab_text {
+	width: 438px;
+	height: 40px;
+	line-height: 20px;
+	padding-top: 12px;
+	background-color: #EEE;
+	padding-left: 11px;
+	padding-right: 11px;
+}
+
+.aptab_title {
+	width: 438pxpx;
+	height: 16px;
+	line-height: 16px;
+	color: #333;
+	padding-left: 11px;
+	padding-right: 11px;
+}
+
+.aptab .selectbox {
+	width: 375px;
+	height: 20px;
+	padding-left: 45px;
+	padding-right: 40px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+}
+
+.selectbox ul li {
+	width: 125px;
+	height: 20px;
+	line-height: 20px;
+}
+
+.aptab_action {
+	text-align: center;
+	width: 55px;
+	height: 25px;
+	line-height: 25px;
+	font-size: 14px;
+	background: url(../images/btn_action.png) no-repeat;
+	border: 0;
+	color: #FFF;
+	font-family: "宋体", "微软雅黑";
+	cursor: pointer;
+	margin: 10px;
+}
+
+.btn_close {
+	width: 11px;
+	height: 11px;
+	padding-top: 1px;
+	padding-top: 6px\9; #
+	padding-top: 1px;
+	_padding-top: 6px;
+}
+
+.aptab_footer {
+	width: 478px;
+	height: 10px;
+	background: url(../images/aptab_footer2.jpg) no-repeat;
+	_overflow: hidden;
+}
+
+.aptab_produce {
+	width: 460px;
+	height: 141px;
+	background-color: #EEE;
+}
+
+.aptab_produce .leftbox {
+	width: 120px;
+	height: 120px;
+	padding: 10px;
+}
+
+.aptab_produce .rightbox {
+	width: 320px;
+	height: 140px;
+}
+
+.rightbox_title {
+	color: #333;
+}
+
+.rightbox div {
+	height: auto;
+	line-height: 20px;
+}
+
+.aptab_produce_title {
+	width: 450px;
+	height: 30px;
+	padding-left: 10px;
+	background-color: #EEE;
+	line-height: 30px;
+	border-bottom: 1px solid #FFF;
+}
+
+.aptab_produce_box {
+	width: 460px;
+	height: 215px;
+}

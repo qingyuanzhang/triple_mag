@@ -1,0 +1,361 @@
+ {% load i18n admin_static %}
+{% load url from future %}
+<div class="content-1of3-wrapper">
+    <div class ="content-1of3">
+        <div id="user-detail-id">
+            <h1 class="float-right dec-header-1">{{UserBasic.get_role_display}}</h1>
+            <h1> {{UserBasic.name}} </h1>
+            {%if user.is_superuser %} <a href="{%url 'management_change_mem_info' %}?user_number={{UserBasic.number}}" class="red button float-right">修改</a> 
+                <a href="{%url 'management_login_mem' %}?user_number={{UserBasic.id}}" class="red button float-right">登录</a> 
+            <a href="javascript:void(0)" onclick="reset_password()">重置密码</a>
+            {%endif%}
+            <p> {{has_exit}}
+                <label> 用户编号</label>
+                <label> {{UserBasic.number}} </label>
+            </p>
+            <p>
+                <label>用户性别</label>
+                <label>{{UserBasic.get_gender_display}}</label>
+            </p>
+            {% if not role = "MemMin" %}
+            <p>
+                <label>开户银行</label>
+                <label>{{UserBasic.bank_name}}</label>
+            </p>
+            <p>
+                <label>开户姓名</label>
+                <label>{{UserBasic.bank_account_name}}</label>
+            </p>
+            <p>
+                <label>开户银行账号</label>
+                <label>{{UserBasic.bank_account_id}}</label>
+            </p>
+            <p>
+                <label>身份证号码</label>
+                <label>{{UserBasic.id_card_number}}</label>
+            </p>
+            {% endif %}
+            <p>
+                <label>收货地址</label>
+                {% if UserAddress %}
+{{UserAddress.province}}{{UserAddress.city}}{{UserAddress.area}}{{UserAddress.street}}
+                {% else %}
+                <label>无地址</label>
+                {% endif %} </p>
+            <p>
+                <label>手机号码</label>
+                <label class="mobile">{{UserBasic.mobile}}</label>
+            {%if not user.is_superuser %}
+                <input type="checkbox" value="mobile" class="change-info" id='mobile'>
+            </p>
+            <div style="display: none; " class="to-modify">
+                <p>
+                    <label>新手机号码</label>
+                    <input type="text" name="mobile">
+                    <input type="submit" class="no_appl" value="修改">
+                </p>
+            </div>
+            {% endif %}
+            </p>
+            <p>
+                <label>联系电话</label>
+                <label class="phone">{{UserBasic.phone}}</label>
+            {%if not user.is_superuser %}
+                <input type="checkbox" value="修改" class="change-info" id='phone'>
+            </p>
+            <div style="display: none; " class="to-modify">
+                <p>
+                    <label>新联系电话</label>
+                    <input type="text" name="phone">
+                    <input type="submit" class="no_appl" value="修改">
+                </p>
+            </div>
+            {% endif %}
+            </p>
+            <p>
+                <label >QQ号码</label>
+                <label class="QQ">
+                {{UserBasic.QQ}}</label>
+                {%if not user.is_superuser %}
+                <input type="checkbox" value="修改" class="change-info" id='QQ'>
+            </p>
+            <div style="display: none; " class="to-modify">
+                <p>
+                    <label >新QQ号码</label>
+                    <input type="text" name="QQ">
+                    <input type="submit" class="no_appl" value="修改">
+                </p>
+            </div>
+            {% endif %}
+            </p>
+        </div>
+        <div>
+            {%if not role = "MemMin" %}
+            {%if not role = "MemVIP" %}
+            <h1>市场信息</h1>
+            <p>
+                <label>用户级别</label>
+                <span>{{UserBasic.level_name}}</span> {%if user.is_superuser and UserBasic.role = "MemMax" %}<a class="float-right" href="{%url 'management_added_mem'%}?user_number={{UserBasic.number}}">查看会员</a> {% endif %}</p>
+            <p>
+                <label>市场位置</label>
+                <span>{{UserBasic.contact_area}}</span>
+               <!-- <span><a class="float-right" href="{%if user.is_superuser or user.first_name == 'finance' %}{%url 'contacting_chart'%}?user_id={{UserBasic.id}}{%else%}{%url 'mem_conactor'%}{%endif%}">查看接点人关系</a></span>-->
+            </p>
+                        <p>
+
+                <label>A区业绩</label>
+
+                <span>{{count_a}}</span>
+
+            </p>
+
+            <p>
+
+                <label>B区业绩</label>
+
+                <span>{{count_b}}</span>
+
+            </p> 
+            <p>
+
+                <label>总业绩</label>
+
+                <span>{{count_sum}}</span>
+
+            </p>
+            {% if role = "MemMax" %}
+            <p>
+                <label>店铺类型</label>
+                {%if UserBasic.is_central%}
+                <label>中心店</label>
+                {% else %}
+                <label>加盟店</label>
+                【中心店:{{UserBasic.user_central_number}}|{{UserBasic.user_central_name}}】
+                {% endif %} </p>
+            {% endif %}
+            
+            <p>
+                <label>接点人</label>
+                <span>{{UserBasic.contacting_name}}</span>（<span>{{UserBasic.contacting_id}}</span>）</p>
+            {% endif %}
+            {% endif %}
+            <p>
+
+                <label>推荐人</label>
+                <span>{{UserBasic.recommending_name}}</span>（<span>{{UserBasic.recommending_id}}</span>）<a class="float-right" href="{%url 'management_recommender'%}?user_number={{UserBasic.number}}">查看推荐人</a> </p>
+            <p>
+                <label>服务中心</label>
+                {%if UserAdder%}
+                <span>{{UserAdder.adding.name}}</span>（<span>{{UserAdder.adding.number}}</span>）
+                {% else%}
+                <span>管理员</span>
+                {% endif %}
+                </p>
+        </div>
+        <div> {% if user.is_superuser %}
+            <h1>状态</h1>
+            <p>
+            {% if UserBasic.is_void %}
+                <label>空点</label>
+            {% endif %}
+            {% if UserBasic.is_stock_XR %}
+                <input type="submit" value="解除股票除权" name = "stock_0" onclick="change_state(this,'{{ UserBasic.number }}')">
+            {% else %}
+                <input type="submit" value="股票除权" name ="stock_1"  onclick="change_state(this,'{{ UserBasic.number }}')">
+            {% endif %}
+            {% if UserBasic.is_blocked %}
+                <input type="submit" value="解除冻结" name ="block_0"  onclick="change_state(this,'{{ UserBasic.number }}')">
+            {% else %}
+                <input type="submit" value="冻结" name ="block_1"  onclick="change_state(this,'{{ UserBasic.number }}')">
+            {% endif %}
+            
+            {% endif %}
+            </p>
+            </div>
+        
+        {%if not user.is_superuser %}
+        {%block content-left%}
+
+        
+        {%endblock%}
+        {% endif %} </div>
+</div>
+<div class="content-2of3-wrapper">
+{%if user.is_superuser%}
+<div class ="content-2of3"> {%include 'includes/account.html'%} </div>
+
+    
+    <div class="content-h50">
+        <p> {%if UserBasic.can_devide %}
+            <input type="checkbox" checked=true disabled="disabled" />
+            {%else%}
+            <input type="checkbox" disabled="disabled" />
+            {%endif%}
+            享受拆股
+            {%if UserBasic.can_share_out %}
+            <input type="checkbox" checked=true disabled="disabled" />
+            {%else%}
+            <input type="checkbox" disabled="disabled" />
+            {%endif%}
+            享受商品分红 </p>
+        <p>
+            <label>商城个人积分</label>
+            <label>{{UserBasic.mall_single_score}}</label>
+        </p>
+        <p>
+            <label>商城累积积分</label>
+            {{UserBasic.mall_team_score}}</p>
+<!--        {% if not UserBasic.is_summit %}-->
+        <p>
+            <label>商城等级</label>
+            {{UserBasic.mall_level}} </p>
+<!--        {% else %}-->
+<!--        <p>-->
+<!--        	<label>商城等级</label>同级部门-->
+<!--        </p>-->
+<!--        {% endif %}-->
+            
+        {%if not role = "MemMin" %}
+        {%if not role = "MemVIP" %}
+
+<!--        <p>-->
+<!--            <label>A区累积业绩</label>-->
+<!--            <label>{{UserBasic.store_total_money_A}}</label>-->
+<!--        </p>-->
+<!--        <p>-->
+<!--            <label>B区累积业绩</label>-->
+<!--            {{UserBasic.store_total_money_B}}</p>-->
+        <p>
+            <label>注册时间</label>
+            {{UserBasic.start_date}}</p>
+        <p>
+            <label>回本奖累积值</label>
+            {{UserBasic.sum_bonus_recost}}</p>
+        {%endif%}
+        {%endif%}
+        <p>
+            <label>股票享受拆股封顶值</label>
+            {{UserBasic.stock_hold_max}} </p>
+        {%if UserBasic.proxy_province or UserBasic.proxy_city or UserBasic.proxy_area %}
+        <p>
+            <label>代理区域</label>
+            {%if UserBasic.proxy_province %}
+            	{{UserBasic.proxy_province}}省
+            {%endif%}
+            
+            {%if UserBasic.proxy_city %}
+            	{{UserBasic.proxy_city}}市
+            {%endif%}
+            
+            {%if UserBasic.proxy_area %}
+            	{{UserBasic.proxy_area}}
+            {%endif%} </p>
+        {%endif%} </div>
+    {%endif%}
+</div>
+<script src="/static/js/validations.js"></script> 
+<script type="text/javascript">
+
+    change_field = ""
+    after_change = ""
+    check_box = ""
+    change_info_div =""
+    clear_input = ""
+    to_clear = ""
+    
+    $(".change-info").bind('click',function(){
+        check_box = $(this)
+        after_change = $(this).prev()
+        change_field = $(this).attr('id')
+        change_info_div =  $(this).parent().next()
+        to_clear = "input[name='"+change_field+"']"
+        if ( $(this).attr("checked") == "checked" )
+		{
+			$(this).parent().next().fadeIn() 
+		}
+		else
+		{
+			$(this).parent().next().fadeOut() 
+		}
+    })
+    
+    
+    $(".no_appl").bind('click',function(){
+        var change_conent = change_field+'_'+ $(to_clear).val() ;
+         
+		var inputs = $("#user-detail-id div[style!='display: none; '] input").validator({
+			message: '<span></span>',
+			position: 'center right',
+			inputEvent: 'blur' ,
+			lang: 'cn' ,
+			offset: [0, 40]
+		});
+  		if(inputs.data("validator").checkValidity())
+        {
+            $.getJSON("/member/change_info/",{"change_conent":change_conent},function(data){
+                if(data == '1'){
+                    alert("已经修改成功") ;
+                    after_change.html($(to_clear).val()) ;
+                    change_info_div.fadeOut() ;
+                    $(to_clear).val("") ;
+                    check_box.attr("checked",false) ;
+                    
+                }
+                else if (data == '0'){
+                    alert("修改失败") ;
+                }
+            }) ;
+        }   
+        else
+        {
+        	
+        } 
+    })
+
+function reset_password(){
+    //alert("test")
+    $.getJSON("{%url 'reset_password'%}?u_id={{UserBasic.id}}",function(data){
+        if (data == '0'){
+            alert("密码重置失败")
+        }
+        else{
+            alert("密码重置成功")
+        }
+    })
+}
+
+function change_state(_this, user_number)
+{
+    choice = $(_this).attr('name')
+    alert(choice)
+    $.getJSON("{%url 'change_state'%}",{'user_number':user_number,'choice': choice},function(data){
+        if(data == '0'){
+            alert("操作失败")
+        }
+        else{
+            switch (choice){
+                case 'stock_0': 
+                    $(_this).val("股票除权");
+                    $(_this).attr("name","stock_1");
+                    break;
+                case 'stock_1': 
+                    $(_this).val("解除股票除权");
+                    $(_this).attr("name","stock_0");
+                    break;
+                case 'block_0': 
+                    $(_this).val("冻结");
+                    $(_this).attr("name","block_1");
+                    break;
+                case 'block_1': 
+                    $(_this).val("解除冻结");
+                    $(_this).attr("name","block_0");
+                    break;
+            }
+    }
+    })
+}
+</script> 
+<script>
+	var triggers = $(".modalInput").overlay({
+	});
+</script>

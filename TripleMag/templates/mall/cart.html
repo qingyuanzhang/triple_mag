@@ -1,0 +1,11 @@
+{% extends "mall/login-base.html" %}
+{% block main-block %}
+{% if Cart.total_num == 0 %}
+{% include "mall/cart/nogoods.html" %}
+{% else %}
+{% include "mall/cart/goods.html"%}
+{% endif %}
+{% endblock %}
+
+
+

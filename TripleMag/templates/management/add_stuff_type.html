@@ -1,0 +1,15 @@
+{% extends 'management/base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+
+{% block main %}
+    <form enctype="multipart/form-data" action="" method="post" id="product_form">
+        {% csrf_token %}
+        <fieldset>
+            {{ form.as_table }}
+        </fieldset>
+        <div class="actions">
+            <input type="submit" class="btn primary" value="添加货物类型">
+        </div>
+    </form>
+{% endblock %}

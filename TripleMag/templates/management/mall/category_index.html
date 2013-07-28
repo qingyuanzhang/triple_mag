@@ -1,0 +1,66 @@
+{% extends "mall/mall_base.html"%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block title %}
+目录管理
+{% endblock %}
+{% block main %}
+<div>
+<caption>
+目录管理
+</caption>
+<div>
+    <span>
+        <label>一级目录</label>
+        <a href="{%url 'mall_category' 1%}">
+        <input type=button value="查看">
+        </a>
+    </span>
+</div>
+<div>
+    <span>
+        <label>二级目录</label>
+        <a href="{%url 'mall_category' 2%}">
+        <input type=button value="查看">
+        </a>
+    </span>
+</div>
+<div>
+    <span>
+        <label>三级目录</label>
+        <a href="{%url 'mall_category' 3%}">
+        <input type=button value="查看">
+        </a>
+    </span>
+</div>
+
+<div>
+<form action="." method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+    <h1>一级目录</h1>
+    {{CategoryForm.as_p}}
+    <input type="submit" value="增加" name="category">
+</form>
+</div>
+<div>
+<form action="." method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+    <h1>二级目录</h1>
+    {{CategoryFirstForm.as_p}}
+     <input type="submit" value="增加" name="category_first">
+</form>
+</div>
+<div>
+<form action="." method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+    <h1>三级目录</h1>
+    {{CategorySecondForm.as_p}}
+     <input type="submit" value="增加" name="category_second">
+</div>
+</form>
+
+
+
+</div>
+
+{% endblock %}

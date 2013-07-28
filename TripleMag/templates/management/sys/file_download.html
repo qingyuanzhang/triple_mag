@@ -1,0 +1,16 @@
+{%extends 'management/sys/sys_base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block content-main%}
+    <div class="content-1of3-wrapper">
+    <div class ="content-1of3"> 
+    {% include 'includes/file_download.html'%}
+    </div>
+    </div>
+    <div class="content-2of3-wrapper">
+    <div class ="content-1of3"> 
+    {% include "management/sys/sys_right.html"%}</div>
+    </div>
+{% endblock %}
+
+

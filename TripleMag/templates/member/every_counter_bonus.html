@@ -1,0 +1,21 @@
+{% extends 'member/bonus_base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block content-main %}
+<div class="content-1of1-wrapper">
+    <div class ="content-1of3">
+        {%include include_template %}
+    </div>
+</div>
+<script type="text/javascript">
+    function page_up(goto_url){
+        $("#counter_detail").load(goto_url)
+    }
+    function page_down(goto_url){
+        $("#counter_detail").load(goto_url)
+    }
+    function to_counter(goto_url){
+        $("#counter_detail").load(goto_url)
+    }
+</script> 
+{% endblock %} 

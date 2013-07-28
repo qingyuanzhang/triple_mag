@@ -1,0 +1,68 @@
+<h1>货物列表</h1>
+{% if not stuff%}
+没有货物
+
+{% else %}
+<table>
+    <tr>
+    	<td>操作</td>
+        <td>货物类型</td>
+        <td>货物</td>
+        <td>货物的总量</td>
+        <td>货物的单价</td>
+    </tr>
+    {% for Stuff in stuff %}
+    <tr>
+        <td>
+        <input class="modalInput" type="submit" value="删除" rel="#type_deletion">
+          <div class="modal" id="type_deletion">
+          <h2>提示</h2>
+          <p>
+                删除该货物会导致含有该货物的订单项目被删除，确认吗？
+          </p>
+        
+          <!-- yes/no buttons -->
+          <p>
+            <button class="close" onclick="del_stuff('{{Stuff.id}}',this)"> 是的 </button>
+            <button class="close"> 取消 </button>
+          </p>
+	</div>
+        <input type="submit" value = "修改" onclick="change_stuff('{{Stuff.id}}')"></td>
+        {%if Stuff.type.detail %}
+        <td title="{{Stuff.type.detail}}">
+        {%else%}
+        	<td>
+        {%endif %}
+        {{Stuff.type.name}}</td>
+        
+        <!--条件判断用于放置有title属性但没有内容导致的DOM解析错误-->
+        {% if Stuff.detail %}
+        <td title="<h3>简介</h3>{{Stuff.detail}}">
+        {% else %}
+        <td>
+        {% endif %}
+            {%if  Stuff.picture%}
+            <img src='/{{Stuff.picture.url}}' class="small-img">
+            {%endif %}
+            <li>{{Stuff.name}}</li>
+        </td>
+        <td>{{Stuff.total_num}}</td>
+        <td>{{Stuff.price_single}}</td>
+    </tr>
+    {% endfor %}
+</table>
+<p>
+
+<a href="?page=1">首页</a>
+
+ {% if stuff.has_previous %} <a class="page_next" id = "page_up"  href="?page={{ stuff.previous_page_number }}"> 上一页 </a> {% endif %}
+    {% if stuff.has_next %} <a class="page_next" id = "page_down" href="?page={{ stuff.next_page_number }}"> 下一页 </a> {% endif%}
+    {{ stuff.number }} / {{ stuff.paginator.num_pages }} 
+<a href="?page={{ stuff.paginator.num_pages }} ">尾页</a>
+    </P>
+{% endif %} 
+
+<script>
+	var triggers = $(".modalInput").overlay({
+	});
+</script>

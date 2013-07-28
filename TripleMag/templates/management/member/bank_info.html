@@ -1,0 +1,34 @@
+{% extends "management/base.html"%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block content-main %}
+<div class="content-1of3-wrapper">
+<div class ="content-1of3"> 
+<h1>会员的汇款帐号信息</h1>
+<p>
+    <label> 请输入会员编号 或 姓名<label>
+    <input type="text" id="number_or_name" />  
+    <input type="submit" value="查询" onclick="search()"/>
+</p>
+{% if not bank_info%}
+没有汇款帐号信息
+{%else %}
+
+<div id="bank_info">
+{% include "management/member/bank_info_table.html"%}
+</div>
+{% endif %}
+</div>
+</div>
+<div class="content-2of3-wrapper">
+    <div class ="content-1of3"> 
+        {%include "management/member/member_right.html"%}
+    </div>
+</div>
+<script type="text/javascript">
+function search(){
+    query = $("#number_or_name").val()
+    $('#bank_info').load("{%url 'bank_info'%}?query="+query);
+}
+</script>
+{% endblock %}

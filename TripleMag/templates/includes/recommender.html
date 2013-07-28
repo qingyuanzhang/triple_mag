@@ -1,0 +1,62 @@
+ {% load i18n admin_static %}
+{% load url from future %}
+<div class="content-1of3-wrapper-alt">
+    <div class ="content-1of3">
+        <h1>{{request.session.recommender_name}}的第一代推荐人</h1>
+        <table>
+            <tr>
+                <td>{{request.session.recommender_name}}</td>
+                <td>第一代推荐人</td>
+            </tr>
+            {%for x,y in recommender_first.items %}
+            <tr> {%if user.is_superuser %}
+                <td title="{{x.recommending.number}}"><a href="{%url 'management_member_detail' %}?user_number={{x.recommending.number}}">{{x.recommending.name}}</a></td>
+                <td title="{{y.recommended.number}}"><a href="{%url 'management_member_detail' %}?user_number={{y.recommended.number}}">{{y.recommended.name}}</a></td>
+                {%else%}
+                <td ><a>{{x.recommending.number}}</a></td>
+                <td ><a>{{y.recommended.number}}</td>
+                {%endif%} </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{%if user.is_superuser%}
+<div class="content-1of3-wrapper-alt">
+    <div class ="content-1of3">
+        <h1>{{request.session.recommender_name}}的第二代推荐人</h1>
+        <table>
+            <tr>
+                <td>第一代推荐人</td>
+                <td>第二代推荐人</td>
+            </tr>
+            {% for x,y in recommender_second.items%}
+            <tr> {%if user.is_superuser %}
+                <td title="{{y.father.number}}"><a href="{%url 'management_member_detail' %}?user_number={{y.father.number}}">{{y.father.name}}</a></td>
+                <td title="{{y.son.number}}"><a href="{%url 'management_member_detail' %}?user_number={{y.son.number}}">{{y.son.name}}</a></td>
+                {%else%}
+                <td title="{{y.father.number}}"><a >{{y.father.name}}</a></td>
+                <td title="{{y.son.number}}"><a >{{y.son.name}}</a></td>
+                {%endif%} </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+<div class="content-1of3-wrapper-alt">
+    <div class="content-1of3">
+        <h1>{{request.session.recommender_name}}的第三代推荐人</h1>
+        <table>    
+                <td>第二代推荐人</td>
+                <td>第三代推荐人</td>
+                {%for x,y in recommender_third.items %}
+            <tr> {%if user.is_superuser %}
+                <td title="{{y.father.number}}"><a href="{%url 'management_member_detail' %}?user_number={{y.father.number}}">{{y.father.name}}</a></td>
+                <td title="{{y.son.number}}"><a href="{%url 'management_member_detail' %}?user_number={{y.son.number}}">{{y.son.name}}</a></td>
+                {%else%}
+                <td title="{{y.father.number}}"><a >{{y.father.name}}</a></td>
+                <td title="{{y.son.number}}"><a >{{y.son.name}}</a></td>
+                {%endif%} </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endif %}

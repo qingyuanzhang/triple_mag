@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>{% block title%}{%endblock %}</title>
+        {% block resource %}
+         <script type="text/javascript" src="/static/js/jquery.js"></script>
+        {% endblock %}
+    </head>
+    <body>
+        <!--Container-->
+        <div id="container">
+            <!--Header-->
+            <div id="header">
+                <div id="logo">
+                    <h1 id="site-name">
+                                 登录           
+                    </h1>
+                    <img src="#"/>
+                </div>
+            </div>
+            <!--END Header-->
+            <!--Content-->
+            <div id="content">
+                <h1>{% block h1 %}{% endblock %}</h1>
+                <div id="content-main">
+                {% block main %}
+                {% endblock %}
+                </div>
+            </div>
+            <!--END Content-->
+            <!--Footer-->
+            <div id="footer">
+            </div>
+            <!--END Footer-->
+        </div>
+        <!--END Container-->
+    </body>
+</html>
+

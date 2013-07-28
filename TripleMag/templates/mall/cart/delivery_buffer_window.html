@@ -1,0 +1,178 @@
+{% if error %}
+    <div class='to-modify'>
+    {{error}}
+    </div>
+{% endif %}
+
+<h1>
+<img src="/static/img/fin_purchase.jpg" /></h1>
+<div id="receiver_info_check" class="address-em stick-to-right">
+    <h2>地址信息</h2>
+    <div id="info_check_receiver" class="infomationleft">
+        <p>
+            <label>收货人</label>
+            {{request.session.cart.name}}</p>
+        <p>
+            <label>详细地址</label>
+            {{Cart.address.province}}{{Cart.address.city}}{{Cart.area}}{{Cart.address.street}}</p>
+        <p>
+            <label>手机</label>
+            {{request.session.cart.mobile}}</p>
+        <p>
+            <label>配送方式</label>
+            {{Cart.delivery_way}}</p>
+    </div>
+    <a href="/mall/cart/sure_to_pay/">[返回修改]</a> </div>
+<div class="product-list-line float-left">
+    <dl>
+        <h2>商品信息</h2>
+        {% for p in Cart.items %}
+        <div style="clear:both">
+        <dt> <a title="{{p.product.name}}" href="/mall/product/{{p.product.name}}" target="_blank">
+            <h3>{{p.product.name}} {%if p.product.color%}{{p.product.color}}{%endif%}{%if p.product.size%}{{p.product.size}}{%endif%}</h3>
+            <img src="/{{p.product.image_url}}" /> </a></dt>
+        <dd>
+        	单价￥
+            <span class="color-alt-red block-one-cont price" name={{p.quantity}}>
+            	{{p.price}}
+            </span>
+ <span class="old-price">￥{{p.product.price_normal}}</span>
+        </dd>
+        
+        <dd> 数量
+        	<span class="color-em-red block-one-cont ">{{p.quantity}}</span>
+        </dd>
+        
+        <dd> 总计
+        <span class="color-em-red block-one-cont">￥
+        <span class="sum_price"></span>
+        </span>
+        </dd>
+        
+        <dd class="order-status">赠股/积分
+        	<span class="color-em-purple block-two-cont">
+        	{% widthratio p.product.bonus_stock 1 p.quantity %} 
+            </span>/
+            {% widthratio p.product.grade 1 p.quantity %} 。
+        </dd>
+		
+        </div>
+        {% endfor%}
+        </p>
+    </dl>
+</div>
+<br />
+<form action='/mall/cart/success' method="GET">
+    <div id="sum">
+        <label>商品总金额</label>
+        ￥ <span id="total_price"></span>
+        <label>运费</label>
+        ￥{{Cart.delivery_price}}
+        <label>总额</label>
+        ￥<span id ="Total_price"></span> </div>
+    <div>
+        <h1>付款方式</h1>
+        <select id="pay_style" name="pay_style">
+            <option value="1" postcode="null"> 使用余额 </option>
+            <option value="2" postcode="null"> 直接汇款 </option>
+        </select>
+        <label></label>
+    </div>
+    <a id="confirm_goods1" class="red button float-right modalInput" rel="#use_transfer" onclick="doSaveInvoice()" href="javascript:void(0)">确认整个订单</a>
+    <input id="confirm_goods_with_pay" class="red button float-right modalInput" rel="#use_cash" value="使用现金账户付款" type="submit">
+    <div id="use_cash" class="modal">
+        <h1>确认付款</h1>
+        <p>
+            <label>现金账户余额</label>
+            ￥<span class="now-price" id="cash">{{Cart.address.user.cash}}</span>
+        </p>
+        <p>
+            <label>需要支付</label>
+            ￥<span class="now-price" id ="total_price_to_pay"></span>
+        </p>
+        
+        <p>
+            <h2>请输入二级密码</h2>
+            <input type="password" name="password_2nd" /></p>
+        <p>
+            <input type="submit" value="进入" />
+            <input type="button" class="close" value="取消" />
+        </p>
+    </div>
+
+    <div id="use_transfer" class="modal">
+        <h1>请在下单结束后汇款</h1>
+        <p>
+        	<label>汇款账号</label> 
+        	<span id="bank_account_id"> 6228460300004871818</span>
+        </p>
+        <p>
+            <label>银行名称</label>
+            <span id="bank_name">中国农业银行威海张村支行</span>
+        </p>
+        <p>
+        	<label>汇款人姓名</label>
+        	<span id="bank_account_name">龙连泉</span>
+        </p>
+        <p>
+            <label>需要支付</label>
+            ￥<span class="now-price" id="total_price_to_pay_1"></span>
+        </p>
+        <p>
+            <h2>请输入二级密码</h2>
+            <input type="password" name="password_2nd_second" /></p>
+        <p>
+            <input type="submit" value="进入" />
+            <input type="button" class="close" value="取消" />
+        </p>
+    </div>
+
+    <div class="clear"></div>
+
+</form>
+<script>
+	$(document).ready(function()
+	{
+		var triggers = $(".modalInput").overlay({
+			  // some mask tweaks suitable for modal dialogs
+		});
+		$("#confirm_goods1").hide()
+		
+		var sum_price = 0
+		var _price=[]
+		$(".price").each(function(index)
+		{
+			price = parseFloat($(this).text())
+			number = parseFloat($(this).attr("name"))
+			_price[index] = price*number
+			sum_price += _price[index]
+		});
+		$(".sum_price").each(function(index){
+			$(this).text(_price[index])
+		});
+		$("#total_price").text(sum_price)
+		var total_price = sum_price+parseFloat('{{Cart.delivery_price}}')
+		$("#Total_price").text(total_price)
+		$("#total_price_to_pay").html( $("#Total_price").html() )
+		$("#total_price_to_pay_1").html( $("#Total_price").html() )
+	}) ;
+	
+	$("#pay_style").change(function(){
+		if( $(this).val() == 1 )
+		{
+			$("#confirm_goods1").hide()
+			$("#confirm_goods_with_pay").show()
+		}
+		else if ( $(this).val() == 2 )
+		{
+			$("#confirm_goods1").show()
+			$("#confirm_goods_with_pay").hide()
+		}
+	});
+	
+/*	function doSaveInvoice(_this,i)
+	{
+		var pay_style = $("#pay_style").children('option:selected').val()
+		location.href="/mall/cart/success?pay_style=" + pay_style
+	}*/
+</script> 

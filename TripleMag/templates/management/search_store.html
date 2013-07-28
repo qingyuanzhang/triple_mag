@@ -1,0 +1,105 @@
+{% extends 'management/base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block title%}
+查看报单中心信息
+{% endblock%}
+{% block h1%}
+报单中心列表
+{% endblock %}
+{% block main %}
+<fieldset>
+    <legend> 报单中心列表 </legend>
+    <p>
+        <label> 查询：按 </label>
+		<select>
+		  <option >用户姓名</option>
+		  <option >用户编号</option>
+		  <option >申请时间</option>
+		</select>     
+		<input type="text" > 
+    </p>
+    <p>
+<table>
+		<tr>
+		<td>序号</td>
+		<td>用户编号</td>
+		<td>用户姓名</td>
+		<td>推荐人编号</td>
+		<td>推荐人姓名</td>
+		<td>接点人编号</td>
+		<td>接点人姓名</td>
+		<td>注册时间</td>
+		<td>级别</td>
+		<td>开通时间</td>
+		<td>开通管理</td>
+		</tr>
+		{% for UserInfo in user_info.object_list %}
+		<tr>
+		<td>{{ UserInfo.id }}</td>
+		<td>{{ UserInfo.number }}</td>
+		<td>{{ UserInfo.name }}</td>
+		<td>{{ UserInfo.recommending.number }}</td>
+		<td>{{ UserInfo.recommending.name }}</td>
+		<td>{{ UserInfo.contacting.number }}</td>
+		<td>{{ UserInfo.contacting.name }}</td>
+		<td>{{ UserInfo.start_date }}</td>
+		<td>{{ UserInfo.style }}</td>
+		<td>{{UserInfo.start_date}}</td>
+		{% if UserInfo.state == 1%}
+		<td>已开通</td>
+		{% else %}
+		<td>
+		<li><input type="submit" value="开通" onclick="allow(this,{{ UserInfo.number }})"></li>
+		<li><input type="submit" value="拒绝" onclick="reject(this)"></li>
+		</td>
+		{% endif %}
+		</tr>
+		{% endfor %}
+</table>
+    </p>
+	<P>本页共X条记录  上一页 下一页</P>
+	
+
+</fieldset>
+<script type="text/javascript">
+    function allow(_this,user_number)
+    {
+        $.ajax(
+            url: '/management/member/allow?user_number='user_number,
+            error: function()
+                    {
+                        alert("未知错误")
+                    }
+            success: function()
+                    {
+                        alert("成功开通")
+                        $(_this).parent().parent().html("已经开通")
+                    }
+        )
+    }
+    function reject(_this,user_number)
+    {
+        $.ajax(
+            url: '/management/member/reject?user_number='user_number,
+            error: function()
+                    {
+                        alert("未知错误")
+                    },
+            success: function(result)
+                    {
+                        alert("成功拒绝")
+                        $(_this).parent().parent().html("已经拒绝")
+                    }
+        )
+    }
+
+</script>
+{% endblock %}
+
+
+
+
+
+
+

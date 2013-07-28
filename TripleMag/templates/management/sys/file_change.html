@@ -1,0 +1,45 @@
+{% extends "management/sys/sys_base.html"%}
+{% block title %}
+资料上传
+{% endblock %}
+{% block content-main%}
+<div class="content-w67">
+<div class ="content-1of3"> 
+<h1>资料修改</h1>
+<form action="." method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+    <p>
+        <label for="id_title">
+            文件标题:
+        </label>
+        <input id="id_title" type="text" name="title" maxlength="30" value={{File.title}}>
+    </p>
+    <p>
+        <label for="id_url">
+            文件地址:
+        </label>
+        <input type="file" name="url" id="id_url" >
+    </p>
+    <p>
+        <label for="id_detail">
+            文件详细说明:
+        </label>
+        <textarea id="id_detail" rows="10" cols="40" name="detail" >{{File.detail}}
+        </textarea>
+    </p>
+    <div class="actions">
+        <input type="submit" class="btn primary" value="修改">
+    </div>
+</form>
+</div>
+</div>
+<div class="content-2of3-wrapper">
+<div class ="content-1of3"> 
+
+{%include "management/sys/sys_right.html"%}
+
+</div>
+</div>
+
+
+{% endblock %}

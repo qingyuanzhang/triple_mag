@@ -1,0 +1,313 @@
+{% extends 'member/base.html'%}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+
+
+{% block title%}
+
+    会员中心首页
+
+{% endblock %}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+
+
+{% block nav %}
+
+    <ol id="nav-2">
+
+        <li><a href="{%url 'member_details'%}">1、会员信息查看和修改</a></li>
+
+        <li><a href="{%url 'member_bonus_center'%}">2、奖金记录</a></li>
+
+        <li><a href="{%url 'money_withdraw'%}">3、提现和转帐</a></li>
+
+    </ol>
+
+{% endblock %}
+
+
+
+
+
+{%block content%}
+
+
+
+
+
+    {%if request.session.subject == 'member_center'%}
+
+              
+
+            <div class="content-w67">
+
+            <div class="content-h100">
+
+            <a href="{%url 'member_details'%}"><h1 class="selected">会员信息查看和修改</h1></a>
+
+            
+
+            
+
+            <a href="{%url 'member_bonus_center'%}"><h1 class="notselected">奖金记录</h1></a>
+
+            <a href="{%url 'money_withdraw'%}"><h1 class="notselected">提现和转帐</h1></a>
+
+            <div class="clear"></div>
+
+            {% block content-main%}
+
+
+
+
+
+            {%include 'includes/member_detail.html'%}
+
+
+
+            {% endblock %}
+
+            </div>
+
+            </div>
+
+            <div class="content-w33">
+
+            {%block content-left%}
+
+            {%endblock%}
+
+                <div class="content-h50">
+
+                <h2>我的账户</h2>
+
+                {%include 'includes/account.html'%}
+
+        </div>
+
+         <div class="content-h50">
+
+        <h2>信息管理</h2>
+
+            {%if not role == "MemMin" %}
+
+            <li><a href= "{%url 'mem_change_info_appl' %}">敏感信息修改申请</a></li>
+
+            {% endif %}
+
+            <li> <a href="{%url 'change_password' %}"> 修改密码 </a></li>
+
+            <li><a href="{%url 'manage_address'%}">地址管理</a></li>
+
+        
+
+        
+
+        {% if UserBasic.role == "MemMid" %}
+
+            <li><a href= "{%url 'mem_upgrade_appl' %}">会员升级报单中心申请</a></li>
+
+        {% endif %}
+
+        
+
+        {% if role == "MemMin" %}
+
+        <li title="您的累积积分大于{{mall_VIP_threshold}}，因而可以填写必要的信息，申请成为商城VIP用户。">
+
+        	{% if UserBasic.mall_team_score > mall_VIP_threshold %}
+
+            <a href= "{%url 'mem_vip_appl' %}">申请成为VIP</a>
+
+            {% else %}
+
+            申请成为VIP
+
+            {% endif %}
+
+        </li>
+
+        {% endif %}
+
+        
+
+        {%if not UserBasic.can_share_out %}
+
+        	<li title="若您的股票持有量超过{{stock_share_out_min_amount}}，则可以提交参与分红的申请，通过后可以拿到分红奖。">
+
+            {% if UserBasic.stock_hold_0devide|add:UserBasic.stock_hold_1devide|add:UserBasic.stock_hold_2devide >  stock_share_out_min_amount %}
+
+                <a href= "{%url 'mem_share_appl' %}">
+
+                申请参与分红
+
+                </a>
+
+            {% else %}
+
+                申请参与分红
+
+            {%endif%}
+
+    	</li>
+
+        {% endif %}
+
+        </div>
+
+  <div class="content-h50">
+
+        <p> {%if UserBasic.can_devide %}
+
+            <input type="checkbox" checked=true disabled="disabled" />
+
+            {%else%}
+
+            <input type="checkbox" disabled="disabled" />
+
+            {%endif%}
+
+            享受拆股
+
+            {%if UserBasic.can_share_out %}
+
+            <input type="checkbox" checked=true disabled="disabled" />
+
+            {%else%}
+
+            <input type="checkbox" disabled="disabled" />
+
+            {%endif%}
+
+            享受商品分红 </p>
+
+        <p>
+
+            <label>商城个人积分</label>
+
+            <label>{{UserBasic.mall_single_score}}</label>
+
+        </p>
+
+        <p>
+
+            <label>商城累积积分</label>
+
+            {{UserBasic.mall_team_score}}</p>
+
+<!--        {% if not UserBasic.is_summit %}-->
+
+        <p>
+
+            <label>商城等级</label>
+
+            {{UserBasic.mall_level}} </p>
+
+<!--        {% else %}-->
+
+<!--        <p>-->
+
+<!--        	<label>商城等级</label>同级部门-->
+
+<!--        </p>-->
+
+<!--        {% endif %}-->
+
+            
+
+        {%if not role = "MemMin" %}
+
+        {%if not role = "MemVIP" %}
+
+
+
+<!--        <p>-->
+
+<!--            <label>A区累积业绩</label>-->
+
+<!--            <label>{{UserBasic.store_total_money_A}}</label>-->
+
+<!--        </p>-->
+
+<!--        <p>-->
+
+<!--            <label>B区累积业绩</label>-->
+
+<!--            {{UserBasic.store_total_money_B}}</p>-->
+
+        <p>
+
+            <label>注册时间</label>
+
+            {{UserBasic.start_date}}</p>
+
+        <p>
+
+            <label>回本奖累积值</label>
+
+            {{UserBasic.sum_bonus_recost}}</p>
+
+        {%endif%}
+
+        {%endif%}
+
+        <p>
+
+            <label>股票享受拆股封顶值</label>
+
+            {{UserBasic.stock_hold_max}} </p>
+
+        {%if role = "MemMid" or role = "MemMax" %}
+
+        {%if UserBasic.proxy_province or UserBasic.proxy_city or UserBasic.proxy_area %}
+
+<!--        <p>
+
+            <label>代理区域</label>
+
+            {%if UserBasic.proxy_province %}
+
+            	{{UserBasic.proxy_province}}省
+
+            {%endif%}
+
+            
+
+            {%if UserBasic.proxy_city %}
+
+            	{{UserBasic.proxy_city}}市
+
+            {%endif%}
+
+            
+
+            {%if UserBasic.proxy_area %}
+
+            	{{UserBasic.proxy_area}}
+
+            {%endif%}
+
+        </p>
+-->
+        {%endif%}
+
+        {%endif%}
+
+    </div>
+
+            <div class="clear"></div>
+
+    {%endif%}
+
+{%endblock%}
+
+
+
+

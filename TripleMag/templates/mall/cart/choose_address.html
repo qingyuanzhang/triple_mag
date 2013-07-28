@@ -1,0 +1,129 @@
+{% extends "mall/login-base.html" %}
+{% block my-resource%} 
+<script src="/static/js/jquery.provincesCity.js" type="text/javascript"></script> 
+<script src="/static/js/provincesdata.js" type="text/javascript"></script> 
+<script>  
+//调用插件  
+$(function(){  
+    $("#address").ProvinceCity();  
+}); 
+</script>
+<script src="/static/js/validations.js"></script> 
+<script type="text/javascript">
+var d_info={}
+var address_info
+delivery_way=""
+function add_address()
+{
+    $("#add_addr").fadeIn()
+}
+function sure_to_buy()
+{
+	var inputs_validate = $("[name=contact_name]").validator({
+		message: '<span></span>',
+		position: 'center right',
+		inputEvent: 'change' ,
+		lang: 'cn' ,
+		offset: [0, 20]
+	});
+	if( !inputs_validate.data("validator").checkValidity())
+	{
+		return false ;
+	}
+	
+	inputs_validate = $("[name=contact_mobile]").validator({
+		message: '<span></span>',
+		position: 'center right',
+		inputEvent: 'change' ,
+		lang: 'cn' ,
+		offset: [0, 20]
+	});
+	if( !inputs_validate.data("validator").checkValidity())
+	{
+		return false ;
+	}
+	
+	
+    $(".chooseaddress").each(function(index)
+    {
+        if($(this).attr('checked') == 'checked')
+        {
+            address_id = $(this).val()
+        }
+    })
+    var delivery = $("#delivery_way").children('option:selected')
+    var user_name = $("#contact_name").val()
+    var user_mobile = $("#contact_mobile").val()
+    var delivery_way = delivery.text()
+    var delivery_price = delivery.val()
+    location.href="/mall/cart/order?address="+address_id+"&&delivery_way="+delivery_way+"&&dp="+delivery_price+"&name="+user_name+"&mobile="+user_mobile
+}
+
+
+function myAddressHideShow()
+{
+    $(".infomationline").each(function(index)
+    {
+            $(".infomationline").show()
+    })
+}
+function delete_address(d_id,_this)
+{
+    
+    $.getJSON('/mall/cart/delete_address/',{'a_id':d_id},function(data){
+    })
+    
+}
+$(document).ready(function(){
+    var data = ""
+    var dlivery_pay = ""
+	
+
+    $.getJSON("/static/js/transportation_expenses.json",data,function(data){
+        $.each(data,function(index){
+                way = data[index].way
+                pay = data[index].pay
+               dlivery_pay += "<option value="+pay+" postcode=null name="+index+">"+way+"</option>"
+        })
+        $("#delivery_way").html(dlivery_pay)
+    })
+    $("#receiver_info_check").show()
+    $("#new_address").attr("checked",true)
+    $('#delivery_way').change(function(){ 
+		var delivery_price = $(this).attr("value") ;
+		$("#delivery_price").html(delivery_price) ;
+	});
+});
+</script> 
+{% endblock %}
+
+
+{% block main-block %}
+<div id="head_info_check" class="infocheck" style="display:{{address_not_empty}} ">
+<h1> 核对收货信息 </h1>
+<div>
+    <p>
+        <label>收货人姓名</label>
+        <input type="text" value="{{request.session.cart.name}}" id="contact_name" name="contact_name">
+    </p>
+    <p>
+        <label>联系人手机号</label>
+        <input type="text" value="{{request.session.cart.mobile}}"id="contact_mobile" name="contact_mobile">
+    </p>
+    <div id="delivery-choose">
+        <h2> 配送信息 </h2>
+        <p>
+            <label>配送方式</label>
+            <select id="delivery_way" name="delivery">
+            </select>
+            <label>运费</label>
+            ￥<span id="delivery_price">0</span>
+        <p> 
+    </div>
+    
+    {%include 'mall/cart/add_info.html'%}
+    <div class="clear"></div>
+    <div class="float-right"> <a href="javascript:void(0)"id="confirm_" class="button red" onclick="sure_to_buy()"> 确认个人信息 </a> </div>
+    <div class="clear"></div>
+</div>
+{%endblock%} 

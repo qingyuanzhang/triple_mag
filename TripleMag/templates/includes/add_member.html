@@ -1,0 +1,292 @@
+{% load i18n admin_static %}
+{% load url from future %}
+{% block my-resource%} 
+<script src="/static/js/jquery.provincesCity.js" type="text/javascript"></script> 
+<script src="/static/js/provincesdata.js" type="text/javascript"></script> 
+<script>  
+    //调用插件  
+    $(function(){  
+        $("#proxy").ProxyAddress();  
+        $("#address").ProvinceCity(); 
+    });  
+  </script> 
+{% endblock %}
+<div class="content-1of1-wrapper">
+    <div class="content-1of3"> <a class="float-right" href="javascript:history.back(-1)">返回上一页</a>
+    <h1>添加会员</h1>
+        <form id="signup_form" method="post" action=".">
+            {% csrf_token %}
+            <h2> 用户基本信息 </h2>
+            {% if error%}
+            <div class="to-modify">{{error}}</div>
+            {% endif %}
+            <p>
+                <label for="id_number"> 编号 </label>
+                {{ basic_form.number.errors }}
+                {{basic_form.number }}*
+                <input type="button" value="换一张" onclick="change_number()">
+            </p>
+            <p>
+                <label for="id_name"> 昵称 </label>
+                {{basic_form.name.errors }}
+                {{basic_form.name}}*
+                <label></label><label></label>
+                <label for="id_gender"> 性别 </label>
+                {{basic_form.gender}} </p>
+            <p>
+                <label for="id_password_1nd"> 一级密码 </label>
+                <input type="password" name="password_1nd" id="id_password_1nd" value={{password_1nd}}>*
+                <label></label><label>{{password_1nd}}</label>
+                <label for="id_password1_again"> 一级密码确认 </label>
+                <input type="password" name="password1_again" id="id_password1_again" value={{password_1nd}}>* </p>
+            <p>
+                <label for="id_password_2nd"> 二级密码 </label>
+                <input type="password" name="password_2nd" id="id_password_2nd" value={{password_2nd}}>*
+                <label></label><label>{{password_2nd}}</label>
+                <label for="id_password2_again"> 二级密码确认 </label>
+                <input type="password" name="password2_again" id="id_password2_again" value={{password_2nd}}>*</p>
+            <h2>敏感信息
+            </h2>
+            <p>
+            {%if user.is_superuser%}
+                <label for="id_role"> 用户类型 </label>
+                {{basic_form.role}}
+                <label for="id_is_void">{{basic_form.is_void}}空点 </label>
+            {% else %}
+                <label for="id_role"> 用户类型 </label>
+                <select name="role" id="id_role">
+                    <option value="MemMid">会员</option>
+                </select>
+            {% endif %}
+            </p>
+            <p>
+            	<label for="id_bank_account_id"> 银行卡号 </label>
+                {{basic_form.bank_account_id}}*
+                <label></label><label></label>
+                <label for="id_bank_name"> 开户银行 </label>
+                {{basic_form.bank_name}}*
+                </p>
+            <p>
+                <label for="id_bank_account_name"> 开户姓名 </label>
+                {{basic_form.bank_account_name}}*
+                <label></label><label></label>
+                <label for="id_id_card_number"> 身份证号码 </label>
+                {{basic_form.id_card_number}}* </p>
+            <h2>联系方式</h2>
+            <p>
+                <label for="id_phone"> 固定电话 </label>
+                {{basic_form.phone}}
+                <label></label><label></label>
+                <label for="id_mobile"> 手机 </label>
+                {{basic_form.mobile.errors}}
+                {{basic_form.mobile}}* </p>
+            <p>
+                <label for="id_QQ"> QQ号 </label>
+                {{basic_form.QQ}}
+                <label></label><label></label>
+            </p>
+            <p>
+            <label>地址*</label>
+            <span id="address"></span>
+            <div class="hidden">
+                {{UserAddressForm.province}}
+                {{UserAddressForm.city}}
+                {{UserAddressForm.area}}
+            </div>
+            </p>
+            <p><label>街道</label>{{UserAddressForm.street}}*
+            <label></label><label></label>
+            <label>邮编</label>{{UserAddressForm.zip_code}}*</p>
+            <h2> 账户信息 </h2>
+            <p>
+                <label for="id_recommending"> 推荐人编号 </label>
+                {{basic_form.recommending.errors}}
+                {{basic_form.recommending}}* <span class="helptext"> </span> 
+                <label></label><label></label>
+                <label for="id_level"> 级别 </label>
+                {{advanced_form.level}}
+                <label id=level_money></label>
+                <label>元</label>
+                
+            </p>
+                {%for l in Level %}
+                <input type="hidden" id={{l.id}} value="{{l.money}}"> 
+                {% endfor %}
+            <p>
+                <label for="id_contacting"> 接点人编号 </label>
+                {{ advanced_form.contact_area.errors }}
+                {{ advanced_form.contacting.errors }}
+                {{advanced_form.contacting}}*<span class="helptext"> </span>
+                <label></label><label></label>
+                <label for="id_contact_area"> 所在区块 </label>
+                {{advanced_form.contact_area}} </p>
+            {%if user.is_superuser%}
+            <div id="mem_max">
+                <p>
+                    <label for="id_style"> 报单中心类型 </label>
+                    {{advanced_form.style}}
+                <p id="central">
+                    <label >中心店</label>
+                    {{advanced_form.user_central.errors}}
+                    {{advanced_form.user_central}}*
+                    <span class="helptext"> </span>
+                </p>
+                </p>
+                <p>
+                    <label>代理店</label>
+                    {{advanced_form.proxy_style}}
+                <span id="proxy" class="hidden"> </span>
+                <div class="hidden">
+                        <label for="id_proxy_area"> 区/县 </label>
+                        {{basic_form.proxy_area}}
+                        <label for="id_proxy_city"> 城市 </label>
+                        {{basic_form.proxy_city}}
+                        <label for="id_proxy_province"> 省份 </label>
+                        {{basic_form.proxy_province}}
+                </div>
+                </p>
+            </div>
+            {% endif %}
+                <input type="submit" class="blue button float-right" value="添加会员" onclick="set_proxy()">
+            <div class="clear"></div>
+        </form>
+        <script src="/static/js/jquery.tools.min.js"></script> 
+        <script src="/static/js/validations.js"></script> 
+        <script>
+	  		$("#signup_form").validator({
+				message: '<span></span>',
+				position: 'center right',
+				inputEvent: 'blur' ,
+				lang: 'cn' ,
+				offset: [0, 20]
+			});
+	</script> 
+    </div>
+</div>
+<script type="text/javascript">
+$("#id_role").change(function()
+{
+    role_value =  $(this).children('option:selected').val()
+    if(role_value == 'MemMax'){
+        $("#mem_max").show()
+    }
+    else{
+        $("#mem_max").hide()
+    }
+    
+})
+$("#id_style").change(function(){
+    style_value =  $(this).children('option:selected').val()
+    if(style_value == '1'){
+        $("#central").show()
+    }
+    else{
+        $("#central").hide()
+    }
+})
+$("#id_proxy_style").change(function(){
+    style_value = $(this).children('option:selected').val()
+    switch (style_value){
+        case '1':
+            $("#proxy").css("display",'none');
+            break;
+        case '2':
+            $("#proxy").css("display","block");
+            $(".ar").show();
+            $(".ct").show();
+            break;
+        case '3':
+            $("#proxy").css("display","block");
+            $(".ar").hide()
+
+            $(".ct").show();
+            break;
+        case '4':
+            $("#proxy").css("display","block");
+            $(".ar").hide();
+            $(".ct").hide();
+            break;
+    }
+})
+function change_number(){
+            $.ajaxSettings.cache = false ;
+
+	        $.ajaxSettings.async = false;
+    $.getJSON("{%url 'change_number'%}",function(data){
+        //alert(data)
+        $("#id_number").val(data)
+    })
+}
+
+
+$(document).ready(function()
+    {
+{%if not user.is_superuser%}
+        $("#id_number").attr("readonly","readonly");
+        {%endif %}    
+        level_id = $("#id_level").children('option:selected').val()
+        input_id = "#"+level_id
+        
+        $("#level_money").html($(input_id).val())
+        $("#id_recommending,#id_contacting,#id_user_central").bind("blur",function()
+        {
+            help_text = $(this).next()
+            $.getJSON("{%url 'get_user_name' %}", {"user_number":$(this).val()},function (data){
+                    help_text.html(data)
+                }
+            )
+        })
+        $("#choose_proxy").click(function(){
+            if($(this).attr('checked')== 'checked'){
+                $("#proxy").fadeIn()
+            }
+            else{
+                $("#proxy").fadeOut()
+            }
+        })
+    }
+)
+
+
+function set_proxy(){
+    style_value = $("#id_proxy_style").children('option:selected').val()
+    $("#id_city").val($("select.new_ct").val());
+    $("#id_area").val($("select.new_ar").val());
+    $("#id_province").val($("select.new_pro").val());
+    switch (style_value){
+        case '2':
+            $("#id_proxy_city").val($("select.ct").val());
+            $("#id_proxy_area").val($("select.ar").val());
+            $("#id_proxy_province").val($("select.pro").val());
+            alert($("#id_proxy_province").val(),$("#id_proxy_province").val())
+            break;
+        case '3':
+            $("#id_proxy_city").val($("select.ct").val());
+            $("#id_proxy_province").val($("select.pro").val());
+            break;
+        case '4':
+            $("#id_proxy_province").val($("select.pro").val());
+            break
+    }
+    
+}
+function change_level_money(){
+    if($("#id_is_void").attr('checked')=="checked"){
+        $("#level_money").html(0)
+    }
+    else{
+        level_id = $("#id_level").children('option:selected').val()
+        input_id = "#"+level_id
+        $("#level_money").html($(input_id).val())
+    }
+}
+$("#id_level").change(function(){
+   change_level_money()
+})
+$("#id_is_void").click(function(){
+change_level_money()
+})
+
+
+
+</script> 

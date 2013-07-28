@@ -1,0 +1,96 @@
+{% extends 'management/base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block my_resource%}
+{% endblock %}
+{% block content-main %}
+<div class="content-1of3-wrapper">
+<div class ="content-1of3"> 
+
+<h1>会员申请报单中心列表</h1>
+<table>
+    <tr>
+        <td>申请人编号</td>
+        <td>申请人姓名</td>
+        <td>申请时间</td>
+        <td>申请管理</td>
+    </tr>
+    {% if not user_appl %}
+    <tr>没有申请</tr>
+    {% else %}
+    {% for UserAppl in user_appl %}
+    <tr>
+        <td>{{UserAppl.user.number}}</td>
+        <td>{{UserAppl.user.name}}</td>
+        <td>{{UserAppl.apply_time|date:"Y.m.d"}}</td>
+        <td><input type="button" value="开通" onclick="del_appl(this,'{{UserAppl.user.number}}','{{UserAppl.user.name}}')" ></td>
+    </tr>
+    {% endfor %}
+    {% endif %}
+</table>
+
+</fieldset>
+<fieldset id="deal_appl" style="display:none">
+    <legend> 开通报单中心申请 </legend>
+    <p>
+        <label>会员编号</label>   
+        <label id='number'></label>		
+    </p>mem_upgrade
+    <p>
+        <label>会员姓名</label>
+        <label id="name"></label>
+    </p>
+    <p>
+        <label>报单中心类型</label>
+		<select id="store_style">
+            <option>社区店</option>
+            <option>中心店</option>
+		</select>
+    </p>
+    <p>
+        <label>所属地区</label>
+		<input type="text" value="" />
+    </p>
+	<p>
+        <label></label>
+        <input type="submit" value="申请" onclick = "allow()"/>
+        <input type="submit" value="返回"/>
+	</p>
+
+</div>
+</div>
+<div class="content-2of3-wrapper">
+    <div class ="content-1of3"> 
+{%include "management/member/member_right.html"%}
+    </div>
+</div>
+<script type="text/javascript">
+user_number = ""
+this_tr
+function del_appl(_this,User_Number, user_name){
+    user_number = User_Number
+    this_tr =$(_this).parent()
+    $("#deal_appl").css("display","block")
+    $("#appl").css("display","none")
+    $("#number").html(user_number)
+    $("#name").html(user_name)
+}
+
+function allow(){
+    store_style = $("#store_style").val()
+    alert(store_style)
+    $.getJSON("{%url 'management_upgrade'%}",{"user_number":user_number,"store_style": store_style},function(data){
+        if(data == '1'){
+            alert("开通成功")
+            $("#deal_appl").css("display","none")
+            $("#appl").css("display","block")
+            this_tr.remove()
+        }
+        else{
+            alert("失败")
+        }
+    })
+}
+
+</script>
+{% endblock %}

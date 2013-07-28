@@ -1,0 +1,54 @@
+{% extends 'management/base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+
+{% block content-main %}
+<div class="content-1of3-wrapper">
+<div class ="content-1of3"> 
+    <p>
+        <label> 请输入会员编号 或 姓名<label>
+        <input type="text" id="number_or_name" />  
+        <input type="submit" value="查询" onclick="search()"/>
+        <div id="test">
+        </div>
+    </p>
+    <div id="user_info">
+    
+    </div>
+</div>
+</div>
+<div class="content-2of3-wrapper">
+    <div class ="content-1of3"> 
+{% include "management/member/member_right.html"%}
+
+   </div>
+   </div>
+
+
+    <script type="text/javascript">
+
+        function charge(_accout,_this,_money,user_number){
+            account = _accout
+            account_now = $(_this).parent().prev()
+            money = _money
+            amount = $(_this).prev().val()
+            $.getJSON("/management/charge_now/",
+                    {"user_number":user_number,"account":account,"amount":amount},
+                    function(data) {
+                            if(data == "1"){
+                                amount = parseFloat(amount)
+                                money = parseFloat(money)
+                                account_now.html(amount + money)
+                                alert("充值成功")
+                            }
+                            else
+                                {alert("充值失败")}
+                    }
+            )
+        }
+        function search(){
+            query = $("#number_or_name").val()
+            $('#user_info').load("{% url 'management_charge' %}?query="+query);
+        }
+    </script>
+{% endblock %}

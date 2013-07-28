@@ -1,0 +1,15 @@
+{% load i18n admin_static %}
+{% load url from future %}
+<ul>
+    <li><a href="{%url 'management_add_member' %}">添加会员</a></li>
+    <li><a href="{% url 'management_search_member' %}">查看会员和报单中心列表<li><a href="{% url 'management_charge'%}">现金/报单账户冲值</a></li></a></li>
+
+    <li><a href="{%url 'management_upgrade_appl'%}">报单中心申请列表</a></li>
+    <li><a href="{%url 'management_withdraw_appl'%}">提现登记表</a></li>
+    <li><a href="{%url 'bank_info' %}">汇款帐号查看</a></li>
+    <li><a href="{%url 'manage_store_order_records'%}">查看所有订货记录</a></li>
+    <li><a href="{%url 'manage_stuff_type'%}">管理货物类型</a></li>
+    <li><a href="{%url 'manage_stuff'%}">货物管理</a></li>
+    <li><a href="{%url 'a_bonus_settlement' %}">产品销售奖金结算</a></li>
+    <li><a href="{%url 'a_bonuses' %}">产品销售奖金发放</a></li>
+</ul>

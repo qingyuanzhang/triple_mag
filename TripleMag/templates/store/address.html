@@ -1,0 +1,130 @@
+{% load i18n %}
+
+{% load url from future %}
+
+{%if UserAddress %}
+
+<h1>选择地址</h1>
+
+<div class="to-modify">{{error}}</div>
+
+{% for address in UserAddress %}
+
+<input type="radio" name="address" value={{address.id}}>
+
+<p>收货人:{{address.user.name}}</p>
+
+<p>收获地址:{{address.province}}省{{address.city}}市{{address.area}}区/县{{address.street}}</p>
+
+<p>邮政编码:{{address.zip_code}}</p>
+
+<p><a href="{%url 'store_del_address'%}?goto=store&address_id={{address.id}}">删除</a></p>
+
+{% endfor %}
+
+<form id="address_form" action="." method="POST">
+
+    {% csrf_token %}
+
+    <input type="hidden" id="address_id" name="address_id" value="">
+
+    <label>总金额</label>
+
+    ￥<span class="now-price">{{sum_price}}</span>
+
+    <button class="modalInput" name="order" rel="#confirm_buy">确认购买</button>
+
+    <div class="modal" id="confirm_buy">
+
+        <p>
+
+            <label>总金额</label>
+
+            ￥<span class="now-price">{{sum_price}}</span></p>
+
+        <p>
+
+            <label>订货账户余额</label>
+
+            ￥<span class="now-price">{{UserBasic.store_cash}}</span></p>
+
+        <h3>请输入二级密码</h3>
+
+        <input type="password" name="password_2nd" />
+
+        <!-- yes/no buttons -->
+
+        <p>
+
+            <input type="submit" name="order" onclick="return to_order()" value="购买" />
+
+            <input type="button" class="close" value="取消" />
+
+        </p>
+
+    </div>
+
+    <input type="button" value="增加地址" onclick="add_address()">
+
+</form>
+
+{% endif %}
+
+<div style="display:{{display}}" id="add_address"> {% include 'store/add_address.html' %} </div>
+
+
+
+<script type="text/javascript">
+
+function add_address(){
+
+    $("#add_address").fadeIn()
+
+}
+
+$(document).ready(function(){
+
+    $("input[type='radio']")[0].checked='checked'
+
+})
+
+
+
+$("form#address_form").submit(function(e) {
+
+	// close the overlay
+
+	if ( parseFloat("{{UserBasic.store_cash}}") < parseFloat( $("{{sum_price}}")) )
+
+	{
+
+		alert( "对不起，您的余额不足，请充值！" ) ;
+
+		triggers.eq(1).overlay().close();
+
+		return e.preventDefault();
+
+	}
+
+	
+
+    $("#address_id").val( $("input:radio[checked=checked]").val() ) ;
+
+	
+
+	//$(this).submit() ;
+
+	return true ;
+
+});
+
+
+
+
+
+var triggers = $(".modalInput").overlay({
+});
+
+
+
+</script>

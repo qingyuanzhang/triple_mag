@@ -1,0 +1,35 @@
+{% extends "management/base.html"%}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+
+
+{%block title%}
+
+系统设置首页
+
+{% endblock %}
+
+
+
+{% block content-main%}
+
+	{%if h1 %}
+
+		<h1>{{h1}}</h1>
+
+	{% endif %}
+
+
+
+	{% block panel%}
+
+	{% endblock %} 
+
+
+
+	{% include "management/sys/sys_right.html"%}
+
+{% endblock %} 

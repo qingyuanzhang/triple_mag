@@ -1,0 +1,709 @@
+{% extends 'mall/site-base.html'%}
+
+
+
+{% load url from future %}
+
+{% load i18n %}
+
+
+
+{% block content %} 
+
+
+
+<style>  
+
+ .unchecked{  
+
+   border: 1px solid gray;  
+
+   padding: 5px;  
+
+ }  
+
+ .checked{  
+
+   border: 2px solid #c00;  
+
+   padding: 5px;  
+
+ }  
+.content-h100{
+    border: 1px solid #99B327;
+}
+</style>  
+
+<script>
+
+        var total_money=0;
+
+        var price_value = 0;
+
+        var p_id = "";
+
+        var getSize="";
+
+        var size = "";
+
+        var color = "";
+
+        function add_in_cart(p_id,price){
+
+	        $.ajaxSettings.cache = false ;
+
+	        $.ajaxSettings.async = false;
+
+	        {%if color_exit %}
+
+	        if(color == ""){
+
+	            alert("请选择颜色")
+
+	            return;
+
+	        }
+
+	        {% endif %}
+
+	        {%if size_exit %}
+
+	        if (size==""){
+
+	        
+
+	            alert("请选择尺寸")
+
+	            return;
+
+	        }
+
+	        {% endif %}
+
+            $.getJSON('/mall/cart/ajax_product_add/',{'p_id':p_id,'price':price_value,'size':size,'color':color},function(data){
+
+                result = data.split('_')
+
+                $("#in_cart_num").html(result[1]);
+
+		        alert("你已经成功加入购物车")
+
+                })
+
+        }
+
+        function delete_in_cart(p_id){
+
+            $.ajaxSettings.cache = false ;
+
+
+
+	        $.ajaxSettings.async = false;
+
+                $.getJSON('/mall/cart/ajax_delete_in_cart/2',{'p_id':p_id},function(data){
+
+                result = data.split('_')
+
+                $("#in_cart_num").html(result[1]);
+
+                })
+
+        }
+
+        
+
+        $(document).ready(function() {
+
+                getSize = $("#color")
+
+                $("#size").css("display","block")
+
+                price_value =parseFloat($("#price").val())
+
+                total_money = price_value
+
+                p_id = '{{product.id}}'
+
+                $("#doPurchaseBtn").click(function(){
+
+                        add_in_cart(p_id,price_value)
+
+                 })
+$("#product-info-down img").css("width","auto")
+
+
+        $("#btn_add").click(function(){
+
+                total_money += price_value
+
+                add_in_cart(p_id,price_value)
+
+                $("#product_amount").attr("value",parseInt($("#product_amount").val()) + 1)
+
+                $("#total-money").html(total_money)
+
+        });
+
+        $("#collection").click(function(){
+
+            if(!'{{user.username}}')
+
+            {
+
+                alert("请先登录")
+
+            }
+
+            else{
+
+                        $.getJSON("{%url 'mall_collection' %}",{'p_id':p_id},function(data){
+
+                            alert(data)
+
+                        })
+
+        }
+
+        })
+
+        $("#btn_reduce").click(function(){
+
+                if($("#product_amount").val() == 1){
+
+                    alert("已经只有一件了，不能再减了");
+
+                    }
+
+                else{
+
+                    $("#product_amount").attr("value",parseInt($("#product_amount").val()) - 1)
+
+                    total_money -= price_value
+
+                    delete_in_cart(p_id)
+
+                    $("#total-money").html(total_money)
+
+                }
+
+        });
+
+        });
+
+
+
+
+
+    var obj={  
+
+        colorSpan:"",  
+
+          sizeSpan:""  
+
+    };  
+
+    function change(span)  
+
+    {  
+
+        
+
+        if($(span).attr('name')=="colorSpan"){
+
+        $('div[class="'+getSize.attr('colorId')+'"]').css("display","None")
+
+        getSize = $(span)
+
+        color = $(span).html()
+
+        $('div[class="'+getSize.attr('colorId')+'"]').css("display","block")
+
+        }
+
+        else{
+
+        
+
+        size = $(span).html()
+
+        
+
+        }
+
+        $('span[name="'+$(span).attr('name')+'"]').each(function(){  
+
+                 if(this.checked&&this!=span)  
+
+                 {  
+
+                     this.className="unchecked";  
+
+                     this.checked=false;  
+
+                 }                 
+
+       });  
+
+       obj[$(span).attr('name')]=span.innerHTML;  
+
+       span.className="checked";  
+
+       span.checked=true;  
+
+       select();  
+
+     }  
+
+    function select()  
+
+     {  
+
+         var html='';  
+
+        for(var i in obj)  
+
+        {  
+
+              if(obj[i]!='')  
+
+              {  
+
+                   html+='<font color=orange>"'+ obj[i]+'"</font> 、';  
+
+                }  
+
+         }  
+
+         html='<b> 已选择:</b> '+html.slice(0,html.length-1);  
+
+         $('#resultSpan').html(html);
+
+     }  
+
+</script>
+
+<div id="short-board">
+
+    <p id="goods-type-chain">
+
+        <a href="{%url 'rt_index'%}">首页</a>»
+
+        <a href="/mall/channel/{{detailnav.catagroy}}">{{detailnav.catagroy}}</a>»
+
+        <a href="/mall/channel/{{detailnav.catagroy}}/#{{detailnav.catagroy1}}">{{detailnav.catagroy1}}</a>»
+
+        <a href="/mall/channel/{{detailnav.catagroy}}/#{{detailnav.catagroy2}}">{{detailnav.catagroy2}}</a>
+
+    </p>
+
+    <!-- wrapper element for the large image -->
+
+    <div class="float-left">
+
+        <div id="image_wrap"> 
+
+            <img src="/static/img/no-pic.png"> </div>
+
+        <!-- "previous page" action --> 
+
+        <a class="prev browse left hidden"></a> 
+
+        <!-- root element for scrollable -->
+
+        <div class="scrollable" id="scrollable"> 
+
+            <!-- root element for the items -->
+
+            <div class="items" > 
+
+                
+
+            <div>
+
+            	<img src="/{{product.image_url|safe}}" width="300px">
+
+                {%for image in Images%}
+
+                <img src="{{image.image_url|safe}}" width="300px">
+
+                {% endfor %}
+
+            </div>
+
+            </div>
+
+        </div>
+
+        <!-- "next page" action --> 
+
+        <a class="next browse right"></a> </div>
+
+    <script>
+
+            $(function() {
+
+            $(".scrollable").scrollable();
+
+            
+
+            $(".items img").click(function() {
+
+                // see if same thumb is being clicked
+
+                if ($(this).hasClass("active")) { return; }
+
+            
+
+                // calclulate large image's URL based on the thumbnail URL (flickr specific)
+
+                var url = $(this).attr("src").replace("_t", "");
+
+            
+
+                // get handle to element that wraps the image and make it semi-transparent
+
+                var wrap = $("#image_wrap").fadeTo("medium", 0.5);
+
+            
+
+                // the large image from www.flickr.com
+
+                var img = new Image();
+
+                // call this function after it's loaded
+
+                img.onload = function() {
+
+                    // make wrapper fully visible
+
+                    wrap.fadeTo("fast", 1);
+
+                    // change the image
+
+                    wrap.find("img").attr("src", url);
+
+                };
+
+                
+
+                // begin loading the image from www.flickr.com
+
+                img.src = url;
+
+                
+
+                // activate item
+
+                $(".items img").removeClass("active");
+
+                $(this).addClass("active");
+
+            // when page loads simulate a "click" on the first image
+
+            }).filter(":first").click();
+
+            });
+
+            </script>
+
+    <div class="float-right" id="product-info-up">
+
+        <h1>{{product.name}}</h1>
+
+        	<label title="满分5分">评分</label>
+
+        {% if product.avg_eval %}
+
+            <span title="满分5分" class="pink">{{product.avg_eval}}</span>
+
+        {% else %}
+
+        	<span title="满分5分" class="pink">暂无评价</span>
+
+        {% endif %}
+
+        <p>
+
+            <label>品牌</label>
+
+            <span>{{product.brand}}</span> </p>
+
+        
+
+        <div>
+
+
+
+            <p>
+
+                <label>市场价</label>
+
+                <span class="old-price">￥{{product.price_normal}}</span> </p>
+
+            
+
+            <p>
+
+                {%if not product.is_promoted %}
+
+                <label>标价</label>
+
+                <span class="now-price">￥{{product.price_VIP}}</span>
+
+                <input type="hidden" value={{product.price_VIP}} id="price">
+
+                {% else %}
+
+                <label>促销价</label>
+
+                <span class="now-price">￥{{product.price_promotions}}</span>
+
+                <input type="hidden" value={{product.price_promotions}} id="price">
+
+                {% endif %}
+
+            </p>
+
+
+
+            {%if color_exit %}
+
+            <div>  
+
+                颜色:  
+
+                {%for Color in color_dic %}
+
+                <span class='unchecked'  name='colorSpan' checked='false' onclick='change(this);'
+
+                value="{{Color.id}}" colorId="{{Color.id}}" id="color">{{Color.color}}</span> 
+
+                {% endfor %}
+
+            </div>  
+
+
+
+            <br />  
+
+            {% endif  %}
+
+
+
+            {%if size_exit %}
+
+                {%for Color,Size in color_dic.items%}
+
+                <div class="{{Color.id}}" style="display:{{Color.display}}" id="size">
+
+                    尺码:  
+
+                    {%for S in Size%}
+
+                    {%if S%}
+
+                    <span class='unchecked'  name='sizeSpan'  checked='false' onclick='change(this);'  sizeId="{{Color.id}}" >{{S}}</span> 
+
+                    {% endif %}
+
+                    {% endfor %}
+
+                </div>  
+
+                <div class="clear"></div>
+
+                {% endfor %}
+
+            {%endif%}
+
+            <div>  
+
+                <span id='resultSpan'></span>  
+
+            </div>
+
+
+
+        </div>
+
+
+
+        <p>
+
+            <label>积分</label>
+
+            <label>{{product.grade}}</label>
+
+            <label>赠股</label>
+
+            <label>{{product.bonus_stock}}</label>
+
+        </p>
+
+        
+
+        <p class="not-impact">
+
+        <label>剩余</label>
+
+        <label>{{product.total_num}}件</label>
+
+        <label>已售出</label>
+
+        <label>{{product.sales}}件</label>
+
+       	</p>
+
+        <p class="not-impact">
+
+            <label>包装</label>
+
+            <label>{{product.package}}</label>
+
+            <label>产地</label>
+
+            <label>{{product.produced_at}}</label>
+
+        </p>
+
+
+
+        {% if product.total_num > 0 %}
+
+        <!-- <p class="p-goods-function">
+
+            <input id = "btn_reduce" type="button" class="reduce" value="-" >
+
+            <input name="product_amount"  id="product_amount" type="text" class="num" onkeyup="inputOnlyNum(this, 1, 999);"value="1">
+
+            <input id = "btn_add" type="button" class="add" value="+" >
+
+            <label>总价</label><span id="total-money"></span>
+
+        </p>-->
+
+        
+
+        <p > 
+
+            <a id="doPurchaseBtn" href="javascript:void(0)" productid="1006563" merchantid="2" saletype="1" title="加入购物车">
+
+                <img src="/static/img/purchase.jpg" />
+
+            </a> 
+
+            <a id="collection" href="javascript:void(0)" title="收藏该商品">
+
+                <img src="/static/img/collection.jpg" />
+
+            </a> 
+
+        </p>
+
+        {% else %}
+
+        <p class="p-goods-function"> 
+
+        	商品已下架。
+
+        </p>
+
+        {% endif %}
+
+    </div>
+
+    <div class="clear"></div>
+
+</div>
+
+<div class="long-board" id="product-info-down">
+
+<div class="content-w100">
+
+<div class="content-h100">
+
+    <div>
+
+        <h1 class="selected">详情</h1>
+
+        {{product.details|safe}} </div>
+
+    <div>
+
+        <p>
+
+            <label>售后服务</label>
+
+            {{product.after_sales}} </p>
+
+        <p>
+
+            <label>注意事项</label>
+
+            {{product.tip}} </p>
+
+        <p>
+
+            <label>上架时间</label>
+
+            {{product.added_time|date:"Y.m.d"}} </p>
+
+        {%if product.is_promoted %}
+
+        <p>
+
+            <label>促销截止时间</label>
+
+            {{product.end_time|date:"Y.m.d"}} </p>
+
+        {% endif %}
+
+    </div>
+
+    <div style="margin-top: 51px;border-top: 1px solid #99B327;padding-top: 20px;padding-left: 20px;position: relative;width: 959px;left: -20px;">
+
+        <h1 class="notselected">评价</h1>
+
+        {% if evaluation|length > 0 %}
+
+            {% for Eval in evaluation%}
+
+            	{% if Eval.evalue_num %}
+
+			
+
+                <p>
+
+	        <span class="float-left white">{{Eval.order.user.name}}-　　</span>
+
+	        <span class="float-left pink">　{{Eval.evalue_num}}星　</span>
+
+		<span class="float-left" style="width:800px">　　{{Eval.evaluation}}　　</span>
+
+                <span class="float-left">　</span>
+
+		</p>
+
+                {% endif %}
+
+                <div class="clear"></div>
+
+            {% endfor %}
+
+        {% else %}
+
+        	<p>　　暂无评价</p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+{% endblock %} 

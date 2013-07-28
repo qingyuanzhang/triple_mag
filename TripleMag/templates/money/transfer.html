@@ -1,0 +1,67 @@
+    
+{% load i18n admin_static %}
+{% load url from future %}
+<form id="form-transfer" action="." method="POST">
+<h1>会员内部转帐</h1>
+<input class="blue button float-right" type="submit" value="转账 " />
+{% csrf_token %} 
+<p><label class="label-header">现金账户余额</label>
+{{UserBasic.cash}}元
+
+</p>
+{%if form.user_to.errors or error %}
+<div class="to-modify">
+{{form.user_to.errors}}
+{{error}}
+</div>
+{%endif%}
+<p>
+    <label class="label-header">转帐帐号</label>{{form.user_to}}
+    <span id="name"></span>
+</p>
+<p>
+	<label class="float-left label-header">数额</label>
+    <input type="range" name="amount" id="id_amount" min="50" step="50" value="50" />
+    <div class="clear"></div>
+</p>
+{% if form.password_2nd.errors%}
+<div class="to-modify">
+{{form.password_2nd.errors}}
+</div>
+{% endif %}
+<p>
+    <label class="label-header">二级密码</label>
+    {{form.password_2nd}}
+</p>
+</form>
+<script src="/static/js/validations.js"></script>
+<script type="text/javascript">
+	$.tools.validator.fn("#form-transfer [name=amount]", {"cn":'您的现金账户余额不足。'} , function (input, value)
+	{
+		return parseFloat("{{UserBasic.cash}}") >= value ;
+	});
+		
+    $(document).ready(function()
+    {
+		var theLeft = (Math.floor(parseFloat("{{UserBasic.cash}}")/50)) * 50 ;
+		theLeft = theLeft > 100 ? theLeft : 100 ;
+		
+		$("#id_amount:range").rangeinput({
+			max: theLeft
+		}) ;
+		$("#form-transfer").validator({
+			message: '<span></span>',
+			position: 'center right',
+			inputEvent: 'change' ,
+			lang: 'cn' ,
+			offset: [0, 20]
+		}) ;
+        $("#id_user_to").bind("blur",function()
+        {
+            $.getJSON("{%url 'get_user_name' %}", {"user_number":$(this).val()},function (data){
+				$("#name").text(data)
+			})
+        }) ;
+    }
+)
+</script>

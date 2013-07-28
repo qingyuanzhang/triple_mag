@@ -1,0 +1,158 @@
+{% extends 'management/sys/sys_base.html'%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block panel%}
+<form action="{%url 'c_web_value_setting'%}" method="POST">
+{% csrf_token %}
+<input class="green button float-right" type="submit" value="设置" name="set_values">
+<div id="C-web-setting-div">
+<h1>商城数值设定</h1>
+
+    <p>
+
+        <label class="float-left label-header">商城纳税比例</label>
+
+        {{ValueSetting.mall_tax_rate}}
+
+        <input type="range" name="mall_tax_rate" value="{{ValueSetting.mall_tax_rate}}" id="id_mall_tax_rate" min="0" max="0.99" step="0.01">
+
+    	<div class="clear"></div>
+
+    </p>
+<p>
+    <label class="float-left label-header">同级部门最小积分</label>
+    {{ValueSetting.grade_summit}}
+    <input type="range" name="grade_summit" value="{{ValueSetting.grade_summit}}" id="id_grade_summit" min="1000" max="10000000" step="10">
+<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">商城用户申请VIP最小积分</label>
+    {{ValueSetting.mall_VIP_threshold}}
+    <input type="range" name="mall_VIP_threshold" value="{{ValueSetting.mall_VIP_threshold}}" id="id_mall_VIP_threshold" min="0" max="10000000" step="10">
+<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">申请分红奖最少股票</label>
+    {{ValueSetting.stock_share_out_min_amount}}
+    <input type="range" name="stock_share_out_min_amount" value="{{ValueSetting.stock_share_out_min_amount}}" id="id_stock_share_out_min_amount" min="0" max="10000000" step="10">
+<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">爱心奖比例</label>
+    {{ValueSetting.mall_love_rate}}
+    <input type="range" name="mall_love_rate" value="{{ValueSetting.mall_love_rate}}" id="id_mall_love_rate" min="0" max="0.99" step="0.01">
+<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">车奖比例</label>
+    {{ValueSetting.mall_car_rate}}
+    <input type="range" name="mall_car_rate" value="{{ValueSetting.mall_car_rate}}" id="id_mall_car_rate" min="0" max="0.99" step="0.01">
+<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">房奖比例</label>
+    {{ValueSetting.mall_house_rate}}
+    <input type="range" name="mall_house_rate" value="{{ValueSetting.mall_house_rate}}" id="id_mall_house_rate" min="0" max="0.99" step="0.01">
+<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">旅游奖比例</label>
+    {{ValueSetting.mall_travel_rate}}
+    <input type="range" name="mall_travel_rate" value="{{ValueSetting.mall_travel_rate}}" id="id_mall_travel_rate" min="0" max="0.99" step="0.01">
+<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">分红奖比例</label>
+    {{ValueSetting.mall_share_rate}}
+    <input type="range" name="mall_share_rate" value="{{ValueSetting.mall_share_rate}}" id="id_mall_share_rate" min="0" max="0.99" step="0.01">
+<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">代理奖比例</label>
+    {{ValueSetting.mall_proxy_rate}}
+    <input type="range" name="mall_proxy_rate" value="{{ValueSetting.mall_proxy_rate}}" id="id_mall_proxy_rate" min="0" max="0.99" step="0.01">
+<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">推荐奖比例</label>
+    {{ValueSetting.mall_recommend_rate}}
+    <input type="range" name="mall_recommend_rate" value="{{ValueSetting.mall_recommend_rate}}" id="id_mall_recommend_rate" min="0" max="0.99" step="0.01">
+<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">省级代理奖比例</label>
+    {{ValueSetting.mall_proxy_prov}}
+    <input type="range" name="mall_proxy_prov" value="{{ValueSetting.mall_proxy_prov}}" id="id_mall_proxy_prov" min="0" max="0.99" step="0.01">
+<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">市级代理奖比例</label>
+    {{ValueSetting.mall_proxy_city}}
+    <input type="range" name="mall_proxy_city" value="{{ValueSetting.mall_proxy_city}}" id="id_mall_proxy_city" min="0" max="0.99" step="0.01">
+	<div class="clear"></div>
+</p>
+<p>
+    <label class="float-left label-header">县级代理奖比例</label>
+    {{ValueSetting.mall_proxy_area}}
+    <input type="range" name="mall_proxy_area" value="{{ValueSetting.mall_proxy_area}}" id="id_mall_proxy_area" min="0" max="0.99" step="0.01">
+<div class="clear"></div>
+</p>
+
+
+<div id="C-web-setting-adv-div">
+	<h1>商城等级</h1>
+	{% for lvm in management_mall_level %}
+	<h3><label>{{lvm.level_name}}</label></h3>
+        <p>
+            <label class="label-header float-left" level="{{lvm.id}}">积分最小值</label>
+            <input type="range" name="min_score" value="{{lvm.min_score}}" min="0" max="100000" step="1">{{lvm.min_score}}
+            <div class="clear"></div>
+        </p>
+        <p>
+            <label class="label-header float-left" level="{{lvm.id}}">积分最大值</label>
+            <input type="range" name="max_score" value="{{lvm.max_score}}" min="0" max="100000" step="1">{{lvm.max_score}}
+            <div class="clear"></div>
+        </p>
+        <p>
+            <label class="label-header float-left" level="{{lvm.id}}">个人零售业绩</label>
+            <input type="range" name="threshold_value" value="{{lvm.threshold_value}}" min="1" max="10000" step="1">{{lvm.threshold_value}}
+            <div class="clear"></div>
+        </p>
+        <p>
+            <label class="label-header float-left" level="{{lvm.id}}">利润</label>
+            <input type="range" name="gain_rate" value="{{lvm.gain_rate}}" min="0.01" max="0.99" step="0.01">{{lvm.gain_rate}}
+            <div class="clear"></div>
+        </p>
+    {% endfor %}
+</div>
+
+<div id="C-web-setting-adv-summit-div">
+<h1>平级奖比率</h1>
+	{% for lvm in management_mall_summit %}
+	<h3>{{lvm.id}}星董事</h3>
+        <p>
+            <label class="label-header float-left" level="{{lvm.id}}">同级部门数量</label>
+            <input type="range" name="summit_num" value="{{lvm.summit_num}}" min="1" max="60" step="1">{{lvm.summit_num}}
+            <div class="clear"></div>
+        </p>
+        <p>
+            <label class="label-header float-left" level="{{lvm.id}}">平级奖比率</label>
+            <input type="range" name="day_max" value="{{lvm.bonus_percent}}" min="0.01" max="1" step="0.01">{{lvm.bonus_percent}}
+            <div class="clear"></div>
+        </p>
+    {% endfor %}
+</div>
+<!--<div >-->
+<!--<h1>配送方式和运费修改</h1>-->
+<!--{%for TransExpense in trans_expense%}-->
+<!--<p>-->
+<!--    <input type="input" value="{{TransExpense.way}}">-->
+<!--    <input type="input" value="{{TransExpense.pay}}">-->
+<!--</p>-->
+<!--{% endfor %}-->
+<!--</div>-->
+</div>
+<script>$("#C-web-setting-div input:range,C-web-setting-adv-div input:range,#C-web-setting-adv-summit-div input:range").rangeinput() ;
+</script>
+</form>
+{% endblock %}

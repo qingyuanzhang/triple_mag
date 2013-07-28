@@ -1,0 +1,53 @@
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $('#layerBtn').click(function(){$('#layer').fadeIn();});    //弹出层
+    $('#close').click(function(){$('#layer').fadeOut();});    //关闭层
+});
+</script>
+{% if not user_basic %}
+    <p>
+        请输入正确的会员编号
+    </p>
+{% else %}
+    <table>
+        <tr>
+            <td>用户编号</td>
+            <td>用户姓名</td>
+            <td>用户类型</td>
+            <td>现金账户余额</td>
+            <td>股票账户余额</td>
+            <td>报单账户余额</td>
+        </tr> 
+        {% for UserBasic in user_basic%}
+        <tr>
+            <td>{{UserBasic.number}}</td>
+            <td>{{UserBasic.name}}</td>
+            <td>{{UserBasic.get_role_display}}</td>
+            <td><label>{{UserBasic.cash}}</label>
+            <p>
+                <input type="text">
+                <input type="submit" value="充值" onclick="charge('cash',this,'{{UserBasic.cash}}','{{UserBasic.number}}')"/>
+            </p>
+            </td>
+            <td><label>{{UserBasic.stock_hold}}</label>
+            <p>
+                <input type="text">
+                <input type="submit" value="充值" onclick="charge('stock_hold',this,'{{UserBasic.stock_hold}}')"/>
+                </p>
+            </td>
+            {% if UserBasic.role == "MemMax" %}
+            <td><label>{{UserBasic.store_order}}</label>
+            <p>
+             <input type="text">
+                <input type="submit" value="充值" onclick="charge('store_order',this,'{{UserBasic.store_order}}')"/>
+            </p>
+            </td>
+            {% else %}
+            <td>无</td>
+            {% endif %}
+        </tr>
+         {%endfor%}
+    </table>
+{% endif %}

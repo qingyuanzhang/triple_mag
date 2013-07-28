@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>1号店购物系统升级公告</title>
+<meta name="keywords" content="购物，网上购物，团购，价格，特价，低价，食品，饮料，美容，化妆，厨卫，清洁，家居，家电，母婴，玩具，超市，免费送货，价格比较，直销，网上商店，网上批发，网上采购，网上销售，比较购物" />
+<meta name="description" content="购物，网上购物，团购，价格，特价，低价，食品，饮料，美容，化妆，厨卫，清洁，家居，家电，母婴，玩具，超市，免费送货，价格比较，直销，网上商店，网上批发，网上采购，网上销售，比较购物" />
+<style>
+img {
+	border:0px;
+}
+.grey {
+	font-size:12px;
+	font-family:宋体;
+	color:#646464;
+	text-decoration:line-through;
+}
+.grey2 {
+	font-size:12px;
+	font-family:宋体;
+	color:#646464;
+}
+.red {
+
+	color:#ff0000;
+}
+
+body, td, th {
+	font-size: 12px;
+}
+.linktable {
+}
+</style>
+
+</head>
+<body>
+<div class="body">
+  <table width="680" border="0" cellspacing="0" cellpadding="0" style="margin:0 auto;">
+    <tr>
+      <td height="50"><img src="yihaodian.jpg" /></td>
+    </tr>
+    <tr>
+      <td height="50"><div align="center" style="line-height:50px; font-size:32px"><strong> 致1号店顾客</strong></div></td>
+    </tr>
+    <tr>
+      <td><hr></td>
+    </tr>
+    <tr>
+      <td><table width="660" border="0" cellspacing="0" cellpadding="0" style="margin:0 auto;" class="linktable">
+          <tr>
+            <td style="line-height:20px;"><br />
+              尊敬的1号店顾客：
+              <p style="text-indent:2em; font-weight:bold;">为了支持和保证我们的圣诞节的促销活动顺利进行，我们正对网站后台系统进行扩容升级。 <span class="red">12月17日01:00 ~ 07:00</span>扩容期间，1号店网站暂停访问，请顾客稍后再来，<span class="red">07:00以后网站恢复正常</span>。
+                我们恳求您的谅解与支持，在此我们对给您带来的不便在此表达深深的歉意。<br />
+                <br />
+              </p>
+              <div align="right" style="width:640px;">1号店敬上<br />
+                2011年12月16日 </div>
+              <p align="right"><br />
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p></td>
+          </tr>
+        </table></td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

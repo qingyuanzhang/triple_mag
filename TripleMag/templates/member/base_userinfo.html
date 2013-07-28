@@ -1,0 +1,28 @@
+{% extends 'site-base.html'%}
+{% load i18n admin_static %}
+{% load url from future %}
+
+{% block page-banner %}
+<div class="page-banner-userinfo"></div>
+{% endblock %}
+{% block nav-1 %}
+
+<div id="nav-1">
+    {%if role == "MemMax" %}
+    <p><a href="{%url 'store_index'%}">↑报单</a></p>
+    {% endif %}
+    <p><a href="{%url 'stock_index'%}">←股票</a>|<a href="{%url 'mall_index'%}">商城→</a></p>
+</div>
+
+{% endblock %}
+
+{% block nav %}
+    <ol id="nav-2">
+        <li><a href = "{%url 'mem_upgrade_appl' %}">会员申请成为报单中心</li>
+        <li><a href="{%url 'member_details'%}">会员信息查看和修改</a></li>
+        <li>申请成为VIP</li>
+        <li><a href='/member/change_info_appl/'>会员信息修改申请</a></li>
+        <li>查看推荐人关系</li>
+        <li><a href="{%url 'mem_announcements_list' %}">企业公告查看</a></li>
+    </ol>
+{% endblock %}

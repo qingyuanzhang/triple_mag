@@ -1,0 +1,64 @@
+{% load i18n admin_static %}
+{% load url from future %}
+<div class="top_bar">
+    <div class="wrap" style="z-index:1001">
+        <div class="top_bar_link fr">
+            <div >
+                <span id="user_name" name = {{user.username}}>
+                    {{user.username}}
+                </span>
+                <script type="text/javascript">
+                    
+                    function goURL(url){
+                        now_url = url+location.href
+                        location.href = now_url
+                    }
+                $(document).ready(function(){
+                    if(document.getElementById('user_name').getAttribute('name')!= "")
+                    {
+                        $("#login").hide();
+                        $("#logout").show();
+                    }
+                    else
+                    {
+                        $("#login").show();
+                        $("#logout").hide();
+                    }
+                });
+                </script>
+                欢迎来到人太网上商城！
+                <span id="login">
+                     <a href="{%url 'user_account_login' %}?nextUrl=">
+                        请登录
+                    </a>
+                    ，新用户？
+                    <a href="{%url 'mall_register'%}?nextUrl=" >
+                        免费注册
+                    </a>
+                </span>
+                <span id="logout" style="display:none">
+                    <a class="logout" href="javascript:void(0)" onclick="javascript:goURL('{%url 'user_account_login'%}?logout=')">
+                        退出
+                    </a>
+                </span>
+                
+                <span>
+                    <a href="/mall/user/my_order/?page=1">
+                    {%if not user.is_superuser and  not user.first_name = "finance" %}
+                        我的订单
+                    {% endif %}
+                    
+                    {% if user.is_superuser or user.first_name = "finance"%}
+                    	订单管理
+                    {% endif %}
+                    </a>
+                    |<a href="{%url 'change_password' %}">修改密码</a>
+                    {%if user.username and not user.is_superuser and not user.first_name = "finance"%}
+                        |
+                        <a href="{%url 'my_collections'%}">我的收藏</a>
+                    {% endif%}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>

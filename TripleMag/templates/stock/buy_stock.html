@@ -1,0 +1,95 @@
+{% load i18n admin_static %}
+{% load url from future %}
+<h2>购买股票</h2>
+<div>
+<form id="stock-buy-form" method="POST">
+{%csrf_token%}
+<p>
+    <label class="label-header">总价格</label>
+    <span id="sum_price" class="now-price">0</span>元 </p>
+<p>
+    <label class="float-left label-header">购买数量</label>
+
+    <input type="range" name="amount" id="id_amount" min="{{ValueSetting.sell_min_amount}}" max="{{ValueSetting.sell_max_amount}}" step="1000" value="{{ValueSetting.sell_min_amount}}">
+    <div class="clear"></div>
+</p>
+<p title="填写购买单价后，卖出池中小于或者等于此单价的（非自己卖出的）股票均可成交。">
+    <label class="float-left label-header">购买单价</label>
+    <input id="id_value" type="range" name="value"  max="{{ValueSetting.stock_value_max_price}}" step="0.0001" value="{{ValueSetting.stock_value_now}}" />
+	<div class="clear"></div>
+</p>
+    {% if buy_form.password_2nd.errors%}
+    <div class="to-modify error">
+    {{buy_form.password_2nd.errors}}
+    </div>
+    {% endif %}
+    <p>
+        <label class="label-header">二级密码</label>
+        {{buy_form.password_2nd}}
+    </p>
+<input id="buy-button" type="button" value="购买股票" />
+</div>
+<script type="text/javascript">
+/*
+    function direct_buy(_this){
+        if(!_this.checked){
+            $("#seller").fadeOut()
+            $("#id_n_seller").val("")        }
+        else{
+        }
+        else{
+            $("#seller").fadeIn()
+        }
+    }
+*/
+
+	$(document).ready(function(){
+		$("#stock-buy-form #id_amount[type=range]").rangeinput() ;
+		$("#stock-buy-form #id_value[type=range]").rangeinput() ;
+		$("#stock-buy-form #sum_price").html( Math.round(
+
+			$("#stock-buy-form #id_amount").val() *
+
+			$("#stock-buy-form #id_value").val() *10000)/10000
+
+		);
+		$("#buy-button").bind("click",function()
+			{
+				$("#stock-buy-form").validator({
+					message: '<span></span>',
+					position: 'center right',
+					inputEvent: 'change' ,
+					lang: 'cn' ,
+					offset: [0, 20]
+				}).submit(
+				    $.post("{%url 'stock_buy_stock'%}?choice=buy",$("#stock-buy-form").serialize(),function(data){
+				    alert(data);
+				    if (data=="二级密码错误"){
+				        return false;
+				    }
+				    else{
+				        location.reload()
+				    }
+				    
+				    },"json")
+				)
+			}
+		);
+	});
+	
+	
+	
+	/*
+    $("#id_n_seller").bind("blur",function()
+    {
+        $.getJSON("{%url 'get_user_name' %}", {"user_number":$(this).val()},function (data){
+                $("#name").text(data)
+            }
+        )
+    })
+    $("input").bind('blur',function(){
+        if($("#id_amount").val() !="" && $("#id_value").val() !=""){
+            $("#sum_price").html($("#id_amount").val()*$("#id_value").val())
+        }
+    })*/
+</script> 

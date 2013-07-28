@@ -1,0 +1,31 @@
+ {% load i18n admin_static %}
+{% load url from future %}
+<div class="float-left">
+    <h2>地址信息</h2>
+    <a id="showAddress" href="/mall/cart/sure_to_pay?choice={{choice}}">[{{choose_address}}]</a>
+    <div class="infoline_s clear"> </div>
+    <div id="r_" class="address-em">
+        <div id="receiver_info_check" class="infomationline hidden"> {% if Dlivery_info %}
+            {% for dlivery_info in Dlivery_info %}
+            <div id="info_check_receiver" class="infomationleft">
+                <input type="radio" id="new_address" class="chooseaddress" name="freceiverAddress" value="{{dlivery_info.id}}"  onclick="choose_address({{dlivery_info.id}})"/>
+                <span id="{{dlivery_info.id}}"> <span class="d_info" style="display:none">
+                <textarea name='d_id'>
+                        {{dlivery_info.id}}
+                </textarea>
+                </span> </span>  <span class="d_info"> {{dlivery_info.province}}
+                {{dlivery_info.city}}
+                {{dlivery_info.area}}
+                {{dlivery_info.street}} </span> <a href="{%url 'store_del_address'%}?goto=mall&address_id={{dlivery_info.id}}"> [删除] </a>
+                </input>
+            </div>
+            {% endfor %}
+            {% endif %}
+            <p> <a href="javascript:void(0)"class ="btn_next pointer"onclick="add_address()"> [添加地址] </a> </p>
+            <div style="display:{{display}}" id="add_addr"> {%include 'mall/cart/add_addr.html'%} </div>
+        </div>
+    </div>
+</div>
+<script>
+
+</script> 

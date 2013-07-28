@@ -1,0 +1,69 @@
+
+/*翻页样式/*/
+div.pagebox{
+    font-size:12px;
+    font-family:宋体,微软雅黑;
+    margin:3px 0;
+}
+div.pagebox a{
+    margin:2px;
+    padding:2px 5px 2px 5px;
+    border:#7F9DB9 1px solid;
+    color:#000;
+    text-decoration:none;
+    font-size:12px;
+    font-family:宋体,微软雅黑;
+}
+div.pagebox a:hover{
+    color:#000;
+    background-color:#BEEBFF;
+    border:#009DC1 1px solid;
+    font-size:12px;
+    font-family:宋体,微软雅黑;
+}
+div.pagebox a:active{
+    border:1px solid #000;
+    color:#666;
+    font-size:12px;
+    font-family:宋体,微软雅黑;
+}
+div.pagebox span.current{
+    border:#79B2CF 1px solid;
+    margin:2px;
+    padding:2px 5px 2px 5px;
+    color:#000;
+    background-color:#BEEBFF;
+    font-size:12px;
+    font-family:宋体,微软雅黑;
+}
+div.pagebox span.disabled{
+    border:#ccc 1px solid;
+    margin:2px;
+    padding:2px;
+    color:#999;
+    font-size:12px;
+    font-family:宋体,微软雅黑;
+}
+
+/*总页数*/
+#quescount,#papercount
+{
+	display:inline-block;
+	padding:0 3px;
+	color:#f00;
+	font-weight:bold;
+}
+
+/*当前页码*/
+#curpage
+{
+	display:inline-block;
+	padding:0 5px;
+	font-weight:bold;
+}
+.font
+{
+    font-size:15px;
+}
+.cancel_order{background:url(../images/bg_sprite_address.png) no-repeat -470px -40px;width:109px;height:35px;vertical-align:middle;border:0;vertical-align:top;margin-top:-1px;_margin-top:0;text-align:center;color:#fff;font-size:14px;font-weight:bold;margin-right:-1px;_margin-right:0;cursor:pointer;}
+.continue_order{background:url(../images/bg_sprite_address.png) no-repeat -470px -40px;width:109px;height:35px;vertical-align:middle;border:0;vertical-align:top;margin-top:-1px;_margin-top:0;text-align:center;color:#fff;font-size:14px;font-weight:bold;float:left;margin-right:-1px;_margin-right:0;cursor:pointer;}

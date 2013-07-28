@@ -1,0 +1,98 @@
+    {% load i18n admin_static %}
+
+    {% load url from future %}
+
+    <a href="javascript:history.back(-1)">返回上一页</a>
+
+    {% if not CashWithdrawRecord%}
+
+    <h1>没有提现记录</h1>
+
+    {% else %}
+
+    <h1>提现记录</h1>
+
+    {%include 'search_by_date.html'%}
+    <table>
+
+   
+
+    	<tr>
+
+        	<td>编号</td>
+
+            <td>昵称</td>
+            <td>开户银行</td>
+            <td>开户人姓名</td>
+
+            <td>银行帐号</td>
+
+            <td>提现金额</td>
+
+            <td>纳税</td>
+            <td>实发金额</td>
+
+            <td>提现时间</td>
+
+        </tr>
+
+        
+
+        {% for CWithdrawRecord in CashWithdrawRecord %}
+
+        <tr>
+
+        	<td>{{CWithdrawRecord.user.number}}</td>
+        	<td>{{CWithdrawRecord.user.name}}</td>
+        	<td>{{CWithdrawRecord.user.bank_name}}</td>
+        	<td>{{CWithdrawRecord.user.bank_account_name}}</td>
+        	<td>{{CWithdrawRecord.user.bank_account_id}}</td>
+
+        	<td>{{CWithdrawRecord.amount}}</td>
+
+        	<td>{{CWithdrawRecord.withdraw_money|floatformat:"2" }}</td>
+        	<td>{{CWithdrawRecord.withdraw_real_money|floatformat:"2" }}</td>
+
+        	<td>{{CWithdrawRecord.time_start|date:"Y.m.d"}}</td>
+
+        </tr>
+
+        {% endfor %}
+
+        
+
+    </table>
+
+    {% endif %}
+
+ <P>
+
+ <a href="?page=1{%if start_time%}&start_time={{start_time}}&end_time={{end_time}}{% endif %}">首页</a>
+
+{% if CashWithdrawRecord.has_previous %}
+
+
+
+<a class="page_next" id = "page_up" href="?page={{ CashWithdrawRecord.previous_page_number }}{%if start_time%}&start_time={{start_time}}&end_time={{end_time}}{% endif %}">
+
+    上一页
+
+</a>
+
+{% endif %}
+
+{% if CashWithdrawRecord.has_next %}
+
+<a class="page_next" id = "page_down" href="?page={{ CashWithdrawRecord.next_page_number}}{%if start_time%}&start_time={{start_time}}&end_time={{end_time}}{% endif %}">
+
+    下一页
+
+</a>
+
+{% endif%}
+
+{{ CashWithdrawRecord.number }} / {{ CashWithdrawRecord.paginator.num_pages }}
+
+<a href="?page={{ CashWithdrawRecord.paginator.num_pages }}{%if start_time%}&start_time={{start_time}}&end_time={{end_time}}{% endif %}">尾页</a>
+
+</P>

@@ -1,0 +1,60 @@
+<div id="receiver_info_check" class="infomationline" style="display:{{address_not_empty}}">
+    {% for d,dlivery_info in Dlivery_info.items %}
+ 
+        <div id="info_check_receiver" class="infomationleft">
+            <span id="receiverInfoSpan">
+          <span>
+            <input type="radio" style="cursor:pointer;" id="new_address" name="receiverAddress"
+                value="{{d}}" checked="" >
+                &nbsp;&nbsp;
+            </span>
+             <span>
+              收获信息
+          </span>
+
+                <span>
+                收获人:
+                &nbsp;&nbsp;
+                </span>
+                <span>
+                {{dlivery_info.name}}&nbsp;&nbsp;
+                </span>
+                <span id="addressDiv">
+                {{dlivery_info.address}}&nbsp;&nbsp;
+                </span>
+                </span>
+                {{dlivery_info.mobile}}
+                </span>
+                <span>
+                {{dlivery_info.phone}}
+                </span>
+            </span>
+            </input>
+        </div>
+
+        <div class="infomationright color_blue">
+        <span>
+            <a onclick="">
+                [修改]
+            </a>
+            </span>
+            <span>
+            <a id="add" onclick="add_address()">
+                [添加]
+            </a>
+            </span>
+        </div>
+        <div class="clear">
+        </div>
+    </div>
+            {% endfor %}
+            <div class="infocont">
+                <div class="btnbar">
+                    <button id="confirm_" class="btn_next pointer" onclick="sure_to_buy()">
+                        确认送到该地址
+                    </button>
+                </div>
+            </div>
+</div>
+</div>
+

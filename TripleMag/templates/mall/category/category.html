@@ -1,0 +1,61 @@
+<script type="text/javascript">
+	function HideNaviSec()
+	{
+		$('#mall-nav-secondary').find('.nav-block').addClass("hidden") ;
+		$("#mall-nav-first").find("li").removeClass("menu-hover") ;
+	}
+
+	$(document).ready(function() {
+		$("#mall-nav-first li").hover(function() {
+			HideNaviSec() ;
+			$(this).addClass("menu-hover");
+			var sec_id = "#nav-second-" + $(this).attr('id').substring(10) ;
+			$(sec_id).removeClass("hidden") ;
+		}, function() {
+			HideNaviSec() ;
+			//$(this).removeClass("menu-hover");
+			/*
+			var this_id = $(this).attr('id') ;
+			this_id = "#nav-second-" + this_id.substring(10) ;
+			$(this_id).addClass("hidden") ;*/
+		});
+		
+		$('#mall-nav-secondary').find('.nav-block').hover(function() {
+			$(this).removeClass("hidden") ;
+			var first_id = "#nav-first-" + $(this).attr('id').substring(11) ;
+			$(first_id).addClass("menu-hover");
+		}, function() {
+			this_id = false ;
+			$(this).addClass("hidden") ;
+			$("#mall-nav-first").find("li").removeClass("menu-hover") ;
+		});
+		
+		$('#mall-nav-secondary').find('.nav-block').each(function(){
+			//alert((parseInt($(this).attr('id').substring(11)) - 1) * 39 - 27 + "px") ;
+			this.style.top = parseInt($(this).attr('id').substring(11)) * 39 - 27 + "px" ;
+		});
+	});
+</script>
+<div id="mall-nav-first">
+    <ul>
+        {% for ct1 in request.session.category %}
+        <li id="nav-first-{{ct1.id}}"><a href="/mall/channel/{{ct1.name}}">{{ct1.name}}</a></li>
+        {% endfor %}
+    </ul>
+</div>
+<div id="mall-nav-secondary">
+    {%for ct1 in category%}
+    <dl id="nav-second-{{ct1.id}}" class="nav-block hidden">
+        {% for ct2 in ct1.ct2 %}
+        <dt><a href="/mall/channel/{{ct1.name}}/#{{ct2.name}}">{{ct2.name}}</a>
+        </dt>
+            <dd>
+                {%for ct3 in ct2.ct3%}
+                <a href="/mall/channel/{{ct1.name}}/#{{ct3.name}}">{{ct3.name}}</a>
+                {% endfor %}
+            </dd>
+            <br class="clear" />
+        {% endfor %}
+    </dl>
+    {% endfor %}
+</div>

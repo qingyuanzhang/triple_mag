@@ -1,0 +1,110 @@
+<script type="text/javascript">
+function reduce(p_id,price,_this)
+{
+                $.ajaxSettings.cache = false ;
+
+	            $.ajaxSettings.async = false;
+    var num = parseInt($(_this).next().val())
+    if(num>1)
+    {
+        num--
+        $(_this).next().val(num)
+        _id = "#"+$(_this).next().attr("name")
+        $(_id).html(num*price)
+        $.getJSON('/mall/cart/ajax_delete_in_cart/2',{'p_id':p_id},function(data){
+        result = data.split('_')
+        total_price = result[0]
+        $("#_total_price").text(total_price)
+        $("#in_cart_num").text(in_cart_num)
+    })
+    }
+}
+function plus(p_id,price,_this)
+{
+                $.ajaxSettings.cache = false ;
+
+	            $.ajaxSettings.async = false;
+    var num = parseInt($(_this).prev().val())
+    num++
+    $(_this).prev().val(num)
+    sum_price_id = $(_this).prev().attr("name")
+    _id = "#"+sum_price_id 
+    $(_id).html(num*price)
+    $.getJSON('/mall/cart/ajax_product_add/',{'p_id':p_id,'price':price},
+    function(data){
+    result = data.split('_')
+    $("#_total_price").html(result[0])
+    })
+}
+function delete_product(p_id,_this)
+{   
+                $.ajaxSettings.cache = false ;
+
+	            $.ajaxSettings.async = false;
+    $.getJSON('/mall/cart/ajax_delete_in_cart/1',{'p_id':p_id},function(data){
+        result = data.split('_')
+        total_price = result[0]
+        in_cart_num = result[1]
+        alert("删除成功")
+        
+        if(in_cart_num==0)
+        {
+            location.href = '/'
+        }
+        else
+        {
+            $(_this).parent().parent().remove()
+            $("#_total_price").text(total_price)
+            $("#in_cart_num").text(in_cart_num)
+        }
+    })
+}
+function add_in_order()
+{
+location.href = '/mall/cart/sure_to_pay/'
+}
+$(document).ready(function()
+{
+    $(".price").each(function(index)
+    {
+        price = $(this).text() * $(this).next().text()
+        $(this).parent().parent().next().next().children().text(price)
+    })
+})
+</script>
+
+<div id="goods">
+    <div>
+        <h1>我的购物车</h1>
+        {% for cart in Cart.items %}
+        <div class="product-list-line">
+            <dl>
+                <dt> <a href="/mall/product/{{cart.product.name}}">  <img src="/{{cart.product.image_url}}" /></a>
+                    <h3>{{cart.product.name}}{%if cart.product.color%}<span>{{cart.product.color}}</span>{%endif%}{%if cart.product.size%}<span>{{cart.product.size}}</span>{%endif%}</h3>
+                 </dt>
+                <dd> 单价<span class="color-alt-red block-one-cont">￥{{cart.price}}</span>
+
+<span class="old-price">￥{{cart.product.price_normal}}</span>
+ </dd>
+                <dd> 数量<span class="color-em-red block-two-cont">
+                    <input class="btn-reduce" onclick="reduce({{cart.product.id}},{{cart.price}},this)" type="button" value="-">
+                    <input type="text" value="{{cart.quantity}}" class="num" limitnum="179-0-0-0-1" disabled="disabled" name={{cart.product.id}}>
+                    <input class="btn-plus" type="button" onclick="plus({{cart.product.id}},{{cart.price}},this)" value="+">
+                    </span> <a href="javascript:void(0);" onclick="delete_product({{cart.product.id}},this)"
+        id="items_1151786_0_delete" > 删除 </a> </dd>
+                <dd> 总计<span class="color-em-red block-one-cont" id="{{cart.product.id}}">￥{{cart.sum_price }}</span> </dd>
+            </dl>
+        </div>
+        {% endfor %}
+        <div class="float-left">
+            <p>商品总价（未包含运费）：￥<span id="_total_price" class="now-price">{{Cart.total_price}}</span>
+        </div>
+        <div class="clear"> </div>
+    </div>
+</div>
+    <div class="float-right">
+    	<a href="/" class="button blue"> 继续购物 </a>
+        <input type="submit" value="确认支付" href="" class="button red" onclick="add_in_order()" >
+    </div>
+
+    <div class="clear"></div>

@@ -1,0 +1,81 @@
+{% extends 'site-base.html'%}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+
+
+{% block title%}
+
+    首页
+
+{% endblock %}
+
+
+
+{% block content %}
+
+    <div class="content-w100">
+
+    <div class="content-h0" style="min-height: 610px;">
+
+        <a href="{%url 'management_member_index' %}"><h1 class="{%if request.session.subject == 'manage_memeber'%}selected{%else%}notselected{%endif%}">会员与报单中心管理</h1></a>
+{%if user.is_superuser%}
+        <a href="{%url 'manage_stuff_type'%}"><h1 class="{%if request.session.subject == 'manage_stuff'%}selected{%else%}notselected{%endif%}">货物管理</h1></a>
+        <a href="{%url 'management_mall_index' %}"><h1 class="{%if request.session.subject == 'manage_mall'%}selected{%else%}notselected{%endif%}">商城管理</h1></a>
+
+        <a href="{%url 'management_stock_index' %}"><h1 class="{%if request.session.subject == 'manage_stock'%}selected{%else%}notselected{%endif%}">股票管理</h1></a>
+
+        <a href="{%url 'management_sys_index' %}"><h1 class="{%if request.session.subject == 'manage_sys'%}selected{%else%}notselected{%endif%}">系统管理</h1></a>
+{%endif%}
+<div class="clear"></div>
+        
+<div id="content-main">
+        {%block content-main%}
+
+                <!--
+
+                <h1>搜索会员</h1>
+
+                <input type="text" id="query_content" onkeydown="javascript:if(event.keyCode==13) search();"> 
+
+                <input type="submit" value="查询" onclick="search()">
+
+                </div>
+
+                <div class ="content-3of3"> 
+
+                -->
+
+            <h1>新的提醒</h1>
+
+            {% include "includes/notices.html"%}
+
+            <script type="text/javascript">
+
+                function search(){
+
+                    query = $("#query_content").val()
+
+                    //alert(query)
+
+                    location.href = "{%url 'management_search_member'%}?query="+query
+
+                }
+
+            </script>
+
+        {%endblock%}
+
+</div>
+
+        <div class="clear"></div>
+
+    </div>
+
+    </div>
+
+{% endblock %}
+
+

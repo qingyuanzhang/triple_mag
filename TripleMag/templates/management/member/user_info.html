@@ -1,0 +1,55 @@
+
+<table>
+<tr>
+<td>序号</td>
+<td>用户编号</td>
+<td>用户姓名</td>
+<td>推荐人编号</td>
+<td>推荐人姓名</td>
+<td>接点人编号</td>
+<td>接点人姓名</td>
+<td>注册时间</td>
+<td>用户类型</td>
+<td>级别</td>
+
+<td>股票除权</td>
+<td>冻结</td>
+</tr>
+{% for UserInfo in user_info.object_list %}
+
+<tr>
+<a href="#">
+<td>{{ UserInfo.id }}</td>
+<td><a href="{url 'management_member_detail' UserInfo.number }" >{{ UserInfo.number }}</a></td>
+<td>{{ UserInfo.name }}</td>
+<td>{{ UserInfo.recommending_number }}</td>
+<td>{{ UserInfo.recommending_name }}</td>
+<td>{{ UserInfo.contacting_number }}</td>
+<td>{{ UserInfo.contacting_name }}</td>
+<td>{{ UserInfo.start_date }}</td>
+<td>{{ UserInfo.get_role_display }}</td>
+<td>{{ UserInfo.level }}</td>
+
+<td>
+{% if UserInfo.is_stock_XR %}
+已被除权
+<!--<input type="submit" value="解除股票除权" name = "stock_0" onclick="change_state(this,'{{ UserInfo.number }}')">-->
+{% else %}
+解除除权
+<!--<input type="submit" value="股票除权" name ="stock_1"  onclick="change_state(this,'{{ UserInfo.number }}')">-->
+{% endif %}
+</td>
+<td>
+{% if UserInfo.is_blocked %}
+<input type="submit" value="解除冻结" name ="block_0"  onclick="change_state(this,'{{ UserInfo.number }}')">
+{% else %}
+<input type="submit" value="冻结" name ="block_1"  onclick="change_state(this,'{{ UserInfo.number }}')">
+{% endif %}
+</td>
+</a>
+</tr>
+
+
+{% endfor %}
+</table>
+

@@ -1,0 +1,278 @@
+{% extends 'site-base.html'%}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+{% block title%}
+
+    股票中心
+
+{% endblock %}
+{% block content%}
+<script type="text/javascript" src="/static/js/jsapi"></script>
+<script type="text/javascript" charset="utf-8">
+  google.load("visualization", "1", {packages:["corechart"]});
+  var ChartData = {{ChartData|safe}}
+  function drawChart() {
+    $("#load_stock_chart").css("display","block");
+    $("#chart_button").css("display","none");
+    var data = google.visualization.arrayToDataTable(ChartData);
+    var options = {
+      title: '股票曲线图' 
+    };
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+    chart.draw(data, options);
+  }
+</script>
+<a class="red button" onclick="drawChart()" id="chart_button">股票曲线图</a>
+
+<div class="content-w100" style="display:none" id="load_stock_chart">
+
+<div class="content-h100">
+
+<h1 class="notselected">股票曲线图</h1>
+
+<div class="content-1of1-wrapper">
+
+	<div class ="content-1of3">
+
+    	<div id="chart_div" style="width:900px;height:500px"></div>
+
+    </div>
+
+</div>
+
+<div class="clear"></div></div>
+
+</div>
+
+<div class="clear"></div>
+
+
+
+
+
+
+
+<div class="content-w67">
+
+<div class="content-h100">
+
+<div class="clear"></div>
+
+<div class="content-1of3-wrapper">
+
+    <div class ="content-1of3">
+
+    	{%if request.session.message%}
+
+    	<div class="to-modify error">{{request.session.message}}</div>
+
+        {%endif%}
+
+
+
+        <div id="selling_poll"> {% include 'stock/selling_poll.html' %} </div>
+
+        <p><label>今日股票价格</label><span class="now-price">{{ValueSetting.stock_value_now}}</span>元</p>
+
+        <!--<p>
+
+<ul>
+
+    <li><a onclick="trade_buy()">购买股票</a></li>
+
+
+
+    <li><a onclick="trade_sell()">卖出股票</a></li>
+
+</ul>
+
+</p>--> 
+
+<!--        {% if direct_selling_poll %}-->
+
+<!--        <div id="direct_selling_poll" title="这里显示的请求为定向卖出给你的，你可以选择是否购买">-->
+
+<!--            <h2>定向卖出请求</h2>-->
+
+<!--            {%include 'stock/direct_selling_poll.html'%} </div>-->
+
+<!--        {%endif%}-->
+
+        <ul class="tabs">
+
+        	<li><a href="#">卖出股票</a></li>
+
+            <li><a href="#">买入股票</a></li>
+
+        </ul>
+
+        <div class="panes">
+
+            <div id="sell"> {% include 'stock/sell_stock.html' %} </div>
+
+            <div id="buy"> {% include 'stock/buy_stock.html' %} </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="content-w33">
+
+<div class="content-h50">
+
+<h2>我的股票账户</h2>
+
+<div class="content-2of3-wrapper">
+
+    <div class ="content-2of3"> {%include 'stock/stock.html'%} </div>
+
+</div>
+
+</div>
+
+
+
+<p style="text-align:center"><a class="red button" href="{%url 'stock_income_record'%}">股票来源记录</a></p>
+
+
+
+
+
+
+
+<p style="text-align:center">
+
+
+
+    <a class="blue button" href="{%url 'stock_stock_record'%}">股票售出记录</a>
+
+
+
+</p>
+
+
+
+<p style="text-align:center">
+
+    <a class="green button" href="{%url 'stock_stock_bonus'%}">股票奖金记录</a>
+
+
+
+    </p>
+
+
+
+
+
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        setInterval("selling_poll()",100000000);
+
+		$("ul.tabs").tabs("div.panes > div");
+
+		{%if request.session.message%}
+
+        $.getJSON("{%url 'del_session'%}",function(data){
+
+            alert(data)
+
+        })
+
+		{%endif%}
+
+    });
+
+    function selling_poll(){
+
+        $('#selling_poll').load("{% url 'get_selling_poll' %}");;
+
+    };
+
+	/*
+
+    function my_stock_sell_reocrd(){
+
+    };
+
+	*/
+
+$.tools.validator.fn("form [name=value]", {"cn":'$1'} , function (input, value)
+
+{
+
+	if( $("ul.tabs").data("tabs").getIndex() == 1 )
+
+	{//确认是在买入选项卡中
+
+		return Math.round(
+
+			parseInt($("#stock-buy-form #id_amount").val()) *
+
+			parseFloat($("#stock-buy-form #id_value").val())
+
+		) <= parseFloat("{{UserBasic.sum}}") ? true : '您好像没有足够现金'  ;
+
+	}
+
+	else if ( $("ul.tabs").data("tabs").getIndex() == 0 )
+
+	{//如果是在卖出选项卡中
+
+		if( $("#is_direct_sell").attr("checked") )
+
+		{
+
+			return Math.round(
+
+				parseInt($("#stock-sell-form #id_direct_sell_amount").val())
+
+			) <= parseInt("{{UserBasic.stock_hold_0devide|add:UserBasic.stock_hold_1devide|add:UserBasic.stock_hold_2devide}}") ? true : '您好像没有足够股票'  ;
+
+		}
+
+		else
+
+		{
+
+			return Math.round(
+
+				parseInt($("#stock-sell-form #id_amount").val())
+
+			) <= parseInt("{{UserBasic.stock_hold_0devide|add:UserBasic.stock_hold_1devide|add:UserBasic.stock_hold_2devide}}") ? true : '您好像没有足够股票'  ;
+
+		}
+
+		
+
+		/*
+
+		return Math.round(
+
+			parseInt($("#stock-sell-form #id_amount").val()) *
+
+			parseFloat($("#stock-sell-form #id_value").val())
+
+		) <= parseFloat($("#sum-stock").html()) ? true : '您好像没有足够股票'  ;*/
+
+	}
+
+	return true ;
+
+});
+
+</script> 
+
+{% endblock %} 

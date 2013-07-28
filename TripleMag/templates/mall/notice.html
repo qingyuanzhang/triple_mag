@@ -1,0 +1,38 @@
+{% extends 'mall/site-base.html'%}
+
+{% load url from future %}
+{% load i18n %}
+{% block my-resource%}
+<style>
+h3{
+text-align: center;
+width: 728px;
+overflow: hidden;
+font-size: 26px;
+font-weight: bold;
+margin: 10px 0;
+color: #F33;
+}
+#short-board div{
+padding: 5px;
+line-height: 2;
+font-size: 14px;
+}
+</style>
+{% endblock %}
+{% block content %} 
+<div id="short-board">
+    <p id="goods-type-chain"> <a href="{%url 'rt_index'%}">首页</a>» <a>商城公告</a>
+    <div class="float-left" style="padding-left:20px">
+    <p><h3>{{NoticeMall.title}}</h3></p>
+    <div style="text-align: center; border-bottom: 1px dashed #ccc; border-top: 1px dashed #ccc;
+font-size: 12px;">
+    时间：{{NoticeMall.time}}
+</div>
+    <div style="12px Arial,'宋体','微软雅黑';">
+    {{NoticeMall.details|safe}}
+    </div>
+    <p></p>
+</div>
+
+{% endblock %}

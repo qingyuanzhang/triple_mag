@@ -1,0 +1,19 @@
+{% extends 'management/member/base.html'%}
+
+{% load i18n admin_static %}
+{% load url from future %}
+
+{% block content-main %}
+
+{%include 'includes/conactor.html'%}
+<script type="text/javascript">
+    function contactor_list(){
+        var user_number = $("#user_number").val()
+        
+        location.href = "{%url 'contacting_chart'%}?user_number="+user_number
+        
+    }
+</script>
+
+
+{% endblock %}

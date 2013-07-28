@@ -1,0 +1,34 @@
+{% load i18n %}
+{% load url from future %}
+<link rel="stylesheet" type="text/css" href="/static/js/uploadify/uploadify.css">
+<script type="text/javascript" src="/static/js/uploadify/jquery.uploadify-3.1.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        //批量上传按钮
+        $('#id_upload').uploadify ({
+            'swf'		: '/static/js/uploadify/uploadify.swf',
+            'uploader' 	: '{%url 'upload_image' %}', 
+            'cancelImage' : '/static/js/uploadify/uploadify-cancel.png',
+            'buttonClass' : 'btn',
+            'checkExisting' : false,
+            'removeCompleted': true,
+            'fileTypeExts'   : '*.jpg;*.gif;*.png',
+            'multi'		: true,
+            'auto'    : true,
+            'buttonText': '添加图片',
+            'onUploadSuccess' : function (file, data, response) {
+                $("#instructions").before("<input type=hidden name='product_image' value='/static/images/"+data+"'><img width=\"200px\" name=\'product_image\' src=\'/static/images/"+data+"\'/><a href=javascript:void(0) onclick=delete_img(this)>删除</a>")
+            }
+        });
+    }
+    
+    
+    )
+    function delete_img(_this){
+        var img = $(_this).prev()
+        img.prev().remove()
+        img.remove()
+        $(_this).remove()
+    }
+    
+</script>

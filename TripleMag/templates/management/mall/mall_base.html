@@ -1,0 +1,39 @@
+{% extends "management/base.html"%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block title%}
+商城管理
+{% endblock %}
+{% block content-main %}
+
+
+<h1>商城首页设置</h1>
+    <p>
+    	<a href="/mall_notice/" class="green button">商城公告管理</a>
+    </p>
+    
+    <p>
+    	<a href="/mall_ad/" class="blue button">商城广告</a>
+    </p>
+    
+    <p>
+    	<a href="/mall_home_mag/" class="pink button">商城首页图片</a>
+    </p>
+<h1>数值设定
+</h1>
+<p><a href="{%url 'c_web_value_setting'%}">商城数值设定</a></p>
+        <h1>商城产品</h1>
+        <p>
+            <a href="{%url 'mall_category_index'%}">商品目录列表</a>
+        </p>
+        
+        <p>
+            <a href="{%url 'manage_product'%}">新增商品</a>
+        </p>
+        
+        <p>
+            <a href="{%url 'product_list'%}">产品列表</a>
+        </p>
+        <h1>订单</h1>
+        <p><a href="/mall/user/my_order/?page=1">订单管理</a></p>
+{% endblock %}

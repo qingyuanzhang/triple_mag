@@ -1,0 +1,18 @@
+{% if notices %}
+<div>
+    
+            {% for notice in notices%}
+            {% if notice.is_unseen %}
+                <div class="unseen_notice">
+            {% else %}
+                <div class="notice">
+            {% endif %}
+                <span class="notice_type">{{ notice.notice_type.display }}</span>
+                <span class="notice_message">{{ notice.message|safe }}</span>
+                <span class="notice_time">{{ notice.added }}</span>
+            </div>
+            {% endfor %}
+</div>
+{%else%}
+<p>没有提醒</p>
+{% endif %}

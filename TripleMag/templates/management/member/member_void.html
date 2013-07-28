@@ -1,0 +1,96 @@
+{% extends 'management/member/base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block title%}
+空点会员列表
+{% endblock%}
+
+{% load i18n admin_static %}
+{% load url from future %}
+{% block content-main %}
+<div class="content-1of1-wrapper">
+<div class="content-1of3">
+<a href="javascript:history.back(-1)">返回上一页</a>
+{% if  not mem_void %}
+<h1>无空点会员</h1>
+{% else %}
+<table>
+<tr>
+<td>序号</td>
+<td>用户编号</td>
+<td>用户姓名</td>
+<td>三代推荐人查看</td>
+<td>接点人关系查看</td>
+<!--<td>推荐人姓名</td>-->
+<!--<td>接点人编号</td>-->
+<!--<td>接点人姓名</td>-->
+<td>注册时间</td>
+<td>用户类型</td>
+<td>股票除权</td>
+<td>冻结</td>
+<!--<td>修改</td>-->
+</tr>
+{% for UserInfo in mem_void %}
+
+<tr>
+
+<td>{{ UserInfo.id }}</td>
+<td><a href="{%url 'management_member_detail' %}?user_number={{UserInfo.number}}" >{{ UserInfo.number }}</a></td>
+<td>{{ UserInfo.name }}</td>
+<td><a href="{%url 'management_recommender'%}?user_number={{UserInfo.number}}">推荐人关系</a></td>
+{%if UserInfo.role = "MemMid" %}
+<td><a href="{%url 'contacting_chart'%}?user_id={{UserInfo.id}}">接点人关系</a></td>
+{%elif UserInfo.role = "MemMax" %}
+<td><a href="{%url 'contacting_chart'%}?user_id={{UserInfo.id}}">接点人关系</a></td>
+{%else%}
+<td></td>
+{%endif%}
+<!--<td>{{ UserInfo.recommending_number }}</td>-->
+<!--<td>{{ UserInfo.recommending_name }}</td>-->
+<!--<td>{{ UserInfo.contacting_number }}</td>-->
+<!--<td>{{ UserInfo.contacting_name }}</td>-->
+<td>{{ UserInfo.start_date|date:"Y.m.d" }}</td>
+<td>{{ UserInfo.get_role_display }}</td>
+<td>
+{% if UserInfo.is_stock_XR %}
+已被除权
+<!--<input type="submit" value="解除股票除权" name = "stock_0" onclick="change_state(this,'{{ UserInfo.number }}')">-->
+{% else %}
+未被除权
+<!--<input type="submit" value="股票除权" name ="stock_1"  onclick="change_state(this,'{{ UserInfo.number }}')">-->
+{% endif %}
+</td>
+<td>
+{% if UserInfo.is_blocked %}
+已被冻结
+{% else %}
+未被冻结
+{% endif %}
+</td>
+
+<td></td>
+<!--<td><a href="{%url 'management_change_mem_info' %}?user_number={{UserInfo.number}}">修改</a></td>-->
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+<P>
+<a  href="{%url 'member_void' %}?page=1">首页</a>
+{% if user_info.has_previous %}
+<a class="page_next" id = "page_up"  href="{%url 'member_void' %}?page={{mem_void.previous_page_number}}">
+                上一页
+</a>
+{% endif %}
+{% if mem_void.has_next %}
+<a class="page_next" id = "page_down" href="{%url 'member_void' %}?page={{ mem_void.next_page_number }}">
+    下一页
+</a>
+
+{% endif%}
+{{ mem_void.number }} / {{ mem_void.paginator.num_pages }}
+ <a  href="{%url 'member_void' %}?page={{ mem_void.paginator.num_pages }}">尾页</a>
+</P>
+</div>
+</div>
+{% endblock %}

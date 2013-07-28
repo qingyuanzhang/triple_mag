@@ -1,0 +1,108 @@
+{% extends 'mall/site-base.html'%}
+
+{% load url from future %}
+{% load i18n %}
+
+{% block content %}
+<div id="short-board">
+    <p id="goods-type-chain"> <a href="{%url 'rt_index'%}">首页</a>» <a>{{channel}}</a>
+    <div class="float-left">
+        <div id="image_wrap" >
+            {% if promotion_products %}
+    			<img title="
+            	{{promotion_products.name}}
+                <p>
+                ￥<span class='old-price'>{{promotion_products.price_normal}}</span>
+                
+                {% if promotion_products.is_promoted %}
+                	<span class='now-price'>￥{{promotion_products.price_promotions}}</span>
+                {% else %}
+                	<span class='now-price'>￥{{promotion_products.price_VIP}}</span>
+                {% endif %}
+            	</p>
+            	<p><a href='/mall/product/{{promotion_products.name}}'>＞去看看</a></p>" src="/{{promotion_products.image_url}}" width="340px" />
+                <h2>
+                {% if promotion_products.is_promoted %}
+                促销
+                {% else %}
+                热卖
+                {% endif %}
+                </h2>
+            {% else %}
+            	<img src="/static/img/no-image-display.png" width="340px" />
+                <h3>暂无商品</h3>
+            {% endif %}
+        </div>
+    </div>
+    <div class="float-left" style="padding-left:20px">
+        <h1>{{channel}}</h1>
+        {%for ct1 in catagroy1 %}
+        	<p style="width: 370px;"><b><a href="#{{ct1.name}}">{{ct1.name}}</a></b>　|
+            {% for ct2 in ct1.catagroy2 %}
+            	<a href="#{{ct2.name}}" onclick="$('ul#ul_{{ct1.name}}.tabs').data('tabs').click('{{ct2.name}}') ;">{{ct2.name|center:"10"}}</a>
+            {% endfor %}
+        {%endfor%}
+    </div>
+    <script>
+		$("#image_wrap [title]").tooltip({
+			effect : 'fade' ,
+			tipClass : 'p-goods-function' ,
+			position: 'bottom center',
+			offset: [-110, 0]
+		});
+    </script>
+</div>
+
+{%for ct1 in catagroy1 %}
+<div class="long-board" id="{{ct1.name}}">
+    <h2 >{{ct1.name}}</h2>
+    <ul id="ul_{{ct1.name}}" class="tabs">
+        {% for ct2 in ct1.catagroy2 %}
+        <li><a href="#{{ct2.name}}">{{ct2.name}}　{{ct2.product|length}}</a></li>
+        {% if ct2.product|length > 0 %}
+        {% endif %}
+        {% endfor %}
+    </ul>
+    
+    <div class="panes">
+    	{% for ct2 in ct1.catagroy2 %}
+        <div class="display_item hidden" id="{{ct2.name}}">
+        	{% if ct2.product|length > 0 %}
+                <ul>
+                    {%for product in ct2.product %}
+                    <li>
+                        <a href="/mall/product/{{product.name}}" title="{{product.name}}">
+                        <span>{{product.name}}<br>
+                        {% if product.is_promoted%}
+                        <b>￥{{product.price_promotions}}</b>
+                        {% else %}
+                        <b>￥{{product.price_VIP}}</b>
+                        {% endif %}
+                        </span>
+                        <img src="/{{product.image_url}}">
+                        </a>
+                    </li>
+                    {% endfor %}
+                    <div class="clear"></div>
+                </ul>
+             {% else %}
+				<p><img src="/static/img/no-image-display.png" width="140px" /></p>
+             {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endfor %}
+
+<script>
+$(function() {
+    // setup ul.tabs to work as tabs for each div directly under div.panes
+    $("ul.tabs").tabs("div.panes > div",{
+		effect : 'fade' ,
+		event : 'mouseover' ,
+		initialIndex: null 
+	});
+});
+</script> 
+
+{% endblock %} 

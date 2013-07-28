@@ -1,0 +1,181 @@
+{% extends 'mall/login-base-for-real.html'%}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+{% block my-resource%}
+
+<style>
+
+#main-block{
+
+    background: transparent;
+
+    _filter:chroma(color=white);;
+
+}
+
+
+
+#mall-footer {
+
+    margin-top: 0px;
+
+}
+
+#container{
+
+    background: url('/static/img/login_bg.jpg?v=1');
+
+    background-position: 49% 10px;
+
+    background-repeat: no-repeat;
+
+    background-size: 100% ;
+
+}
+
+#header-row{
+
+    visibility: hidden;
+
+}
+
+
+
+</style>
+
+{% endblock %}
+
+
+
+{% block title-pic %}
+
+<img src="/static/img/log_in.jpg" />
+
+{% endblock %}
+
+
+
+{% block main-block%}
+
+
+
+
+
+<div class="float-right fence_purple" id="new-user-block">
+
+    <div id="login-block" novalidate="novalidate">
+
+        <form action= "." method="POST" id="loginform">
+
+            {% csrf_token %}
+
+            <div class="login_left">
+
+                <div class="login_form2">
+
+                    <span class="error">
+
+                    {{error}}
+
+                    </span>
+
+                    <p>
+
+                        <label>登录账号</label>
+
+                        {{form.username}}
+
+                        
+
+                        * </p>
+
+                    <p>
+
+                        <label>密码</label>
+
+                        {{form.password}}
+
+                        *
+
+                    </p>
+
+                    <p>
+
+                        <label title="点击图片即可换一张" >验证码*</label>
+
+                        <span id="captcha"> {%include "account/captcha.html"%}</span> </p>
+
+                    <script type="text/javascript">
+
+                                function change_one()
+
+                                {
+
+                                    $("#captcha").load("{%url 'change_one'%}")
+
+                                    return false;
+
+                                }
+
+                    </script>
+
+                    </p>
+
+                    <p>
+
+                        <input class="button orange" type="submit" id="btn_submit" value="登录" />
+
+                    </p>
+
+    			</div>
+
+            </div>
+
+        </form>
+
+        <p> 还没有账号？<a href="{%url 'mall_register'%}"> 现在注册 </a> </p>
+
+        <script src="/static/js/validations.js"></script>
+
+        <script>
+
+    	  	$("#loginform").validator({
+
+    			message: '<span></span>',
+
+    			position: 'center right',
+
+    			inputEvent: 'change' ,
+
+    			lang: 'cn' ,
+
+    			offset: [0, 20]
+
+    		})
+
+    		$("[title]").tooltip({
+
+    			opacity: 0.7 ,
+
+    			position: 'center left' ,
+
+    			offset: [0, -15]
+
+    		});
+
+    	</script> 
+
+    </div>
+
+</div>
+
+
+
+<div class="clear"></div>
+
+
+
+{% endblock%} 

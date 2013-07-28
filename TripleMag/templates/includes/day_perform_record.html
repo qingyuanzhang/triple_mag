@@ -1,0 +1,47 @@
+{% load i18n admin_static %}
+{% load url from future %}
+<h1>每日业绩{{name}}</h1>
+{% if not day_perform_record %}
+没有记录
+{% else %}
+<table>
+{% include 'search_by_date.html'%}
+<tr>
+{%if user.is_superuser%}
+<td>编号</td>
+<td>姓名</td>
+{% endif %}
+<td>日期</td>
+<td>A区业绩值</td>
+<td>B区业绩值</td>
+<!--<td>报单</td>-->
+</tr>
+{% for DayPerformRecord in day_perform_record %}
+<tr>
+{%if user.is_superuser%}
+<td>{{DayPerformRecord.mid.user.number}}</td>
+<td>{{DayPerformRecord.mid.user.name}}</td>
+{% endif %}
+<td>{{DayPerformRecord.date|date:"Y.m.d"}}</td>
+<td>{{DayPerformRecord.accumulate_a}}</td>
+<td>{{DayPerformRecord.accumulate_b}}</td>
+<!--<td>{{DayPerformRecord.accumulate_self}}</td>-->
+</tr>
+{% endfor %}
+</table>
+<p>
+<a href="?page=1{%if start_time%}&start_time={{start_time}}&end_time={{end_time}}{% endif %}">首页</a>
+{% if day_perform_record.has_previous %}
+<a class="page_next" id = "page_up"  href="?page={{ day_perform_record.previous_page_number }}{%if start_time%}&start_time={{start_time}}&end_time={{end_time}}{% endif %}">
+                上一页
+</a>
+{% endif %}
+{% if day_perform_record.has_next %}
+<a class="page_next" id = "page_down" href="?page={{ day_perform_record.next_page_number }}{%if start_time%}&start_time={{start_time}}&end_time={{end_time}}{% endif %}">
+    下一页
+</a>
+{% endif%}
+{{ day_perform_record.number }} / {{ day_perform_record.paginator.num_pages }}
+<a href="?page={{ day_perform_record.paginator.num_pages }}{%if start_time%}&start_time={{start_time}}&end_time={{end_time}}{% endif %}">尾页</a>
+</p>
+{% endif %}

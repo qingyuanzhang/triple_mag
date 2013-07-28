@@ -1,0 +1,33 @@
+{% load i18n admin_static %}
+{% load url from future %}
+
+
+<table>
+	<tr>
+		<td>卖出者编号</td>
+    	<td>卖出者姓名</td>
+    	<td>卖出数量</td>
+        <td>单价</td>
+        <td>进入卖出池时间</td>
+        <td><a onclick="my_stock_sell_reocrd()">{{choose}}</a></td>
+    </tr>
+    
+    {% for DirectSellingPoll in direct_selling_poll %}
+    <tr>
+    	<td>
+        	{{DirectSellingPoll.user_from.number}}
+        </td>
+    	<td>
+        	{{DirectSellingPoll.user_from.name}}
+        </td>
+        <td>{{DirectSellingPoll.amount}}</td>
+        <td>{{DirectSellingPoll.value}}</td>
+        <td>{{DirectSellingPoll.time}}</td>
+        
+        <td>
+            <li><a href="{%url 'direct_stock_buy' %}?sp_id={{DirectSellingPoll.id}}&amount={{DirectSellingPoll.amount}}">购买</a></li>
+        </td>
+    </tr>
+    {% endfor %}
+    
+</table>

@@ -1,0 +1,270 @@
+{% extends "member/member.html"%}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+{% block content%}
+
+<div class="content-w100">
+<div class="content-h100">
+    <a href="{%url 'member_details'%}"><h1 class="selected">会员信息查看和修改</h1></a>
+
+    <a href="{%url 'member_bonus_center'%}"><h1 class="notselected">奖金记录</h1></a>
+
+    <a href="{%url 'money_withdraw'%}"><h1 class="notselected">提现和转帐</h1></a>
+<div class="clear"></div>
+
+<div class="content-1of1-wrapper">
+
+    <div class="content-1of3"> <a href="javascript:history.back(-1)" class="float-right">返回上一页</a>
+
+        <h1> 个人信息修改申请</h1>
+
+        <form id="modify-info-appl-form" action="." method="POST">
+
+            {% csrf_token %}
+
+            <p>{{has_exit}}</p>
+
+            <p>
+
+                <label>昵称:</label>
+
+                <span>{{UserBasic.name}}</span>
+
+                <input type="checkbox" value="修改" class="change">
+
+            </p>
+
+            <div class="to-modify" style="display: none; ">
+
+                <p>
+
+                    <label value="name">新的昵称</label>
+
+                    {{form.name}} </p>
+
+            </div>
+
+            <p>
+
+                <label>开户银行:</label>
+
+                <span>{{UserBasic.bank_name}}</span>
+
+                <input type="checkbox" value="修改" class="change" id="bank_name_check">
+
+            </p>
+
+            <div class="to-modify" style="display: none; ">
+
+                <p>
+
+                    <label>新开户银行</label>
+
+                    <select name="bank_name_list" id="id_bank_name_list">
+
+                    <option value="NongHang">中国农业银行</option>
+
+                    <option value="GongHang">中国工商银行</option>
+
+                    <option value="ZhongHang">中国银行</option>
+
+                    <option value="JianHang">中国建设银行</option>
+
+                    <option value="MinSheng">中国民生银行</option>
+
+                    <option value="YouZheng">中国邮政储蓄</option>
+
+                    <option value="JiaoTong">交通银行</option>
+
+                    <option value="ZhaoShang">招商银行 </option>
+
+                    </select></p>
+
+            </div>
+
+                    <div class="hidden">
+
+                    {{form.bank_name}} 
+
+                    </div>
+
+            <p>
+
+                <label>开户姓名:</label>
+
+                <span>{{UserBasic.bank_account_name}}</span>
+
+                <input type="checkbox" value="修改" class="change">
+
+            </p>
+
+            <div class="to-modify" style="display: none; ">
+
+                <p>
+
+                    <label>新开户姓名</label>
+
+                    {{form.bank_account_name}} </p>
+
+            </div>
+
+            <p>
+
+                <label>开户银行账号:</label>
+
+                <span>{{UserBasic.bank_account_id}}</span>
+
+                <input type="checkbox" value="修改" class="change">
+
+            </p>
+
+            <div class="to-modify" style="display: none; ">
+
+                <p>
+
+                    <label>新银行帐号</label>
+
+                    {{form.bank_account_id}} </p>
+
+            </div>
+
+            <p>
+
+                <label>身份证号码:</label>
+
+                <span>{{UserBasic.id_card_number}}</span>
+
+                <input type="checkbox" value="修改"class="change" >
+
+            </p>
+
+            <div class="to-modify" style="display: none; ">
+
+                <p>
+
+                    <label>新身份证号</label>
+
+                    {{form.id_card_num}} </p>
+
+            </div>
+
+            {% if form.password_2nd.errors%}
+
+            <div class="to-modify"> {{form.password_2nd.errors}} </div>
+
+            {% endif %}
+
+            <p>
+
+                <label>二级密码</label>
+
+                {{form.password_2nd}}</p>
+
+            <input id="submit-the-form" type="submit" class="need_appl" value="申请提交" onclick="changeInfo()">
+
+        </form>
+
+    </div>
+
+</div>
+
+
+</div>
+</div>
+
+
+
+<script src="/static/js/validations.js"></script> 
+
+<script type="text/javascript">
+
+    $(".change").bind('click',function(){
+
+        _this = $(this).parent().next()
+
+        if($(this).attr('checked') == 'checked')
+
+            _this.fadeIn()
+
+            
+
+        else{
+
+                _this.children().children().first().next().val("")
+
+                _this.fadeOut()
+
+            }
+
+    })
+
+    
+
+    function changeInfo(){
+
+        if($("#bank_name_check").attr("checked")=='checked'){
+
+            $("#id_bank_name").val($("#id_bank_name_list").find("option:selected").text())
+
+        }
+
+    }
+
+    
+
+	$("#submit-the-form").bind('click',function(){
+
+		var inputs = $('#modify-info-appl-form div:visible input').validator({
+
+			message: '<span></span>',
+
+			position: 'center right',
+
+			inputEvent: 'blur' ,
+
+			lang: 'cn' ,
+
+			offset: [0, 20]
+
+		});
+
+		if( !inputs.data("validator").checkValidity() || $(":checkbox[checked=checked]").length == 0 
+
+ )
+
+		{
+
+			return false ;
+
+		}
+
+	});
+
+
+
+/*
+
+	$("#modify-info-appl-form div[style!='display:none'] input").validator({
+
+		message: '<span></span>',
+
+		position: 'center right',
+
+		inputEvent: 'change' ,
+
+		lang: 'cn' ,
+
+		offset: [0, 20]
+
+	});*/
+
+
+
+
+
+</script> 
+
+{% endblock %} 

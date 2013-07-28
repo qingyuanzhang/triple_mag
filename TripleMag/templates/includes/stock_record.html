@@ -1,0 +1,66 @@
+{% load i18n admin_static %}
+{% load url from future %}
+<a href="javascript:history.back(-1)">返回上一页</a>
+{% if not selling_record %}
+<h1>没有卖出记录</h1>
+{% else %}
+<h1>卖出记录</h1>
+<table>
+    <tr>
+    {% if user.is_superuser or user.first_name == "finance" %}
+    <td>卖股者编号</td>
+    <td>卖股者姓名</td>
+    <td>买股者编号</td>
+    <td>买股者姓名</td>
+    {% endif %}
+    <td>交易数量</td>
+    <td>交易单价</td>
+    <td>交易总价</td>
+    <td>成交时间</td>
+    <td title="其中包括提现税等">扣除费用</td>
+    <td>回购</td>
+    <td>返给上级</td>
+    <td>最后所得</td>
+    </tr>
+    {% for SellingRecord in selling_record %}
+    <tr>
+    {% if user.is_superuser or user.first_name == "finance" %}
+    <td><a href=?user_number={{SellingRecord.seller.number}}>{{SellingRecord.seller.number}}</a></td>
+    <td>{{SellingRecord.seller.name}}</td>
+    <td><a href=?user_number={{SellingRecord.buyer.number }}>{{SellingRecord.buyer.number }}</a></td>
+    <td>{{SellingRecord.buyer.name }}</td>
+    {% endif %}
+    <td>{{SellingRecord.amount}}</td>
+    <td>{{SellingRecord.value}}</td>
+    <td>{{SellingRecord.sum_price}}</td>
+    <td>{{SellingRecord.time|date:"Y.m.d"}}</td>
+    <td>{{SellingRecord.tax}}</td>
+    <td>{{SellingRecord.repo}}</td>
+    <td>{{SellingRecord.ex_return}}</td>
+    <td>{{SellingRecord.gain}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+<P>
+<a href="?page=1">首页</a>
+{% if selling_record.has_previous %}
+
+<a class="page_next" id = "page_up" href="?page={{ selling_record.previous_page_number }}">
+    上一页
+</a>
+{% endif %}
+{% if selling_record.has_next %}
+<a class="page_next" id = "page_down" href="?page={{ selling_record.next_page_number}}">
+    下一页
+</a>
+{% endif%}
+{{ selling_record.number }} / {{ selling_record.paginator.num_pages }}
+<a href="?page={{ selling_record.paginator.num_pages }}">尾页</a>
+</P>
+{% if user.is_superuser or user.first_name == "finance" %}
+<a class="blue button" href="{%url 'out_put_csv'%}">股票售出记录导出</a>
+
+{% endif%}
+
+

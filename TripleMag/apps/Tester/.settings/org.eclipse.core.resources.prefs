@@ -1,0 +1,7 @@
+eclipse.preferences.version=1
+encoding//mall/models.py=utf8
+encoding//management/models.py=utf8
+encoding//member/models.py=utf8
+encoding//money/models.py=utf8
+encoding//stock/models.py=utf8
+encoding//store/models.py=utf8

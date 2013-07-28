@@ -1,0 +1,12 @@
+
+
+<h1>报单账户充值</h1>
+<form action="." method="POST">
+{%csrf_token%}
+<p><label>报单账户余额</label>
+<label>{{UserBasic.store_order}}</label></p>
+<p><label>现金账户余额</label>
+<label>{{UserBasic.cash}}</label></p>
+<p>{{form.amount}}<input type="submit" value="充值"></p>
+</form>
+

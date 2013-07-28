@@ -1,0 +1,23 @@
+{% extends "stock/base.html"%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block title %}
+股票交易记录
+{% endblock %}
+{% block content%}
+<div class="content-w100">
+<div class="content-h100">
+<h1 class="selected">股票交易记录</h1>
+<div class="content-1of1-wrapper">
+<div class ="content-1of3"> 
+    <a class="red button" href="{%url 'stock_income_record'%}">股票来源记录</a>
+    <a class="blue button" href="{%url 'stock_stock_record'%}">股票售出记录</a>
+    <a class="green button" href="{%url 'stock_stock_bonus'%}">股票奖金记录</a>
+    {% include include_template %}
+</div>
+</div>
+<div class="clear"></div></div>
+</div>
+
+{% endblock %}
+

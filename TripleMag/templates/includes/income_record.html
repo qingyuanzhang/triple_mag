@@ -1,0 +1,44 @@
+{% load i18n admin_static %}
+{% load url from future %}
+{% if not income_record %}
+<h1>没有来源记录</h1>
+{% else %}
+<h1>股票来源记录</h1>
+<table>
+    <tr>
+    <td>编号</td>
+    <td>姓名</td>
+    <td>股票来源类型</td>
+    <td>数量</td>
+    <td>时间</td>
+    </tr>
+    {% for IncomeReocrd in income_record %}
+    <tr>
+    <td>{{IncomeReocrd.to_user.number}}</td>
+    <td>{{IncomeReocrd.to_user.name}}</td>
+    <td>{{IncomeReocrd.get_type_display}}</td>
+    <td>{{IncomeReocrd.amount}}</td>
+    <td>{{IncomeReocrd.time|date:"Y.m.d"}}</td>
+    </tr>
+    {% endfor %}
+</table>
+<P>
+<a href="?page=1">首页</a>
+{% if income_record.has_previous %}
+
+<a class="page_next" id = "page_up" href="?page={{ income_record.previous_page_number }}">
+    上一页 {{ income_record.previous_page_number }}
+</a>
+{% endif %}
+{% if income_record.has_next %}
+<a class="page_next" id = "page_down" href="?page={{ income_record.next_page_number}}">
+    下一页
+</a>
+{% endif%}
+{{ income_record.number }} / {{ income_record.paginator.num_pages }}
+<a href="?page={{ income_record.paginator.num_pages }}">尾页</a>
+</P>
+{% endif %}
+{% if user.is_superuser or user.first_name == "finance" %}
+<a class="blue button" href="{%url 'out_put_csv'%}">股票来源记录导出</a>
+{%endif%}

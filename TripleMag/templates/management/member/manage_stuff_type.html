@@ -1,0 +1,108 @@
+{% extends 'management/base.html' %}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+
+
+{% block content-main %}
+
+
+
+        <a href="{%url 'manage_stuff_type'%}"><img src="/static/img/manage_stuff_type.jpg"></a> <a  href="{%url 'manage_stuff'%}"> <img src="/static/img/manage_stuff.jpg"> </a> <a  href="{%url 'add_stuff_type' %}"> <img src="/static/img/manage_add_stuff_type.jpg"> </a> <a href="{%url 'add_stuff'%}"> <img src="/static/img/manage_add_stuff.jpg">　</a> <a href="{%url 'manage_store_order_records'%}"><img src="/static/img/manage_order_list.jpg"></a>
+
+        <div class="clear"></div>
+
+<div class="content-1of3">
+
+ {%include include_template%}
+ </div>
+
+<script type="text/javascript">
+
+function del_stuff_type(stuff_type_id, _this){
+
+    del_tr = $(_this).parent().parent() ;
+
+    $.getJSON("{%url 'del_stuff_type' %}",{"stuff_type_id":stuff_type_id},function(data){
+
+        if(data == '1'){
+
+            alert("删除成功")
+
+            del_tr.remove() ;
+
+			location.reload() ;
+
+        }
+
+        else{
+
+            alert("操作失败")
+
+        }
+
+    })
+
+}
+
+function change_stuff_type(stuff_type_id){
+
+    $(".content-1of3").load("{%url 'change_stuff_type'%}?stuff_type_id="+stuff_type_id)
+
+}
+
+function del_stuff(stuff_id, _this){
+
+    del_tr = $(_this).parent().parent() ;
+
+    $.getJSON("{%url 'del_stuff' %}",{"stuff_id":stuff_id},function(data){
+
+        if(data == '1'){
+
+            alert("删除成功")
+
+            del_tr.remove()
+
+			location.reload() ;
+
+        }
+
+        else{
+
+            alert("操作失败")
+
+        }
+
+    }) ;
+
+}
+
+
+
+function change_stuff(stuff_id){
+
+    $(".content-1of3").load("{%url 'change_stuff'%}?stuff_id="+stuff_id)
+
+}
+
+
+
+var triggers = $(".modalInput").overlay({
+
+});
+
+/*
+
+function be_sure()
+
+{
+
+	if (  )
+
+}*/
+
+</script> 
+
+{% endblock %} 

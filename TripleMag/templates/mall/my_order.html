@@ -1,0 +1,441 @@
+{% extends "mall/login-base.html" %}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+{% block main-block %} 
+
+<!--content start--> 
+
+
+
+{% if not user.is_superuser and not user.first_name = "finance"%}
+
+<style type="text/css">
+.content-h100{
+    border: 1px solid #468FD3;
+}
+</style>
+
+<div class="triangle">
+
+</div>
+
+<div class="triangle-info"> 个人业绩
+
+    <em>
+
+    	{{mall_single_score}}
+
+    </em>
+
+    <span>
+
+    	<em title="累积积分">
+
+        	{{mall_team_score}}
+
+        </em>
+
+        {% if not is_summit %}
+
+            {{level_name}}
+
+        {% else %}
+
+            同级部门
+
+        {% endif %}
+
+    </span>
+
+</div>
+
+
+
+
+
+<div style="position: absolute; top: 250px; background-color: #FFEFD5; left: 20px; padding: 0 1em;">
+
+	<p><label class="label-header">利润</label><label>{{gain_rate}}</label></p>
+
+	<p><label class="label-header">最少个人业绩</label><label>{{threshold_value}}</label></p>
+
+</div>
+
+{% endif %}
+
+<div class="center-product-list">
+
+    <h1> {%if user.is_superuser or user.first_name = "finance"%}
+
+        订单管理
+
+        {% else %}
+
+        {{user.username}}的全部订单
+
+        {% endif %} </h1>
+
+    {% for order in contacts.object_list %}
+
+    <div class="product-list-line">
+
+        <dl>
+
+            <h2>＃{{order.id}}
+
+                <label></label>
+
+                下单日期：{{order.order_data}}
+
+                <label></label>
+
+                <br />联系人：{{order.contactor_name}}<label></label>电话：{{order.contactor_phone}}<label></label>
+
+                <br />收货地址:{{order.address.province}}{{order.address.city}}{{order.address.area}}{{order.address.street}}</h2>
+
+            {% if user.is_superuser or user.first_name = "finance" %}
+
+            <a href="{%url 'management_member_detail' %}?user_number={{order.user.number}}">
+
+            <h2>
+
+            <label class="label-header">购买者姓名</label>{{order.user.name}}
+
+            <label></label><label class="label-header">购买者编号</label>{{order.user.number}}
+
+            </h2>
+
+            </a>
+
+            {% endif %}
+
+            {% for Product in order.lineitem%}
+
+            <dt> <a href="/mall/product/{{Product.product.name}}" title="{{Product.product.name}}" target="_blank"> <img src="/{{Product.product.image_url}}">
+
+                <h3>{{Product.product.name}}{%if Product.color%}{{Product.color}}{%endif%}{%if Product.size%}{{Product.size}}{%endif%}</h3>
+
+                </a>
+
+            </dt>
+
+            <dd> 单价<span class="color-alt-red block-one-cont price">{{Product.price}}</span></span> </dd>
+
+            <dd> 数量<span class="color-em-red block-one-cont quantity">{{Product.quantity}}</span> </dd>
+
+            <dd> 总计<span class="color-em-red block-one-cont sum_price"></span> </dd>
+
+            <dd>订单状态 <span class="color-em-purple">{{order.get_status_display}}</span>
+
+
+
+            {% if order.status == "wait" %}
+
+                {%if user.is_superuser or user.first_name = "finance"%}
+
+                	<p>　</p><p><a class="modalInput orange button" rel="#pw2_confirm" href="{%url 'order_management'%}?order_id={{order.id}}&order_status={{order.status}}">发货</a>
+
+                	 <div class="modal" id="pw2_confirm">
+
+            <form id="confirm_form" action="{%url 'order_management'%}?order_id={{order.id}}&order_status={{order.status}}" method="POST" >
+
+                {% csrf_token %}
+
+                
+
+                <p><span>快递名称</span><input type="input" name="dlivery_way" /></p>
+
+                <p><span>快递编号</span><input type="input" name="dlivery_number" /></p>
+
+                <!-- yes/no buttons -->
+
+                <p>
+
+                    <input type="submit" value="确认" />
+
+                    <input type="button" class="close" value="取消" />
+
+                </p>
+
+            </form>
+
+        </div>
+
+        <script>
+
+			var triggers = $(".modalInput").overlay({
+			});
+
+			
+
+			$.tools.validator.fn("#form-transfer [name=amount]", {"cn":'您的现金账户余额不足。'} , function (input, value){
+
+				return parseFloat("{{UserBasic.cash}}") >= value ;
+
+			});
+
+			
+
+			/*
+
+			$("form#confirm_form").submit(function(e) {
+
+				if ( parseFloat("{{UserBasic.store_cash}}") < parseFloat( $("{{sum_price}}")) )
+
+				{
+
+					alert( "对不起，您的余额不足，请充值！" ) ;
+
+					triggers.eq(1).overlay().close();
+
+				}
+
+				//$(this).submit() ;
+
+				return true ;
+
+			});
+
+			*/
+
+		</script> 
+
+                    </p><p>　</p><p>
+
+<!--                    <a class="black button" href="{%url 'order_management'%}?choice='cancle'">拒绝</a></p>-->
+
+                {% else %}
+
+                <p>　</p><p>
+<a class="red button" href="{%url 'cancle_order'%}?order_id={{order.id}}">取消订单</a>
+
+                </p>
+
+                {% endif %}
+
+                
+
+            {% endif %}
+
+
+
+
+
+            {% if order.status == "sent" %}
+
+                {%if not user.is_superuser and not user.first_name = "finance" %}
+
+                <p>　</p><p>
+
+                	<a class="red button" href="{%url 'order_management'%}?order_id={{order.id}}&order_status={{order.status}}">确认收货</a>
+
+                </p>
+
+                {% endif %}
+
+            {% endif %}
+
+            
+
+            {% if order.status == "finish" %}
+
+            	{%if not user.is_superuser and not user.first_name = "finance"%}
+
+                    {%if not Product.evalue_num %}
+
+                        <p>　</p><p>
+
+                        <a class="white button modalInput" rel="#comment_{{Product.id}}_{{Product.product.id}}">
+
+                            评价
+
+                        </a>
+
+                        </p>
+
+                    {% else %}
+
+                        <p>　</p><p>　</p>
+
+                        <a class="eval" title="<h3>{{Product.evalue_num}}星</h3><p>{{Product.evaluation}}</p>">我的评价</a> 
+
+<!--|<a class="modalInput" rel="#comment_{{order.id}}_{{Product.product.id}}">修改</a>-->
+
+                    {% endif %}
+
+                    <div class="modal" id="comment_{{Product.id}}_{{Product.product.id}}">
+
+                        <h3>要评价的商品</h3>
+
+                        <h1>{{Product.product.name}}</h1>
+
+                        <a href="/mall/product/{{Product.product.name}}" title="{{Product.product.name}}" target="_blank"> <img src="/{{Product.product.image_url}}" width="140px" /></a>
+
+                        <p>
+
+                        	评星
+
+                            <select name="{{Product.id}}">
+
+                            	<option value="5">5星</option>
+
+                                <option value="4">4星</option>
+
+                                <option value="3">3星</option>
+
+                                <option value="2">2星</option>
+
+                            	<option value="1">1星</option>
+
+                            </select>
+
+                        </p>
+
+                        <p>
+
+                        	评价
+
+                            <textarea name="{{Product.id}}" maxlength="300"></textarea>
+
+                        </p>
+
+                    	<input type="button" class="close" value="评价" onclick="comment({{Product.id}})" />
+
+                    	<input type="button" class="close" value="取消" />
+
+
+
+                    </div>
+
+                {% else %}
+
+                    {%if Product.evalue_num %}
+
+                        <p>　</p><p>　</p>
+
+                        <a class="eval" title="<h3>{{Product.evalue_num}}星</h3><p>{{Product.evaluation}}</p>">他的评价</a>
+
+                    {% endif %}
+
+                {% endif %}
+
+            {% endif %}
+
+            </dd>
+
+            <div class="clear"></div>
+
+            {% endfor%}
+
+            <p>总赠股<span>{{order.bonus_stocks}}</span>，总积分<span>{{order.grades}}</span>
+
+                <label></label>
+
+                {%if order.transport_ways%}
+
+                <span>快递名称:{{order.dlivery_way}}</span><span>快递编号:{{order.dlivery_number}}</span>
+
+                {%endif%}
+
+                <label>订单总计</label>
+
+                <span id="sum_price">￥{{order.sum_price}}</span>
+
+            </p>
+
+            {% if order.is_money_transfer %}
+
+            	<p><label class="label-header">银行转账付款</label></p>
+
+            {% else %}
+
+            	<p><label class="label-header">√使用余额付款</label></p>
+
+            {% endif %}
+
+            <br />
+
+        </dl>
+
+    </div>
+
+    <br  />
+
+    {% endfor %}
+
+    <div class="turnPageBottom"> 
+
+        <!--<span class="page_start">上一页</span>--> 
+
+        <a href="/mall/user/my_order/?page=1">首页</a>
+
+        {% if contacts.has_previous %} <a class="page_next" id = "page_up"  href="/mall/user/my_order/?page={{ contacts.previous_page_number }}"> 上一页 </a> {% endif %}
+
+        {% if contacts.has_next %} <a class="page_next" id = "page_down" href="/mall/user/my_order/?page={{ contacts.next_page_number }}"> 下一页 </a> {% endif%} 
+
+        <!--<span href="#" class="page_end">下一页</span> --> 
+
+        <span class="pageOp" id = "cur_num" > {{ contacts.number }} / {{ contacts.paginator.num_pages }} </span> 
+
+        <a href="/mall/user/my_order/?page={{ contacts.paginator.num_pages}}">尾页</a>
+
+        
+
+        </div>
+
+    <div class="clear"> </div>
+
+</div>
+
+<!--js start--> 
+
+<script>
+
+$(".sum_price").each(function(){
+
+	var quantity = parseInt( $(this).parent().prev().children().html() ) ;
+
+	var price = parseFloat( $(this).parent().prev().prev().children().html() );
+
+	$(this).html( quantity * price ) ;
+
+	//$(this).father().father().find(".")
+
+});
+
+
+
+$(".eval").tooltip() ;
+
+$(".modalInput").overlay();
+
+
+
+function comment(shop_record_id){
+
+    var evalue_num = $("select[name="+shop_record_id+"]").val()
+
+    var evaluation = $("textarea[name="+shop_record_id+"]").val()
+
+    location.href = "/comment/"+shop_record_id+"/?evalue_num="+evalue_num+"&evaluation="+evaluation;
+
+
+
+
+
+}
+
+
+
+
+
+
+
+</script>
+
+<!--无页面级头部js时, 全局头部js下移--> 
+
+{% endblock %} 

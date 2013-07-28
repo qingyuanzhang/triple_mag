@@ -1,0 +1,199 @@
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+    {% if  selling_poll %}
+
+        <h1>卖出池</h1>
+
+    <table>
+
+    	<tr>
+
+    	    {% if user.is_superuser %}
+
+			<td>卖出者编号</td>
+
+        	<td>卖出者姓名</td>
+
+        	{% endif %}
+
+        	<td>卖出数量</td>
+
+            <td>单价</td>
+
+            <td>进入卖出池时间</td>
+
+            <td>{{choose}}</td>
+
+        </tr>
+
+        {% for SellingPoll in selling_poll %}
+
+        <tr>
+
+            {% if user.is_superuser %}
+
+        	<td>
+
+            	{{SellingPoll.user_from.number}}
+
+            </td>
+
+           
+
+        	<td>
+
+            	{{SellingPoll.user_from.name}}
+
+            </td>
+
+             {% endif %}
+
+            <td>{{SellingPoll.amount}}</td>
+
+            <td>{{SellingPoll.value}}</td>
+
+            <td>
+
+            {{SellingPoll.time}}</td>
+
+            <td>{%if user == SellingPoll.user_from.user %}
+
+                <a href="{%url 'cancle_stock'%}?sp_id={{SellingPoll.id}}" >取消</a>
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        
+
+    </table>
+
+    {% endif %}
+
+    {%if direct_selling_poll %}
+
+    <h1>定向卖出池</h1>
+
+    <table>
+
+    	<tr>
+
+
+
+        	<td>卖出数量</td>
+
+            <td>单价</td>
+
+            <td>进入卖出池时间</td>
+
+            <td>目标编号</td>
+
+            <td>{{choose}}</td>
+
+        </tr>
+
+        {% for DirectSellingPoll in direct_selling_poll %}
+
+        <tr>
+
+
+
+            <td>{{DirectSellingPoll.amount}}</td>
+
+            <td>{{DirectSellingPoll.value}}</td>
+
+            <td>
+
+            {{DirectSellingPoll.time}}</td>
+
+            <td>{{DirectSellingPoll.user_to.number}}</td>
+
+            <td>{%if user == DirectSellingPoll.user_from.user %}
+
+                <a href="{%url 'cancle_stock'%}?sp_id={{DirectSellingPoll.id}}" >取消</a>
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        
+
+    </table>
+
+    {% endif %}
+
+    {%if direct_buy_poll%}
+
+    <h1>定向买入池</h1>
+
+    <table>
+
+	    <tr>
+
+		    <td>卖出者编号</td>
+
+        	<td>卖出者姓名</td>
+
+        	<td>卖出数量</td>
+
+            <td>单价</td>
+
+            <td>进入卖出池时间</td>
+
+            <td><a onclick="my_stock_sell_reocrd()">{{choose}}</a></td>
+
+        </tr>
+
+        
+
+        {% for DirectBuyPoll in direct_buy_poll %}
+
+        <tr>
+
+        	<td>
+
+            	{{DirectBuyPoll.user_from.number}}
+
+            </td>
+
+        	<td>
+
+            	{{DirectBuyPoll.user_from.name}}
+
+            </td>
+
+            <td>{{DirectBuyPoll.amount}}</td>
+
+            <td>{{DirectBuyPoll.value}}</td>
+
+            <td>{{DirectBuyPoll.time}}</td>
+
+            
+
+            <td>
+
+                <li><a href="{%url 'direct_stock_buy' %}?sp_id={{DirectBuyPoll.id}}&amount={{DirectBuyPoll.amount}}">购买</a></li>
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+        
+
+    </table>
+
+    {% endif %}
+
+

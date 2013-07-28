@@ -1,0 +1,15 @@
+{% extends 'management/base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+
+{% block main %}
+    <form id="signup_form" method="post" action="." >
+        {% csrf_token %}
+        <fieldset>
+            {{ form.as_table }}
+        </fieldset>
+        <div class="actions">
+            <input type="submit" class="btn primary" value="添加会员">
+        </div>
+    </form>
+{% endblock %}

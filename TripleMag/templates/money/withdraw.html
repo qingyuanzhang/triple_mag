@@ -1,0 +1,70 @@
+<form action="." method="POST" id="withdraw_form">
+{% csrf_token %} 
+<h1>提现申请</h1>
+{%if error%}
+<div class="to-modify">
+{{error}}
+</div>
+{% endif %}
+<input class="red button float-right" type="submit" value="申请" >
+<p>
+	<label class="label-header">现金账户余额</label>
+    <label>{{UserBasic.cash}}元</label>
+</p>
+<p>
+    <label class="float-left label-header">提现金额<span id="sum"></span></label>
+<input type="range" id="id_amount" min="200" step="100" value="200" name="amount">
+    <div class="clear"></div>
+</p>
+{% if form.password_2nd.errors%}
+<div class="to-modify">
+{{form.password_2nd.errors}}
+</div>
+{% endif %}
+<p>
+    <label class="label-header">二级密码</label>
+    {{form.password_2nd}}
+</p>
+<div style="display:none" id="password">
+
+</div>
+</form>
+<script src="/static/js/validations.js"></script>
+<script>
+	var theLeft = (Math.floor(parseFloat("{{UserBasic.cash}}")/50)) * 50 ;
+	theLeft = theLeft > 100 ?  theLeft : 100 ;
+	$("#id_amount:range").rangeinput({
+		max: theLeft
+	}) ;
+	
+	$.tools.validator.fn("#withdraw_form [name=amount]", {"cn":'您的现金账户余额不足。'} , function (input, value)
+	{
+		return parseFloat("{{UserBasic.cash}}") >= value ;
+	});
+	
+	$("#withdraw_form").validator({
+		message: '<span></span>',
+		position: 'center right',
+		inputEvent: 'change' ,
+		lang: 'cn' ,
+		offset: [0, 20]
+	});
+</script>
+<script type="text/javascript">
+/*
+$("#withdraw_form").submit(function(){
+    
+    if($("#id_password_2nd").val()==""){
+        return false
+    
+})
+
+$("#multiples").bind('blur',function(){
+    $("#password").fadeIn()
+    _sum = parseInt($("#multiples").val())*50
+    $("#sum").html(_sum)
+    $("#id_amount").val(_sum)
+})*/
+</script>
+
+

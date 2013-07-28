@@ -1,0 +1,33 @@
+
+{% load i18n admin_static %}
+{% load url from future %}
+<div class="content-1of1-wrapper">
+<div class="content-1of3">
+    <script type='text/javascript' src='https://www.google.com/jsapi'></script>
+    <script type='text/javascript'>
+      google.load('visualization', '1', {packages:['orgchart']});
+      google.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Name');
+        data.addColumn('string', 'Manager');
+        data.addColumn('string', 'ToolTip');
+        data.addRows({{chart_data|safe}});
+        var chart = new google.visualization.OrgChart(document.getElementById('chart_div'));
+        chart.draw(data, {allowHtml:true});
+      }
+    </script>
+{%if user.is_superuser%}
+<a class="float-right" href="{% url 'management_search_member' %}">回到列表</a>
+{%endif%}
+<h1 title="{%if user.is_superuser%}向上一代，向下三代{%else%}自己的三代接点人关系{%endif%}">{{request.session.contactor_name}}的{%if user.is_superuser%}四{%else%}三{%endif%}代接点人关系</h1>
+{%if user.is_superuser%}
+<p>输入会员编号<input type="text" id="user_number"><input type="button" value="查询" onclick="contactor_list()"></p>
+{% endif %}
+{%if chart_data%}
+<div id='chart_div'></div>
+{% else %}
+<p>没有接点人</p>
+{% endif %}
+</div>
+</div>

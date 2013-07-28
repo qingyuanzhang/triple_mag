@@ -1,0 +1,29 @@
+{% extends "management/base.html"%}
+{% block title %}
+会员和报单中心管理
+{% endblock %}
+
+{% block left %}
+    <ul>
+        <li><a href="{%url 'management_add_member' %}">添加会员</a></li>
+        <li>查看会员列表</li>
+        <li>现金/报单账户冲值</li>
+        <li>报单中心申请列表</li>
+        <li>查看节点人示意图</li>
+        <li>查看报单中心列表</li>
+        <li>体现登记表</li>
+        <li>汇款帐号查看</li>
+        <li>查看所有订货记录</li>
+        <li>修改货物类型</li>
+        <li>货物详情</li>
+        <li>修改货物属性</li>
+        <li>产品销售奖金结算</li>
+        <li>产品销售奖金发放</li>
+    </ul>
+    <ul>
+        <li><a href="/management/add_product/">添加商品</a></li>
+    </ul>
+{% endblock %}
+{% block h1 %}
+会员和报单中心管理
+{% endblock %}

@@ -1,0 +1,93 @@
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+
+
+    {%if not UserBasic.can_devide %}
+
+    	<div class="dec-money-alt" title="<h3>{{UserBasic.stock_hold_0devide|add:UserBasic.stock_hold_1devide|add:UserBasic.stock_hold_2devide}}股</h3>您的股票不能再享受拆股。">
+
+    {% else %}
+
+    	<div class="dec-money-alt" title="<h3>{{UserBasic.stock_hold_0devide|add:UserBasic.stock_hold_1devide|add:UserBasic.stock_hold_2devide}}股</h3>可以享受两次拆股的股票数量:<b>{{UserBasic.stock_hold_0devide}}</b><br />可以享受一次拆股的股票数量:<b>{{UserBasic.stock_hold_1devide}}</b><br />不能享受拆股的股票数量:<b>{{UserBasic.stock_hold_2devide}}</b>">
+
+    {% endif %}
+
+    	<h4>股票总量</h4>
+
+        <p><span id="sum-stock">{{UserBasic.stock_hold_0devide|add:UserBasic.stock_hold_1devide|add:UserBasic.stock_hold_2devide}}</span>股</p>
+
+    </div>
+
+
+
+    <div class="dec-money-alt">
+
+        <h4>现金账户余额</h4>
+
+        <p>{{UserBasic.cash}}元</p>
+
+    </div>
+
+    <div class="dec-money-alt">
+
+        <h4>股票重复消费账户</h4>
+
+        <p>{{UserBasic.stock_repeat}}元</p>
+
+    </div>
+
+    <div class="dec-money-alt">
+
+        <h4>股票回购账户</h4>
+
+        <p>{{UserBasic.stock_rebuy}}元</p>
+
+    </div>
+
+    <div class="dec-money">
+
+        <h4 class="alt-color-pink">可购股票总额</h4>
+
+        <p class="alt-color-pink"><span id="sum-money">{{UserBasic.sum}}</span>元</p>
+
+    </div>
+
+    
+
+    {% if UserBasic.is_blocked %}
+
+    <label>
+
+        已被冻结
+
+    </label>
+
+    {% else %}
+
+
+
+    {% endif %}
+
+
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+    setInterval("selling_poll()",5000); 
+
+});
+
+
+
+function selling_poll(){
+
+    $('#selling_poll').load("{% url 'get_selling_poll' %}");
+
+}
+
+</script>
+
+

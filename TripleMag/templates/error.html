@@ -1,0 +1,23 @@
+{% extends base %}
+{% block content %}
+<div class="content-1of1-wrapper">
+<div class="content-1of3">
+<h1>{{error}}</h1>
+<h1>{{error_name}}</h1>
+<p>{{error_detail}}</p>
+<p>
+{{warning_1}}
+</p>
+<p>
+{{warning_2}}
+</p>
+<p>
+{{warning_3}}
+</p>
+</div>
+</div>
+{% endblock %}
+{% block main-block%}
+<h1>{{error}}</h1>
+{% endblock %}
+

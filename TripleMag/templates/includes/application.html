@@ -1,0 +1,286 @@
+ {% load i18n admin_static %}
+{% load url from future %}
+<div class="content-1of1-wrapper">
+    <div class="content-1of3">
+    	<h1>会员申请报单中心列表</h1>
+        <div>
+            <h2>会员申请报单中心列表</h2>
+            {% if not user_appl %}
+            没有申请
+            {% else %}
+            <table>
+                <tr>
+                    <td>申请人编号</td>
+                    <td>申请人姓名</td>
+                    <td>申请时间</td>
+                    <td>申请管理</td>
+                </tr>
+                {% for UserAppl in user_appl %}
+                <tr>
+                    <td>{{UserAppl.user.number}}</td>
+                    <td>{{UserAppl.user.name}}</td>
+                    <td>{{UserAppl.apply_time}}</td>
+                    <td><input type="button" value="开通" onclick="del_appl(this,'{{UserAppl.user.number}}','{{UserAppl.user.name}}')" ></td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %}
+            <div id="deal_appl" style="display:none">
+                <h1> 开通报单中心申请 </h1>
+                <p>
+                    <label>会员编号</label>
+                    <label id='number'></label>
+                </p>
+                <p>
+                    <label>会员姓名</label>
+                    <label id="name"></label>
+                </p>
+                <p>
+                    <label>报单中心类型</label>
+                    <select id="store_style">
+                        <option>社区店</option>
+                        <option>中心店</option>
+                    </select>
+                </p>
+
+                <p>
+                    <label></label>
+                    <input type="submit" value="开通" onclick = "allow('allow')"/>
+                    <input type="submit" value="拒绝" onclick="allow('reject')"/>
+                </p>
+            </div>
+            <script type="text/javascript">
+user_number = ""
+this_tr = ""
+function del_appl(_this,User_Number, user_name){
+    user_number = User_Number
+    this_tr =$(_this).parent()
+    $("#deal_appl").css("display","block")
+    $("#appl").css("display","none")
+    $("#number").html(user_number)
+    $("#name").html(user_name)
+}
+
+function allow(choice){
+    var store_style = $("#store_style").val()
+    $.getJSON("{%url 'management_upgrade'%}?choice="+choice,{"user_number":user_number,"store_style": store_style},function(data){
+        if(data == '1'){
+            alert("操作成功")
+            location.reload() 
+        }
+        else{
+            alert("失败")
+        }
+    })
+}
+
+</script> 
+        </div>
+        <div>
+            <h2>会员提现申请</h2>
+            {% if not withdraw_appl%}
+            没有申请
+            {% else %}
+            <table>
+                <tr>
+                    <td>申请人编号</td>
+                    <td>申请人姓名</td>
+                    <td>申请时间</td>
+                    <td>申请数额</td>
+                    <td>现金账户余额</td>
+                    <td>银行帐号</td>
+                    <td>开户银行</td>
+                    <td>开户人姓名</td>
+                    <td>操作</td>
+                </tr>
+                {% for WithDrawAppl in withdraw_appl %}
+                <tr>
+                    <td>{{WithDrawAppl.user.number}}</td>
+                    <td>{{WithDrawAppl.user.name}}</td>
+                    <td>{{WithDrawAppl.time_start|date:"Y.m.d" }}</td>
+                    <td>{{WithDrawAppl.amount}}</td>
+                    <td>{{WithDrawAppl.user.cash}}</td>
+                    <td>{{WithDrawAppl.user.bank_account_id}}</td>
+                    <td>{{WithDrawAppl.user.bank_name}}</td>
+                    <td>{{WithDrawAppl.user.bank_account_name}}</td>
+                    <td><p>
+                            <input type="submit" value="允许" onclick="deal_withdraw_appl(this,'{{WithDrawAppl.id}}')">
+                            <input type="submit" value="拒绝" onclick="deal_withdraw_appl(this,'{{WithDrawAppl.id}}')">
+                        </p></td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %} 
+<script type="text/javascript">
+    function deal_withdraw_appl(_this,withdraw_id){
+        choice = $(_this).val()
+        $.getJSON("{%url 'deal_withdraw_appl' %}",{'choice': choice,'withdraw_id': withdraw_id},function(data){
+            if(data == '1'){
+                alert("操作成功")
+                location.reload() 
+            }
+            else{
+                alert("操作失败")
+            }
+        })
+    }
+</script> 
+        </div>
+        
+        <div>
+        	<h2>商城用户升级申请</h2>
+            {% if not memmin_upgrade_appl%}
+            	没有申请
+            {% else %}
+            <table>
+            	<tr>
+                    <td>申请人编号</td>
+                    <td>申请人姓名</td>
+                    <td>申请时间</td>
+                    <td>身份证号码</td>
+                    <td>银行帐号</td>
+                    <td>开户银行</td>
+                    <td>开户人姓名</td>
+                    <td>操作</td>
+                </tr>
+                {% for one_appl in memmin_upgrade_appl %}
+                <tr>
+                	<td>
+                    	{{one_appl.id}}
+                    </td>
+                	<td>
+                    	{{one_appl.user.name}}
+                    </td>
+                	<td>
+                    	{{one_appl.time}}
+                    </td>
+                	<td>
+                    	{{one_appl.id_card_number}}
+                    </td>
+                	<td>
+                    	{{one_appl.bank_account_id}}
+                    </td>
+                	<td>
+                    	{{one_appl.bank_account_name}}
+                    </td>
+                	<td>
+                    	{{one_appl.bank_name}}
+                    </td>
+                	<td>
+                        <a href="{%url 'deal_memmin_upgrade_appl'%}?choice=allow&appl_id={{one_appl.id}}">
+
+                        允许
+
+                        </a>
+                        |
+
+                         <a clas="" href="{%url 'deal_memmin_upgrade_appl'%}?choice=reject&appl_id={{one_appl.id}}">
+
+                        拒绝
+
+                        </a>
+                    </td>
+                </tr>	
+                {% endfor %}
+            </table>
+            {% endif %}
+        </div>
+        <div>
+            <h2>会员信息修改申请</h2>
+            {% if not user_modify_record %}
+            没有申请
+            {% else %}
+            <table>
+                <tr>
+                    <td>用户编号</td>
+                    <td>用户姓名</td>
+                    <td>申请时间</td>
+                    <td>姓名修改</td>
+                    <td>身份证号修改</td>
+                    <td>银行修改</td>
+                    <td>银行卡号修改</td>
+                    
+                    <td>户名修改</td>
+                    <td>申请状态</td>
+                </tr>
+                {% for UserModifyRecord in user_modify_record %}
+                <tr>
+                    <td>{{ UserModifyRecord.user.number }}</td>
+                    <td>{{ UserModifyRecord.user.name }}</td>
+                    <td>{{ UserModifyRecord.time }}</td>
+                    {% if not UserModifyRecord.name %}
+                    <td>无修改</td>
+                    {% else %}
+                    <td>{{UserModifyRecord.name}}</td>
+                    {% endif %}
+                    {%if not UserModifyRecord.id_card_num%}
+                    <td>无修改</td>
+                    {% else %}
+                    <td>{{UserModifyRecord.id_card_num}}</td>
+                    {% endif %}
+                    {% if not UserModifyRecord.bank_name %}
+                    <td>无修改</td>
+                    {% else %}
+                    <td>{{UserModifyRecord.bank_name}}</td>
+                    {% endif %}
+                    
+                    {% if not UserModifyRecord.bank_account_id %}
+                    <td>无修改</td>
+                    {% else %}
+                    <td>{{UserModifyRecord.bank_account_id}}</td>
+                    {% endif %}
+                    
+                    {% if UserModifyRecord.bank_account_name  %}
+                    <td>{{UserModifyRecord.bank_account_name}}</td>
+                    {% else %}
+                    <td>无修改</td>
+                    {% endif %}
+                    <td> {% if UserModifyRecord.state == "wait" %}
+                        <li>
+                            <input type="submit" value="开通" onclick="change_info_allow(this,'{{UserModifyRecord.id}}')">
+                        </li>
+                        <li>
+                            <input type="submit" value="拒绝" onclick="change_info_reject(this,'{{UserModifyRecord.id}}')">
+                        </li>
+                        {% endif %}
+                        {% if UserModifyRecord.state == "sure"%}
+                        已经允许
+                        {% endif%}
+                        {% if UserModifyRecord.state == "deny"%}
+                        已经拒绝
+                        {% endif%} </td>
+                </tr>
+                {% endfor %}
+            </table>
+            {% endif %} 
+<script type="text/javascript">
+    function change_info_allow(_this,record_id){
+        $.getJSON("/management/del_appl/",{"record_id":record_id,"choice":"allow"},function(data){
+            if(data == '1')
+            {
+                alert("操作成功")
+                location.reload() 
+            }
+            else{
+                alert("操作失败")
+            }
+        }
+        )
+    }
+    function change_info_reject(_this,record_id){
+        $.getJSON("/management/del_appl/",{"record_id": record_id,"choice":"reject"},function(data){
+            if(data == '1')
+            {
+                alert("操作成功")
+                location.reload() 
+            }
+            else{
+                alert("操作失败")
+            }
+        }
+        )
+    }
+</script> 
+        </div>
+    </div>
+</div>

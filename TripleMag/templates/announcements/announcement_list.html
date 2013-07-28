@@ -1,0 +1,43 @@
+{% load i18n admin_static %}
+{% load url from future %}
+
+<div class="results">
+    <table id="result_list">
+            <tr>
+                <td scope="col" class="sortable">
+                            标题
+                </td>
+                {%if user.is_superuser %}
+                <td scope="col" class="sortable">
+                            发布时间
+                </td>
+                <td scope="col" class="sortable">
+                            操作
+                </td>
+                {%endif%}
+            </tr>
+            {% for Announcement in announcements%}
+                <tr class="row1">
+                    <td>
+                        <a onclick="announcement_deatil('{{Announcement.id}}')">
+                            {{Announcement.title}}
+                        </a>
+                    </td>
+                    {%if user.is_superuser %}
+                    <td class="nowrap">
+                        {{Announcement.creation_date}}
+                    </td>
+<!--                   	<td class="nowrap">
+                        {{Announcement.creator}}
+                    </td>-->
+                    <td>
+                        <a href="{%url 'manage_announcement'%}?choice=change&p_id={{Announcement.id}}" class="green button">修改</a>
+                        <a onclick="javascript:if(!confirm('确认删除？')){return false}"  href="{%url 'manage_announcement'%}?choice=del&p_id={{Announcement.id}}" class="red button">删除</a>
+                    </td>
+                    {%endif%}
+                </tr>
+            {% endfor %}
+    </table>
+</div>
+
+

@@ -1,0 +1,48 @@
+
+{% load i18n admin_static %}
+{% load url from future %}
+<div class="content-2of3-wrapper">
+<div class ="content-1of3"> 
+<p><a href="javascript:history.back(-1)">返回上一页</a></p>
+
+{%if not Counters %}
+没有奖金记录
+{% else %}
+
+<ul>
+{% for Counter in Counters %}
+<li><a href="javascript:void(0)" onclick="to_counter('?counter={{Counter.counter}}')">第{{Counter.counter}}期</a></li>
+{% endfor %}
+</ul>
+<p>
+{% if Counters.has_previous %}
+<a class="page_next" id = "page_up"  href="?page={{ Counters.previous_page_number }}">
+                上一页
+</a>
+{% endif %}
+{% if Counters.has_next %}
+<a class="page_next" id = "page_down" href="?page={{ Counters.next_page_number }}">
+    下一页
+</a>
+{% endif%}
+{{ Counters.number }} / {{ Counters.paginator.num_pages }}
+</P>
+{% endif %}
+</div>
+</div>
+<div class="content-1of3-wrapper">
+<div class ="content-1of3" id="counter_detail"> 
+{%include include_template%}
+</div>
+</div>
+<script type="text/javascript">
+    function page_up(goto_url){
+        $("#counter_detail").load(goto_url)
+    }
+    function page_down(goto_url){
+        $("#counter_detail").load(goto_url)
+    }
+    function to_counter(goto_url){
+        $("#counter_detail").load(goto_url)
+    }
+</script>

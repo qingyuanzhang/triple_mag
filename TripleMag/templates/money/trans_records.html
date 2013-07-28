@@ -1,0 +1,81 @@
+
+<a href="javascript:history.back(-1)">返回上一页</a>
+     {% if not cash_trans_out_records %}
+    <h1>没有转出记录</h1>
+    {% else %}
+    <h1>所有转出记录</h1>
+    {% if user.is_superuser or user.first_name == "finance" %}
+    {%include 'search_by_date.html'%}
+    {% endif %}
+    <table>
+    	<tr>
+        	<td>转出金额</td>
+        	<td>转账时间</td>
+            <td>转出人编号</td>
+            <td>转出人姓名</td>
+            <td>转到人编号</td>
+            <td>转到人姓名</td>
+        </tr>
+        
+        {% for CashTransOutRecords in cash_trans_out_records %}
+        <tr>
+        	<td>{{CashTransOutRecords.amount}}</td>
+        	<td>{{CashTransOutRecords.time}}</td>
+        	<td>
+           {{CashTransOutRecords.user_from.number}}
+            </td>
+        	<td>
+            	{{CashTransOutRecords.user_from.name}}
+            </td>
+        	<td>
+            	{{CashTransOutRecords.user_to.number}}
+            </td>
+        	<td>
+            {{CashTransOutRecords.user_to.name}}
+            </td>
+        </tr>
+        {% endfor %}
+        
+    </table>
+    {% endif %}
+
+    
+    {% if not cash_trans_in_records%}
+    <h1>没有转入记录</h1>
+    {% else %}
+    <h1>所有转入记录</h1>
+    <table>
+
+    	<tr>
+        	<td>转入金额</td>
+        	<td>转账时间</td>
+            <td>转入人编号</td>
+            <td>转入人姓名</td>
+            <td>转到人编号</td>
+            <td>转到人姓名</td>
+        </tr>
+        
+        
+        {% for CashTransInRecords in cash_trans_in_records %}
+        <tr>
+        	<td>{{CashTransInRecords.amount}}</td>
+        	<td>{{CashTransInRecords.time}}</td>
+        	<td>
+            	{{CashTransInRecords.user_from.number}}
+            </td>
+        	<td>
+    {{CashTransInRecords.user_from.name}}
+            </td>
+        	<td>
+            	{{CashTransInRecords.user_to.number}}
+            </td>
+        	<td>
+         {{CashTransInRecords.user_to.name}}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endif %}
+
+
+

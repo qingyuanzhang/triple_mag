@@ -1,0 +1,68 @@
+{% load i18n admin_static %}
+{% load url from future %}
+{%if not BonusRecords %}
+没有奖金记录 
+{%else%}
+<a href="javascript:history.back(-1)">返回上一页</a>
+{% if user.is_superuser %}
+<a class="red button" href="{%url 'out_put_csv'%}">导出商城奖金</a>
+<h1>第{{counter}}期商城奖金记录</h1>
+
+{%else%}
+<h1>商城奖金记录</h1>
+{% endif %}
+<table>
+<tr>
+{% if user.is_superuser %}
+<td>用户编号</td>
+<td>用户姓名</td>
+{% else %}
+<td>期数</td>
+{% endif %}
+<td>消费奖</td>
+<td>平级奖</td>
+<td>推荐奖</td>
+<td>代理奖</td>
+<td>纳税</td>
+<td>到账总计</td>
+<td>发放时间</td>
+</tr>
+{% for BonusRecord in BonusRecords%}
+<tr>
+{% if user.is_superuser %}
+<td><a href="{%url 'management_member_detail'%}?user_number={{BonusRecord.user.number}}">{{BonusRecord.user.number}}</a></td>
+<td>{{BonusRecord.user.name}}</td>
+{% else %}
+<td>{{BonusRecord.counter}}</td>
+{% endif %}
+<td>{{BonusRecord.bonus_retail}}</td>
+<td>{{BonusRecord.bonus_summit}}</td>
+<td>{{BonusRecord.bonus_recommend}}</td>
+<td>{{BonusRecord.bonus_proxy}}</td>
+<td>-{{BonusRecord.tax}}</td>
+<td>{{BonusRecord.total}}</td>
+<td>{{BonusRecord.time|date:"Y.m.d"}}</td>
+</tr>
+{% endfor %}
+</table>
+<P>
+<a href="javascript:void(0)" onclick="page_up('?counter={{counter}}&page=1')">首页</a>
+{% if BonusRecords.has_previous %}
+
+
+<a class="page_next" id = "page_up"  onclick="page_up('?counter={{counter}}&page={{ BonusRecords.previous_page_number }}')">
+    上一页 
+</a>
+
+{% endif %}
+{% if BonusRecords.has_next %}
+<a class="page_next" id = "page_down" onclick="page_down('?counter={{counter}}&page={{ BonusRecords.next_page_number }}')">
+    下一页
+</a>
+{% endif%}
+{{ BonusRecords.number }} / {{ BonusRecords.paginator.num_pages }}
+<a href="javascript:void(0)" onclick="page_up('?counter={{counter}}&page={{ BonusRecords.paginator.num_pages }}')">尾页</a>
+</P>
+{%endif%}
+    
+

@@ -1,0 +1,15 @@
+
+{% load i18n admin_static %}
+{% load url from future %}
+<!--<a href="javascript:history.back(-1)">返回上一页</a>-->
+<h1>添加货物</h1>
+<form enctype="multipart/form-data" id="signup_form" method="post" action="{%url 'add_stuff' %}" >
+    {% csrf_token %}
+        <div>
+        {{ form.as_p }}
+        </div>
+    <div class="actions">
+        <input type="submit" class="btn primary" value="添加货物">
+    </div>
+</form>
+  

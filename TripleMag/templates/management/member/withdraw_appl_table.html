@@ -1,0 +1,22 @@
+{% if not withdraw_appl%}
+<tr>没有申请</tr>
+{% else %}
+{% for WithDrawAppl in withdraw_appl %}
+<tr>
+    <td>{{WithDrawAppl.user.number}}</td>
+    <td>{{WithDrawAppl.user.name}}</td>
+    <td>{{WithDrawAppl.time_start}}</td>
+    <td>{{WithDrawAppl.amount}}</td>
+    <td>{{WithDrawAppl.user.cash}}</td>
+    
+    <td>{{WithDrawAppl.user.bank_account_id}}</td>
+    <td>{{WithDrawAppl.user.bank_name}}</td>
+    <td>{{WithDrawAppl.user.bank_account_name}}</td>
+    <td><p><input type="submit" value="允许" onclick="deal_withdraw_appl(this,'{{WithDrawAppl.id}}')">
+        <input type="submit" value="拒绝" onclick="deal_withdraw_appl(this,'{{WithDrawAppl.id}}')"></p>
+    </td>
+</tr>
+
+{% endfor %}
+{% endif %}
+

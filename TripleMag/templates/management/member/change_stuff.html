@@ -1,0 +1,57 @@
+{% load i18n admin_static %}
+{% load url from future %}
+<h1>修改货物属性</h1>
+<form enctype="multipart/form-data" id="signup_form" method="post" action="{%url 'change_stuff' %}">
+{% csrf_token %}
+
+        <p><label for="id_type">
+            货物类型ID
+        </label>
+        <select name="type" id="id_type">
+            {% for StuffType in stuff_type %}
+            <option value={{StuffType.id}}>
+                {{StuffType.name}}
+            </option>
+            {% endfor %}
+        </select>
+        </p>
+        <p>
+        <label for="id_name">
+            货物名称
+        </label>
+        <input id="id_name" type="text" name="name" maxlength="50" value={{Stuff.name}}>
+        </p>
+        <p>
+        <label for="id_total_num">
+            总量:
+        </label>
+        
+        <input type="text" name="total_num" value="100" id="id_total_num" value={{Stuf.total_num}}>
+        </p>
+        <p>
+        <label for="id_detail">
+            货物简介:
+        </label>
+        <textarea id="id_detail" rows="10" cols="40" name="detail" >{{Stuff.detail}}
+        </textarea>
+        </p>
+        <p>
+        <label for="id_price_single">
+            货物单价:
+        </label>
+        <input type="text" name="price_single" id="id_price_single" value={{Stuff.price_single}}>
+        </p>
+        <p>
+        <label for="id_picture">
+            货物图片:
+        </label>
+        {% if Stuff.picture %}
+        	<img src="/{{Stuff.picture.url}}">
+        {% endif %}
+        
+        <input type="file" name="picture" id="id_picture">
+        </p>
+    <div class="actions">
+        <input type="submit" name="change" class="btn primary" value="修改货物">
+    </div>
+</form>

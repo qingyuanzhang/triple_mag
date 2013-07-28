@@ -1,0 +1,15 @@
+{% extends "mall/login-base.html" %}
+{% block main-block %}
+     
+  <div class="ordernav mt10">
+                <div id="flowBar" class="fl step4">
+                </div>
+            </div>
+            <div class="clear">
+            </div>
+            <div id="errorMsgDisplayDiv" style="z-index: 1000; display: none; ">
+            </div>
+<div id="wrapper" class="cartinfo mt10">
+{% include "mall/cart/delivery_buffer_window.html"%}
+</div>
+{% endblock %}

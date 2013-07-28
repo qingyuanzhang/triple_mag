@@ -1,0 +1,41 @@
+
+<form id="add_address_form" action="." method="POST">
+{% csrf_token %}
+<div id="address"></div>
+<p>街道{{form.street}}</p>
+<p>邮编{{form.zip_code}}</p>
+
+<input type="hidden" name="province" id="id_province">
+<input type="hidden" name="city" id="id_city">
+<input type="hidden" name="area" id="id_area">
+<p>
+	<input type="submit" value="增加" onclick="test()" name='add_address'>
+    <input type="button" value="取消" onclick="cancle()" >
+</p>
+</form>
+<script>
+$("#add_address_form").validator({
+	message: '<span></span>',
+	position: 'top center',
+	inputEvent: 'change' ,
+	lang: 'cn' ,
+	offset: [0, 20]
+});
+function test(){
+
+
+    $("#id_province").val($("#address select:eq(0)").val())
+
+    $("#id_city").val($("#address select:eq(1)").val())
+
+    $("#id_area").val($("#address select:eq(2)").val())
+
+
+}
+
+function cancle(){
+
+    $("#add_address").fadeOut()
+
+}
+</script>

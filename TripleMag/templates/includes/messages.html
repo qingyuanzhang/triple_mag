@@ -1,0 +1,81 @@
+{% load i18n admin_static %}
+{% load url from future %}
+
+<h1>留言列表</h1>
+<form action="." method="POST">
+{%csrf_token%}
+{%if not Messages%}
+    没有留言
+{% else %}
+
+{% for Message in Messages %}
+<div>
+    <p></p>
+    <ul>
+        <li>
+            <label class="label-header">留言人</label>{{Message.user.name}}
+        </li>
+        <li>
+        <div class="to-modify"><p><label class="label-header">内容</label>
+        {{Message.content|safe}}</p>
+        <p><label></label>
+        <span class="float-right">{{Message.publish_time}}
+        {%if user.is_superuser%}
+        <a onclick="javascript:if(!confirm('确认删除？')){return false}" href="{%url 'message_del'%}?message={{Message.id}}">删除</a>
+        {% endif %}
+        </span>
+        
+        </p>
+        </div>
+        {% if not Message.reply and user.is_superuser %}
+        <div class ="reply to-modify">
+        <p>
+        <label class="label-header">回复</label>
+            <textarea class="reply_content" name="reply"></textarea>
+            <input type="hidden" value="{{Message.id}}" name="message_id">
+            <input type="submit" value="提交回复" name="to_reply">
+        </p>
+        </div>
+        {% else %}
+        {%if not Message.reply %}
+        管理员没有回复
+        {%else%}
+        <div>
+        <div class="to-modify">
+        	<p><label class="label-header">管理员回复</label>
+            {{Message.reply|safe}}</p>
+            <p><label>　</label>
+            	<span class="float-right">{{Message.reply_time}}</span>
+            </p> 
+        </div>
+        </div>
+        {%endif%}
+        {% endif %}
+        </li>
+    </ul>
+</div>
+<br />
+{% endfor %}
+{% endif %}
+{%if not user.is_superuser%}
+    <div>
+        <ul>
+        <li>
+            <div>
+                {{form.content}}
+            </div>
+        </li>
+        <li><span><input type="submit" value="留言" name="leave_message"></span></li>
+        </ul>
+    </div>
+
+{% endif %}
+</form>
+<script type="text/javascript">
+function reply(_this, m_id){
+    content = $(_this).prev().val()
+    replay_div = $(_this).parent().parent()
+    replay_div.load("{%url 'admin_reply' %}?content="+content+"&m_id="+m_id)
+}
+</script>
+

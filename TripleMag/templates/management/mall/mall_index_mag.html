@@ -1,0 +1,195 @@
+{% extends "management/base.html"%}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+
+
+{% block title%}
+
+商城管理
+
+{% endblock %}
+
+
+
+{% block content-main %}
+
+<div class="content-1of3-wrapper">
+
+<div class ="content-1of3">
+
+    <h1>查看目录</h1>
+
+	{%for ct1 in request.session.category%}
+
+	<p>
+
+    <a class="black button" href="/mall/channel/{{ct1.name}}">{{ct1}}</a>
+
+    <a onclick="javascript:if(!confirm('确认删除？')){return false}" href="/mall_management/delete_category_1st/{{ct1.id}}/" id="{{ct1}}" title="请保持一级目录为10个，否则主页框架将被打乱。">删除 </a><a class="modalInput" rel="#change_category_div" onclick="get_category('ct1','{{ct1.id}}',this)">
+
+                           修改
+
+                        </a>
+
+</p>
+
+        {% for ct2 in ct1.ct2 %}
+
+        <p><label></label>
+
+            <a class="gray button" href="/mall/channel/{{ct1.name}}/#{{ct2.name}}">{{ct2.name}}</a>
+
+            <a onclick="javascript:if(!confirm('确认删除？')){return false}" href="/mall_management/delete_category_2nd/{{ct2.id}}/" id="{{ct2.name}}" >删除 </a>
+
+            <a class="modalInput" rel="#change_category_div" onclick="get_category('ct2','{{ct2.id}}',this)">
+
+                           修改
+
+                        </a>
+
+        </p>
+
+        	{%for ct3 in ct2.ct3%}
+
+            <p><label></label><label></label>
+
+                <a class="white button" href="/mall/channel/{{ct1.name}}/#{{ct3.name}}">{{ct3.name}}</a>
+
+            	<a onclick="javascript:if(!confirm('确认删除？')){return false}" href="/mall_management/delete_category_3rd/{{ct3.id}}/" id="{{ct3.name}}">删除 </a>
+
+            	<a class="modalInput" rel="#change_category_div" onclick="get_category('ct3','{{ct3.id}}',this)">
+
+                           修改
+
+                        </a>
+
+            </p>
+
+            {% endfor %}
+
+        {% endfor %}
+
+    {% endfor %}
+
+</div>
+
+<div class="modal" id="change_category_div">
+
+	<input type="input" id="new_category">
+
+	<input type="button" class="close" value="修改"  onclick="change_category()"/>
+
+
+
+    <input type="button" class="close" value="取消" />
+
+	</div>
+
+</div>
+
+<div class="content-2of3-wrapper">
+
+    <div class ="content-1of3">
+
+        <h1>添加目录</h1>
+
+        <p><a rel="#new_1st" class="modalInput black button" >添加一级目录</a></p>
+
+        <div id="new_1st" class="modal">
+
+            <form action="." method="POST" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                {{CategoryForm.as_p}}
+
+                <input type="submit" value="增加" name="category">
+
+                <input type="button" value="取消" class="close" />
+
+            </form>
+
+        </div>
+
+        <p><a rel="#new_2nd" class="modalInput gray button" >添加二级目录</a></p>
+
+        <div id="new_2nd" class="modal">
+
+            <form action="." method="POST" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                {{CategoryFirstForm.as_p}}
+
+                <input type="submit" value="增加" name="category_first">
+
+                <input type="button" value="取消" class="close" />
+
+            </form>
+
+        </div>
+
+        <p><a rel="#new_3rd" class="modalInput white button" >添加三级目录</a></p>
+
+        <div id="new_3rd" class="modal">
+
+            <form action="." method="POST" enctype="multipart/form-data">
+
+                {% csrf_token %}
+
+                {{CategorySecondForm.as_p}}
+
+                <input type="submit" value="增加" name="category_second">
+
+                <input type="button" value="取消" class="close" />
+
+            </form>
+
+    	</div>
+
+    <script>
+
+    	var triggers = $(".modalInput").overlay();
+
+    	var category = ""
+
+    	var c_id = ""
+    	var new_category = ""
+    	var change_category_a = ""
+
+    	function get_category (category,c_id,change_category_a){
+
+    	    
+
+    	    this.category = category;
+    	    this.c_id = c_id;
+    	    this.change_category_a = $(change_category_a).prev().prev();
+
+    	}
+    	
+    	function change_category(){
+    	    this.new_category = $("#new_category").val();
+    	    $.getJSON("/category_change/",{"category":category,"c_id":c_id,"new_category":new_category},
+    	    function(data){
+    	        if (data == '1')
+    	        {
+    	        
+    	            change_category_a.html(new_category);
+    	        }else{
+    	            alert("修改失败");
+    	        }
+    	        
+    	    })
+    	}
+    	
+
+    </script>
+
+    </div>
+
+</div>
+
+{% endblock %}

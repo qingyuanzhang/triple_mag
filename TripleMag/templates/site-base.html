@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "
+
+http://www.w3.org/TR/html4/loose.dtd">
+
+<!DOCTYPE html>
+
+
+
+<html>
+
+    <head>
+
+    <meta name="人太易康网上商城" http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    
+    
+
+    <!--[if IE 6]>
+
+    <script src="/static/js/DD_belatedPNG_0.0.8a.js"></script>
+
+    <script>
+
+      /* EXAMPLE */
+
+      DD_belatedPNG.fix('img,ol#nav-2 li,.page-banner-main , .page-banner-store , .page-banner-userinfo, .page-banner-stock , .page-banner-bank ,.page-banner-finance ,.page-banner-management');
+
+      
+
+      /* string argument can be any CSS selector */
+
+      /* .png_bg example is unnecessary */
+
+      /* change it to what suits you! */
+
+    </script>
+
+    <![endif]-->
+
+    <script type="text/javascript" src="/static/js/jquery.js"></script>
+
+    <script src="/static/js/jquery.tools.min.js"></script>
+
+    <style type="text/css">
+
+    #mall-header{
+
+        background: url("/static/img/member_header_bg.jpg");
+
+        background-size: 90%;
+
+        background-position: center;
+
+        background-repeat: no-repeat;
+
+    }
+
+
+
+    #mall-logo{
+
+        visibility: hidden;
+
+    }
+
+
+
+    #header-row a
+
+    {
+
+        width: 300px;
+
+        height: 64px;
+
+        margin: 30px 21px;
+
+        display: block;
+
+    }
+
+
+
+    #mall-nav
+
+    {
+
+        background-color: #468DDC;
+
+    }
+
+    a{
+
+        color:#468DDC;
+
+    }
+
+
+
+    #mall-nav a{
+
+    color: white;
+
+    font-size: 16px;
+
+    margin-right: 1em;
+
+    line-height: 36px;
+
+    }
+
+</style>
+
+    <title>
+
+    {% block title %}{% endblock %}
+
+    </title>
+
+    {% load url from future %}
+
+    {% load i18n %}
+
+    {% block resource %}
+
+
+
+    {% endblock %}
+
+    {%block my-resource%}
+
+    {%endblock%}
+
+    </head>
+
+    <body>
+
+
+
+        <!--Container-->
+
+        <div id="container">
+
+            <!--Header-->
+
+            <div id="mall-banner">
+
+                <div class="wrap"> 
+
+                {%include 'mall/top_bar.html'%}
+
+                </div>
+
+            </div>
+
+
+
+        <div id="mall-header">
+
+            <div class="wrap">
+
+            
+
+             <div id="header-row"><a href="{%url 'rt_index'%}"><img id="mall-logo" src="/static/img/header.png"></a></div>
+
+            <div class="clear"></div>
+
+            </div>
+
+        </div>
+
+        <div id="mall-nav">
+
+            <div class="wrap">
+
+            
+
+            
+
+
+
+            <a href="{%url 'rt_index'%}">|　人太易购</a>
+
+            {%if user.is_superuser%}
+
+
+
+             <a href="">|　管理中心</a>
+
+            {%else %}
+
+            
+
+            
+
+            <a href="{%url 'apps_index'%}">|　我的人太网</a>
+
+            {%if request.session.password_2nd%}
+
+             <a href="{%url 'member_index' %}">|　会员中心</a>
+
+             <a href="{%url 'stock_index'%}">|　股票交易</a>
+
+             {%if request.session.role == "MemMax"%}
+
+
+
+            <a href="{%url 'store_index' %}">| 报单中心</a>
+
+
+
+             {% endif %}
+
+             {% endif %}
+
+            {% endif %}
+
+                {%if not user.is_superuser%}
+
+                <a class="right-icon float-right" href="{%url 'file_download' %}">资料中心</a> 
+
+                {% if not user.first_name = "finance" %}
+
+                <a class="right-icon float-right" href="{%url 'member_messages' %}">留言板</a> 
+
+                {% endif %}
+
+                 <a class="right-icon float-right" href="{%url 'mem_announcements_list' %}">公告</a> 
+
+                {% else %}
+
+                <a class="right-icon float-right" href="{%url 'management_file_list' %}">资料中心</a>
+
+                
+
+                <a class="right-icon float-right" href="{%url 'admin_messages' %}">留言板</a>
+
+                
+
+                <a class="right-icon float-right"href="{%url 'announcements_list' %}">公告</a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div id="main-block">
+
+             <div class="wrap">
+
+             
+
+             
+
+                         
+
+            {%block content%}
+
+
+
+            {%endblock%}
+
+           
+
+              
+
+
+
+      
+
+        </div>
+
+        </div>
+
+        <div class="clear"></div>             
+
+           
+
+        </div>
+
+        <div>{%include "footer.html"%}</div>
+
+        <!--END Container-->
+
+        <script>
+
+		$("[title]").tooltip({
+
+			opacity: 0.8 ,
+
+			position: 'top center' ,
+
+			offset: [0, -15]
+
+		});
+
+        </script>
+
+    </body>
+
+</html>
+
+

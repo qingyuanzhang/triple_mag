@@ -1,0 +1,169 @@
+{% load i18n admin_static %}
+{% load url from future %}
+<style type="text/css"> 
+<!-- 
+ul {margin:0;padding:0;border:0;} 
+body { 
+font-family: arial, 宋体, serif; 
+font-size:12px; 
+} 
+#nav { 
+line-height: 24px; list-style-type: none; background:#666; 
+} 
+#nav a { 
+display: block; width: 80px; text-align:center; 
+} 
+#nav a:link { 
+color:#666; text-decoration:none; 
+} 
+#nav a:visited { 
+color:#666;text-decoration:none; 
+} 
+#nav a:hover { 
+color:#FFF;text-decoration:none;font-weight:bold; 
+} 
+#nav li { 
+float: left; width: 80px; background:#CCC; 
+display: inline; list-style: none;
+} 
+#nav li a:hover{ 
+background:#999; 
+} 
+#nav li ul { 
+line-height: 27px; list-style-type: none;text-align:left; 
+left: -999em; width: 180px; position: absolute; 
+} 
+#nav li ul li{ 
+float: left; width: 180px; 
+background: #F6F6F6; 
+} 
+#nav li ul a{ wedisplay: block; width: 156px;text-align:left;padding-left:24px; 
+} 
+#nav li ul a:link { 
+color:#666; text-decoration:none; 
+} 
+#nav li ul a:visited { 
+color:#666;text-decoration:none; 
+} 
+#nav li ul a:hover { 
+color:#F3F3F3;text-decoration:none;font-weight:normal; 
+background:#C00; 
+} 
+#nav li:hover ul { 
+left: auto; 
+} 
+#nav li.sfhover ul { 
+left: auto; 
+} 
+#content { 
+clear: left; 
+} 
+--> 
+</style> 
+<script type=text/javascript> 
+<!--//--><![CDATA[//><!-- 
+function menuFix() { 
+var sfEls = document.getElementById("nav").getElementsByTagName("li"); 
+for (var i=0; i<sfEls.length; i++) { 
+sfEls[i].onmouseover=function() { 
+this.className+=(this.className.length>0? " ": "") + "sfhover"; 
+} 
+sfEls[i].onMouseDown=function() { 
+this.className+=(this.className.length>0? " ": "") + "sfhover"; 
+} 
+sfEls[i].onMouseUp=function() { 
+this.className+=(this.className.length>0? " ": "") + "sfhover"; 
+} 
+sfEls[i].onmouseout=function() { 
+this.className=this.className.replace(new RegExp("( ?|^)sfhover\\b"), 
+""); 
+} 
+} 
+} 
+window.onload=menuFix; 
+//--><!]]> 
+</script> 
+<table>
+<tr>
+<td>序号</td>
+<td>用户编号</td>
+<td>用户姓名</td>
+<td>三代推荐人查看</td>
+<td>接点人关系查看</td>
+<!--<td>推荐人姓名</td>-->
+<!--<td>接点人编号</td>-->
+<!--<td>接点人姓名</td>-->
+<td>注册时间</td>
+<td>
+<ul id="nav"> 
+<li>{{current_role}}
+<ul> 
+<li><a href="{%url 'management_search_member'%}">所有用户</a> 
+<li><a href="{%url 'management_search_member'%}?role=MemMax">报单中心</a></li>
+<li><a href="{%url 'management_search_member'%}?role=MemMid">会员</a></li>
+<li><a href="{%url 'management_search_member'%}?role=MemMin"> 商城用户</a></li>
+</ul> 
+</li> 
+
+</ul> 
+</td>
+<td>级别</td>
+
+<td>股票除权</td>
+<td>冻结</td>
+<td>操作</td>
+<!--<td>修改</td>-->
+</tr>
+{% for UserInfo in user_info.object_list %}
+
+<tr>
+
+<td>{{ UserInfo.id }}</td>
+<td><a href="{%url 'management_member_detail' %}?user_number={{UserInfo.number}}" >{{ UserInfo.number }}</a></td>
+<td>{{ UserInfo.name }}</td>
+<td><a href="{%url 'management_recommender'%}?user_number={{UserInfo.number}}">推荐人关系</a></td>
+{%if UserInfo.role = "MemMid" %}
+<td><a href="{%url 'contacting_chart'%}?user_id={{UserInfo.id}}">接点人关系</a></td>
+{%elif UserInfo.role = "MemMax" %}
+<td><a href="{%url 'contacting_chart'%}?user_id={{UserInfo.id}}">接点人关系</a></td>
+{%else%}
+<td></td>
+{%endif%}
+<!--<td>{{ UserInfo.recommending_number }}</td>-->
+<!--<td>{{ UserInfo.recommending_name }}</td>-->
+<!--<td>{{ UserInfo.contacting_number }}</td>-->
+<!--<td>{{ UserInfo.contacting_name }}</td>-->
+<td>{{ UserInfo.start_date|date:"Y.m.d" }}</td>
+<td>{{ UserInfo.get_role_display }}</td>
+<td>{{ UserInfo.level }}</td>
+<td>
+{% if UserInfo.is_stock_XR %}
+已被除权
+<!--<input type="submit" value="解除股票除权" name = "stock_0" onclick="change_state(this,'{{ UserInfo.number }}')">-->
+{% else %}
+未被除权
+<!--<input type="submit" value="股票除权" name ="stock_1"  onclick="change_state(this,'{{ UserInfo.number }}')">-->
+{% endif %}
+</td>
+<td>
+{% if UserInfo.is_blocked %}
+已被冻结
+{% else %}
+未被冻结
+{% endif %}
+</td>
+{% if UserInfo.delete_able %}
+<td><a onclick="javascript:if(!confirm('确认删除？')){return false}" href= "{%url 'delete_member'%}?user_number={{UserInfo.number}}">删除</a></td>
+{% else %}
+<td></td>
+{% endif %}
+<!--<td><a href="{%url 'management_change_mem_info' %}?user_number={{UserInfo.number}}">修改</a></td>-->
+</tr>
+
+{% endfor %}
+
+
+
+
+</table>
+

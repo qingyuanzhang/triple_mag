@@ -1,0 +1,88 @@
+{% extends "management/mall/mall_base.html"%}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+{% block title %}
+新商城公告
+{% endblock %}
+
+{% block content-main %}
+
+<div class="content-1of3-wrapper">
+    <div class ="content-1of3">
+    	<h1>新商城公告
+        </h1>
+        {% if Result%}
+        <table>
+        <tr>
+            <td>标题</td>
+            <td>公告内容</td>
+            <td>发布时间</td>
+            <td>操作</td>
+        </tr>
+        {% for notice in Result %}
+        <tr>
+            
+            <td>{{notice.title}}</td>
+            <td title="{{notice.details}}"><a>内容</a></td>
+            <td>{{notice.time|date:"Y.m.d"}}</td>            
+            <td><a onclick="javascript:if(!confirm('确认删除？')){return false}"href="/mall_notice/{{notice.id}}">删除</a> | <a href="{%url 'change_mall_announcement'%}?a_id={{notice.id}}">修改</a></td>
+            
+        </tr>
+        {% endfor %}
+        </table>
+        {% endif %}
+        <form enctype="multipart/form-data" action="{%if change %}{%url 'change_mall_announcement'%}?a_id={{a_id}}{%else%}{%url 'add_mall_notice'%}{%endif%}" method="post" id="announcement_form">
+        {% csrf_token %}
+        <div class="form-row field-title">
+            <div>
+                <label for="id_title" class="required">
+                    标题
+                </label>
+                {{form.title}}
+<!--                <input id="id_title" type="text" class="vTextField"  value="{{title}}" name="title" maxlength="50">-->
+            </div>
+        </div>
+        <div class="form-row field-content">
+            <div>
+                <label for="id_content" class="required">
+                    公告内容
+                </label>
+                {{form.details}}
+<!--        <textarea id="id_content" rows="10" cols="40"  name="details" style="display: block; " aria-hidden="true"></textarea>-->
+            </div>
+        </div>
+        <div class="submit-row">
+            <input type="submit" value="提交" class="default" name="_save">
+        </div>
+        <script type="text/javascript">
+            document.getElementById("id_title").focus();
+        </script>
+        <script type="text/javascript">
+            (function($) {
+                var field;
+            })(django.jQuery);
+        </script>
+		<script type="text/javascript" src="/static/js/tiny_mce.js"></script>
+        <script type="text/javascript">
+        tinyMCE.init({
+            mode : "textareas",
+            theme:	"advanced",
+            language:'zh-cn',
+            plugins : "autolink,lists,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
+        
+        // Theme options
+            theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,fontsizeselect,|,cut,copy,paste,pastetext,pasteword,|,search,replace,|",
+            theme_advanced_buttons2 : "bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,|,insertdate,inserttime,|,forecolor,backcolor" ,
+            'theme_advanced_toolbar_location' : 'top',
+            'theme_advanced_toolbar_align' : 'left'
+        });
+        </script>
+        </form>
+    </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends 'management/base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+
+{% block main %}
+    <form id="signup_form" method="post" action="." >
+        {% csrf_token %}
+        <fieldset>
+            {{ form.as_table }}
+        </fieldset>
+        <div class="actions">
+            <input type="submit" class="btn primary" value="添加会员">
+        </div>
+    </form>
+<script type="text/javascript">
+    $(document).ready(function()
+    {
+        $("#id_recommender").bind("blur",function()
+        {
+            help_text = $(this).next().next()
+            $.getJSON("/get_user_name/", {"user_number":$(this).val()},function (data){
+                        help_text.html(data)
+
+                }
+            )
+        })
+    }
+)
+</script>
+{% endblock %}

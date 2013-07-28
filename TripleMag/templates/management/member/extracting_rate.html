@@ -1,0 +1,78 @@
+{%extends "management/member/base.html"%}
+
+{% load i18n admin_static %}
+{% load url from future %}
+
+{% block content-main %}
+
+{% if user.is_superuser or user.first_name == "finance" %}
+<div class="content-1of1-wrapper">
+    <div class="content-1of3">
+    	<h1>
+        	拨出率统计表
+        </h1>
+        <a class="red button" href="{%url 'extracting_rate'%}">产品销售拨出率</a>
+        <a class="red button" href="{%url 'extracting_rate'%}?bonus_style=C">商城拨出率</a>
+        <a class="blue button" href="{%url 'out_put_csv'%}">导出CSV文件</a>
+        <table>
+        	<tr>
+        	{% if not bonus_style %}
+            	<td>
+                	产品销售业绩
+                </td>
+            	<td>
+                	产品销售总奖金
+                </td>
+            	<td>
+                	产品销售拨出率
+                </td>
+                <td>
+                    开始日期
+                </td>
+                <td>
+                    结束日期
+                </td>
+                <td>
+                    结算发放日期
+                </td>
+            {% else %}
+                <td>
+                	商城业绩
+                </td>
+            	<td>
+                	商城总奖金
+                </td>
+            	<td>
+                	商城拨出率
+                </td>
+<td>
+
+                	日期
+
+                </td>
+            {% endif %}
+            </tr>
+            {% for extract in ExtractingRate %}
+            <tr>
+            {% for i in extract%}
+            	<td>
+            	    {{i}}
+                	{{extract.A_perform}}
+                </td>
+            {% endfor %}
+
+            {% endfor %}
+            </tr>
+        </table>
+        <p> 
+            <a href="?{%if bonus_style%}bonus_style={{bonus_style}}{% endif%}&page=1"> 首页 </a>
+            {% if ExtractingRate.has_previous %} <a class="page_next" id = "page_up"  href="?{%if bonus_style%}bonus_style={{bonus_style}}{% endif%}&page={{ ExtractingRate.previous_page_number }}"> 上一页 </a> {% endif %}
+                {% if ExtractingRate.has_next %} <a class="page_next" id = "page_down" href="?{%if bonus_style%}bonus_style={{bonus_style}}{% endif%}&page={{ ExtractingRate.next_page_number }}"> 下一页 </a> {% endif%}
+                {{ ExtractingRate.number }} / {{ ExtractingRate.paginator.num_pages }} 
+            <a href="?{%if bonus_style%}bonus_style={{bonus_style}}{% endif%}&page={{ ExtractingRate.paginator.num_pages }}"> 尾页 </a>    
+        </P>
+    </div>
+</div>
+
+{% endif %}
+{% endblock %}

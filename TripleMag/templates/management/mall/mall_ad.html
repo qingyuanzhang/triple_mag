@@ -1,0 +1,38 @@
+{% extends "management/mall/mall_base.html"%}
+{% load i18n admin_static %}
+{% load url from future %}
+
+{% block content-main%}
+<div class="content-1of1-wrapper">
+<div class="content-1of3">
+    	<h1>商城推广:{{Result|length}}张图片</h1>
+    	{% if Result%}
+    	<table>
+    	<tr>
+    	    <td>相关<a href="/mall/product/"></a></td>
+    	    <td>推广图片</td>
+    	    <td>操作</td>
+    	</tr>
+    	
+        {% for image in Result %}
+        <tr>
+            <td><a href="/mall/product/{{image.product.name}}">{{image.product.name}}</a></td>
+            <td>
+        	    <a href="" title="<img src='/{{image.image_url.url}}' width='104px' height='52px'/>">图片{{image.id}}</a>　
+        	</td>
+    	    <td><a onclick="javascript:if(!confirm('确认删除？')){return false}" href="/mall_ad/{{image.id}}">删除</a></td>
+        </tr>
+        {% endfor %}
+        </table>
+        {% endif %}
+        <form action="{%url 'add_mall_ad'%}" enctype="multipart/form-data" method="POST">
+        	{% csrf_token %}
+        	{{form.as_p}}
+            <!--使用django自带的select来完成相应功能-->
+            <i>*为保证显示效果，请维持图片的宽高比为2:1，且高不少于104像素，宽不少于208像素</i>
+        	<input type="submit" name="" value="确认上传" />
+        </form>
+</div>
+</div>
+{% endblock %}
+

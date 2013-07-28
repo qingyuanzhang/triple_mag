@@ -1,0 +1,26 @@
+{% extends "management/sys/sys_base.html"%}
+{% block title %}
+资料上传
+{% endblock %}
+{% block content-main%}
+<div class="content-1of3-wrapper">
+<div class ="content-1of3"> 
+<h1>资料上传</h1>
+<form action="." method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+{{form.as_p}}
+<div class="actions">
+<input type="submit" class="btn primary" value="上传资料">
+</div>
+</div>
+</div>
+<div class="content-2of3-wrapper">
+<div class ="content-1of3"> 
+
+{%include "management/sys/sys_right.html"%}
+
+</div>
+</div>
+
+
+{% endblock %}

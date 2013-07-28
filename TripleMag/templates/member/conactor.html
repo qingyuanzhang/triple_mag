@@ -1,0 +1,22 @@
+{% extends 'member/member.html'%}
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+{% block content%}
+<div class="content-w100">
+<div class="content-h100">
+    <a href="{%url 'member_details'%}"><h1 class="selected">会员信息查看和修改</h1></a>
+
+    <a href="{%url 'member_bonus_center'%}"><h1 class="notselected">奖金记录</h1></a>
+
+    <a href="{%url 'money_withdraw'%}"><h1 class="notselected">提现和转帐</h1></a>
+<div class="clear"></div>
+
+
+
+{%include 'includes/conactor.html'%}
+
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'management/base.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block title%}
+会员信息申请 
+{% endblock%}
+{% block main %}
+
+<p>
+<table>
+		<tr>
+		    <td>序号</td>
+		    <td>用户编号</td>
+		    <td>申请时间</td>
+		    <td>姓名修改</td>
+		    <td>银行修改</td>
+		    <td>银行卡号修改</td>
+		    <td>户名修改</td>
+		    <td>申请状态</td>
+		</tr>
+		{% for UserModifyRecord in user_modify_record.object_list %}
+		<tr>
+		<td>{{ UserModifyRecord.id }}</td>
+		<td>{{ UserModifyRecord.user.name }}</td>
+		<td>{{ UserModifyRecord.time|date:"Y.m.d" }}</td>
+		{% if not UserModifyRecord.name %}
+		<td>无修改</td>
+		{% else %}
+		<td>{{UserModifyRecord.name}}</td>
+		{% endif %}
+	    {% if not UserModifyRecord.bank_name %}
+		<td>无修改</td>
+		{% else %}
+		<td>{{UserModifyRecord.bank_name}}</td>
+		{% endif %}
+		
+		{% if not UserModifyRecord.bank_account_id %}
+		<td>无修改</td>
+		{% else %}
+		<td>{{UserModifyRecord.bank_account_id}}</td>
+		{% endif %}
+		
+		{% if not UserModifyRecord.bank_account_name %}
+		<td>无修改</td>
+		{% else %}
+		<td>{{UserModifyRecord.bank_account_name}}</td>
+		{% endif %}
+		<td>
+		{% if UserModifyRecord.state == "wait" %}
+		<li><input type="submit" value="开通" onclick="allow(this,'{{UserModifyRecord.user.number}}')"></li>
+		<li><input type="submit" value="拒绝" onclick="reject(this,'{{UserModifyRecord.user.number}}')"></li>
+		{% endif %}
+		{% if UserModifyRecord.state == "sure"%}
+		已经允许
+		{% endif%}
+		{% if UserModifyRecord.state == "deny"%}
+		已经拒绝
+		{% endif%}
+		</td>
+		{% endif %}
+		</tr>
+		{% endfor %}
+</table>
+</p>
+<script type="text/javascirpt">
+    function allow(_this,user_number){
+        $.getJSON("/management/del_appl/",{"user_number": user_number,"choice":"allow"},function(data){
+            if(data == '1')
+            {
+                alert("操作成功")
+                $(_this).parent().html("已受理")
+            }
+            else{
+                alert("操作失败")
+            }
+        }
+        )
+    }
+    function reject(_this,user_number){
+        $.getJSON("/management/del_appl/",{"user_number": user_number,"choice":"reject"},function(data){
+            if(data == '1')
+            {
+                alert("操作成功")
+                $(_this).parent().html("已受理")
+            }
+            else{
+                alert("操作失败")
+            }
+        }
+        )
+    }
+</script>
+{% endblock %}
+{% block h1%}
+会员信息申请
+{% endblock %}

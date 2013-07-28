@@ -1,0 +1,98 @@
+{% extends 'mall/site-base.html'%}
+
+{% load url from future %}
+{% load i18n %}
+{% block content %}
+<div>
+
+<div id="short-board">
+    <p id="goods-type-chain"> <a href="{%url 'rt_index'%}">首页</a>» <a>搜索</a></p>
+    <div class="float-left" style="padding-left:20px">
+    	<h1>搜索结果</h1>
+        <p style="width: 900px;"><b>
+        <label>品牌</label>
+         <a href="{{brand_url}}">全部</a></b>　 |
+         {% for brand in brands%}
+         <a href="{{brand_url}}&brand={{brand}}">{{brand}}</a></b>　 |
+         {%endfor %}
+        </p>
+        <p style="width: 900px;"><b>
+        <label>价格区间</label>
+        <a href="{{price_url}}">全部</a></b>　|
+        <a href="{{price_url}}&sprice=0&eprice=100">0-100元</a></b>  |
+        <a href="{{price_url}}&sprice=1000&eprice=200">100-200元</a></b>  |
+        <a href="{{price_url}}&sprice=200&eprice=500">200-500元</a></b>  |
+        <a href="{{price_url}}&sprice=500&eprice=1000">500-1000元</a></b>  |
+        <a href="{{price_url}}&sprice=1000&eprice=2000">1000-2000元</a></b>  |
+        <a href="{{price_url}}&sprice=2000&eprice=">2000元以上</a></b>  |
+            </p>
+        <p style="width: 900px;"><b>
+        <label>积分区间</label>
+         <a href="{{pv_url}}">全部</a></b>　|
+        <a href="{{pv_url}}&spv=0&epv=5">0-5</a></b>　|
+        <a href="{{pv_url}}&spv=5&epv=10">5-10</a></b>　|
+        <a href="{{pv_url}}&spv=10&epv=20">10-20</a></b>　|
+        <a href="{{pv_url}}&spv=20&epv=50">20-50</a></b>　|
+        <a href="{{pv_url}}&spv=50&epv=100">50-100</a></b>　|
+        <a href="{{pv_url}}&spv=100&epv=">100以上</a></b>　|
+        </p>
+        <p><b>
+        <label>排序</label>
+            <a href="{{sort_url}}">全部</a></b>　|
+            {%if sort != 'grade*1' %}
+            <a href="{{sort_url}}&sort=grade*1">积分↓</a></b>　|
+            {% else %}
+            <a href="{{sort_url}}&sort=grade*0">积分↑</a></b>　|
+            {% endif %}
+            {%if sort != 'added_time*1' %}
+            <a href="{{sort_url}}&sort=added_time*1">上市时间↓</a></b>　|
+            {% else %}
+            <a href="{{sort_url}}&sort=added_time*0">上市时间↑</a></b>　|
+            {% endif %}
+            
+            {%if sort != 'price_VIP*1' %}
+            <a href="{{sort_url}}&sort=price_VIP*1">价格↓</a></b>　|
+            {% else %}
+            <a href="{{sort_url}}&sort=price_VIP*0">价格↑</a></b>　|
+            {% endif %}
+            </p>
+    </div>
+
+    <div class="long-board display_item">
+
+    <h3>商品搜索结果</h3>
+
+    <ul>
+
+        {% for product in products %}
+
+        <li><a href="/mall/product/{{product.name}}"><span>{{product.name}}<br/>
+
+            <b>会员价￥{{product.price_VIP}}</b>
+
+            {%if product.is_promoted %}
+
+            <b>促销价￥{{product.price_promotions}}</b>
+
+            {% endif %}
+
+            </span> <img src="/{{product.image_url}}"  width="140px" ></a></li>
+
+        {% endfor %}
+
+        <div class="clear"></div>
+
+    </ul>
+
+</div>
+    <script>
+		$("#image_wrap [title]").tooltip({
+			effect : 'fade' ,
+			tipClass : 'p-goods-function' ,
+			position: 'bottom center',
+			offset: [-110, 0]
+		});
+    </script>
+</div>    
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% load i18n admin_static %}
+{% load url from future %}
+<form action="." method="GET">
+{% csrf_token %}
+<p>
+    {%if user.is_superuser or  user.first_name == "finance" %}
+    <input name="start_time" id="id_start_time">
+    <input name="end_time" id="id_end_time">
+    <input type="submit" value="查找">
+    <a class="red button" href="{%url 'out_put_csv'%}">{{out_put_name}}</a>
+{%endif%}
+</p>
+
+</form>
+<link rel="stylesheet" type="text/css" href="/static/css/dateinput.css">
+<script type="text/javascript" src="/static/js/dateinput/jquery.tools.min.js"></script> 
+<script type="text/javascript">
+$.tools.dateinput.localize("cn",  {
+   months:        '1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月',
+   shortMonths:   '1,2,3,4,5,6,7,8,9,10,11,12',
+   days:          '星期天,星期一,星期二,星期三,星期四,星期五,星期六',
+   shortDays:     '七,一,二,三,四,五,六'
+});
+$("#id_start_time,#id_end_time").dateinput({
+	lang:'cn',
+	format: 'yyyy-mm-dd',
+	selectors: true
+	
+});
+
+$("#id_start_time").data("dateinput").change(function() {
+	// we use it's value for the seconds input min option
+	$("#id_end_time").data("dateinput").setMin(this.getValue(), true);
+});
+</script>

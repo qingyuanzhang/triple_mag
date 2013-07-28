@@ -1,0 +1,327 @@
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+<div>
+
+<form id="stock-sell-form" action="{%url 'stock_sell_stock'%}" method="POST">
+
+{% csrf_token %}
+
+	<br id="selling-token" class="hidden" />
+
+    <h2>股票卖出</h2>
+
+    <p>
+
+        <label class="label-header">总价格</label>
+
+        <span id="sum_price" class="now-price">0</span> 元
+
+    </p>
+
+    <p title="你可以向一个人定向售出一些股票，可以成交更大数额。">
+
+        <label class="label-header">定向售出</label>
+
+        <input id="is_direct_sell" type="checkbox" onclick="direct_buy(this)">
+
+    </p>
+
+    <div id="seller" class="hidden">
+
+        <p>
+
+        <label class="label-header">目标编号</label>{{sell_form.n_seller}}<label id="name"></label>
+
+        </p>
+
+        <p>
+
+            <label class="label-header float-left">股票数量</label>
+
+            <!--<input type="text" name="direct_sell_amount" id="id_direct_sell_amount">×{{ValueSetting.P2P_radix}}-->
+
+            <input type="range" name="direct_sell_amount" id="id_direct_sell_amount" 
+
+            min="{{ValueSetting.P2P_radix}}" max="1000000" 
+
+            step="{{ValueSetting.P2P_radix}}" value="{{ValueSetting.P2P_radix}}">
+
+            <div class="clear"></div>
+
+        </p>
+
+        <input type="hidden" name="value_text" value="" id="id_value_text">
+
+    </div>
+
+    
+
+    <div id="amount">
+
+    <p title="数量区间{{ValueSetting.sell_min_amount}}~{{ValueSetting.sell_max_amount}}">
+
+        <label id="pre-stock-amount" class="label-header float-left">股票数量</label>
+
+        <!--{{sell_form.amount}}-->
+
+        <input type="range" name="amount" id="id_amount" min="{{ValueSetting.sell_min_amount}}" max="{{ValueSetting.sell_max_amount}}" step="1000" value="{{ValueSetting.sell_min_amount}}">
+
+        <div class="clear"></div>
+
+    </p>
+
+    
+
+    </div>
+
+    <p title="价格区间{{ValueSetting.stock_value_now}}±{{ValueSetting.stock_value_delta}}">
+
+        <label class="label-header float-left">单价</label>
+
+       <!--{{sell_form.value}}-->
+
+       <input id="id_value" type="range" name="value"  />
+
+        <div class="clear"></div>
+
+    </p>
+
+    {% if sell_form.password_2nd.errors%}
+
+    <div class="to-modify error">
+
+    {{sell_form.password_2nd.errors}}
+
+    </div>
+
+    {% endif %}
+
+    <div id="password_2nd">
+
+        <p>
+
+            <label class="label-header">二级密码</label>
+
+            {{sell_form.password_2nd}}
+
+        </p>
+
+    </div>
+
+    <p><input id="sell-button" type="button" value="出售"></p>
+
+</form>
+
+</div>
+
+<script>
+
+	$(document).ready(function(){
+
+		//$("#pre-stock-amount").append("<input type='range' name='amount' id='id_amount' >") ;
+
+    	$("#stock-sell-form #id_value:range").rangeinput({
+
+			min		: parseFloat('{{ValueSetting.stock_value_min_price}}'),
+
+			max		: parseFloat('{{ValueSetting.stock_value_max_price}}'),
+
+			step	: 0.0001,
+
+			value	: '{{ValueSetting.stock_value_now}}' ,
+
+			precision: '4' 
+
+		});
+
+
+
+		$("#stock-sell-form #id_amount:range").rangeinput() ;
+
+		$("#stock-sell-form #id_direct_sell_amount:range").rangeinput() ;
+
+
+
+		$("#sell-button").bind("click",function()
+
+			{
+
+				$("#stock-sell-form").validator({
+
+					message: '<span></span>',
+
+					position: 'center right',
+
+					inputEvent: 'change' ,
+
+					lang: 'cn' ,
+
+					offset: [0, 20]
+
+				}).submit(
+
+				
+
+				$.post("{%url 'stock_sell_stock'%}",$("#stock-sell-form").serialize(),function(data){
+
+				    alert(data);
+
+				    if (data=="二级密码错误"){
+
+				        return false;
+
+				    }
+
+				    else{
+
+				        location.reload()
+
+				    }
+
+				    
+
+				    },"json")
+
+				
+
+				);
+
+			}
+
+		);
+
+		
+
+		$("#stock-sell-form #sum_price").html( Math.round(
+
+			$("#stock-sell-form #id_amount").val() *
+
+			$("#stock-sell-form #id_value").val()*10000 )/10000
+
+		);
+
+
+
+		$("#stock-buy-form #sum_price").html( Math.round(
+
+			$("#stock-buy-form #id_amount").val() *
+
+			$("#stock-buy-form #id_value").val() *10000)/10000
+
+		);
+
+	});
+
+	$("#stock-sell-form").submit(function(){
+
+	    $("#id_value_text").val($("#id_value").val()) ;
+
+	})
+
+</script>
+
+<script src="/static/js/validations.js"></script>
+
+<script>
+
+	$("body").bind("click",function()
+
+	{
+
+		$(".error").hide() ;
+
+	});
+
+</script> 
+
+<script type="text/javascript">
+
+    function direct_buy(_this){
+
+        if(!_this.checked){
+
+            $("#seller").hide()
+
+            $("#id_n_seller").val("")
+
+            $("#name").html("")
+
+            $("#amount").css("display","block")
+
+        }
+
+        else{
+
+            $("#seller").fadeIn()
+
+            $("#amount").css("display","none")
+
+        }
+
+    }
+
+
+
+    $("#id_n_seller").bind("blur",function()
+
+    {
+
+        $.getJSON("{%url 'get_user_name' %}", {"user_number":$(this).val()},function (data){
+
+                $("#name").text(data)
+
+            }
+
+        )
+
+    })
+
+	
+
+	$(":range").change(function(event, value) {
+
+		//console.info("value changed to", value);
+
+		if( $("#is_direct_sell").attr("checked") )
+
+		{
+
+			$("#stock-sell-form #sum_price").html( Math.round(
+
+				$("#stock-sell-form #id_direct_sell_amount").val() *
+
+				$("#stock-sell-form #id_value").val()*10000 )/10000
+
+			);
+
+		}
+
+		else
+
+		{
+
+			$("#stock-sell-form #sum_price").html( Math.round(
+
+				$("#stock-sell-form #id_amount").val()*
+
+				$("#stock-sell-form #id_value").val()*10000 )/10000
+
+			);
+
+		}
+
+		
+
+		$("#stock-buy-form #sum_price").html( Math.round(
+
+			$("#stock-buy-form #id_amount").val() *
+
+			$("#stock-buy-form #id_value").val()*10000 )/10000
+
+		);
+
+	});
+
+</script>

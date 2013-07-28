@@ -1,0 +1,81 @@
+ {% load i18n admin_static %}
+
+{% load url from future %} 
+{%if user.is_superuser or user.first_name = "finance"%}
+<a class="red button" href="{%url 'out_put_csv'%}">奖金明细导出</a>
+{% if bonus_style == 'a_bonus'%}
+<a class="red button" href="{%url 'management_a_bonus_detail'%}?paid=0">未发放奖金</a>
+<a class="red button" href="{%url 'management_a_bonus_detail'%}?paid=1">已发放奖金</a>
+{%else %}
+<a class="red button" href="{%url 'management_c_bonus_detail'%}?paid=0">未发放奖金</a>
+<a class="red button" href="{%url 'management_c_bonus_detail'%}?paid=1">已发放奖金</a>
+{% endif %}
+{% else %}
+{% if bonus_style == 'a_bonus'%}
+<a class="red button" href="{%url 'member_a_bonus_detail'%}?paid=0">未发放奖金</a>
+<a class="red button" href="{%url 'member_a_bonus_detail'%}?paid=1">已发放奖金</a>
+{%else %}
+<a class="red button" href="{%url 'member_c_bonus_detail'%}?paid=0">未发放奖金</a>
+<a class="red button" href="{%url 'member_c_bonus_detail'%}?paid=1">已发放奖金</a>
+{% endif %}
+
+{% endif %}
+<h1>{{sub_website}}奖金详情</h1>
+<h2>
+{%if not paid%}
+未发放奖金
+{% else %}
+已发放奖金
+{%endif %}
+</h2>
+{%if not BonusDetails%}
+没有奖金记录
+{%else%}
+<table>
+ <tr> {%if user.is_superuser or user.first_name == "finance" %}
+        <td>用户编号</td>
+        <td>用户姓名</td>
+        {% endif %}
+        <td>奖金类型</td>
+        <td>奖金数额</td>
+        <td>触发奖金用户编号</td>
+        <td>触发奖金用户姓名</td>
+        <td>奖金发放时间</td>
+    </tr>
+    {% for BonusDetail in BonusDetails%}
+    <tr>
+ <tr> {%if user.is_superuser or user.first_name == "finance" %}
+                <td>{{BonusDetail.to_user.number}}</td>
+                <td>{{BonusDetail.to_user.name}}</td>
+            {% endif %}
+                <td>{{BonusDetail.get_type_display}}</td>
+                <td>{{BonusDetail.amount}}</td>
+                <td>{{BonusDetail.cause_user.number}}</td>
+                <td>{{BonusDetail.cause_user.name}}</td>
+                {%if BonusDetail.paid%}
+                <td>{{BonusDetail.time|date:"Y.m.d" }}</td>
+                {%else %}
+                <td>--</td>
+                {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{%endif%}
+{%if not paid%}
+<p> 
+<a href="?paid=0&page=1"> 首页 </a>
+{% if BonusDetails.has_previous %} <a class="page_next" id = "page_up"  href="?paid=0&page={{ BonusDetails.previous_page_number }}"> 上一页 </a> {% endif %}
+    {% if BonusDetails.has_next %} <a class="page_next" id = "page_down" href="?paid=0&page={{ BonusDetails.next_page_number }}"> 下一页 </a> {% endif%}
+    {{ BonusDetails.number }} / {{ BonusDetails.paginator.num_pages }} 
+<a href="?paid=0&page={{ BonusDetails.paginator.num_pages }}"> 尾页 </a>    
+</P>
+{% else %}
+<p> 
+<a href="?paid=1&page=1"> 首页 </a>
+{% if BonusDetails.has_previous %} <a class="page_next" id = "page_up"  href="?paid=1&page={{ BonusDetails.previous_page_number }}"> 上一页 </a> {% endif %}
+    {% if BonusDetails.has_next %} <a class="page_next" id = "page_down" href="?paid=1&page={{ BonusDetails.next_page_number }}"> 下一页 </a> {% endif%}
+    {{ BonusDetails.number }} / {{ BonusDetails.paginator.num_pages }} 
+<a href="?paid=1&page={{ BonusDetails.paginator.num_pages }}"> 尾页 </a>       
+</P>
+{%endif %}
+

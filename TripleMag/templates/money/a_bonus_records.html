@@ -1,0 +1,60 @@
+{% extends "money/base.html"%}
+{% block title %}
+我的互转记录
+{% endblock %}
+
+{% block main %}
+<fieldset>
+    <legend>产品销售奖金发放记录表</legend>
+    <p>
+        <label>按结算日期查询</label>
+        <select>
+            {% for BonusTime in bonus%}
+            <option>{{BonusTime.time}}</option>
+            {% endfor %}
+		</select>
+    <p>
+    <table>
+    	<tr>
+        	<td>用户编号</td>
+        	<td>用户姓名</td>
+            <td>销售奖</td>
+            <td>回本奖</td>
+            <td>互助奖</td>
+            <td>纳税</td>
+            <td>重复消费</td>
+            <td>总计到帐金额</td>
+            <td>奖金到帐时间</td>
+            <td>期数</td>
+        </tr>
+        {% if not bonus%}
+        <tr>没有奖金结算</tr>
+        {% else %}
+        {% for Bonus in bonus %}
+        <tr>
+        	<td>{{Bonus.user.number}}<td/>
+        	<td>
+            	<a href="">{{Bonus.user.name}}</a>
+            </td>
+        	<td>
+            	<a href="">{{Bonus.bonus_group}}</a>
+            </td>
+        	<td>
+            	<a href="">{{Bonus.bonus_recost}}</a>
+            </td>
+            <td>{{Bonus.bonus_comhelp}}</td>
+            <td>{{Bonus.tax}}</td>
+            <td>{{Bonus.bonus_repeat}}</td>
+            <td>{{Bonus.total}}</td>
+            <td>{{Bonus.time}}</td>
+            <td>{{Bonus.counter}}</td>
+        </tr>
+        {% endfor %}
+        {% endif %}
+    </table>
+</fieldset>
+
+{% endblock %}
+
+
+

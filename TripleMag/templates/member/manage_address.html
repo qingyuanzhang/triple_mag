@@ -1,0 +1,132 @@
+{% extends 'member/member.html'%}
+
+{%block content%}
+{% load i18n admin_static %}
+
+{% load url from future %}
+<div class="content-w100">
+<div class="content-h100">
+    <a href="{%url 'member_details'%}"><h1 class="selected">会员信息查看和修改</h1></a>
+
+    <a href="{%url 'member_bonus_center'%}"><h1 class="notselected">奖金记录</h1></a>
+
+    <a href="{%url 'money_withdraw'%}"><h1 class="notselected">提现和转帐</h1></a>
+<div class="clear"></div>
+
+
+
+<div class="content-1of1-wrapper">
+
+    <div class="content-1of3"> {% load i18n %}
+
+        {% load url from future %}
+
+        {%if UserAddress %}
+
+        <h1>我的地址</h1>
+
+        <div class="to-modify">{{error}}</div>
+
+        {% for address in UserAddress %}
+
+        <p>收货人:{{address.user.name}}</p>
+
+        <p>收货地址:{{address.province}}省{{address.city}}市{{address.area}}区/县{{address.street}}</p>
+
+        <p>邮政编码:{{address.zip_code}}</p>
+
+<!--        {% if address.is_primary %}<p>√首选地址</p>{% endif %} -->
+
+        <p><a href="{%url 'store_del_address'%}?goto=address&address_id={{address.id}}">删除</a></p>
+
+        {% endfor %}
+
+        <p> {% if UserAddress.has_previous %} <a class="page_next" id = "page_up"  href="?page={{ UserAddress.previous_page_number }}"> 上一页 </a> {% endif %}
+
+            {% if UserAddress.has_next %} <a class="page_next" id = "page_down" href="?page={{ UserAddress.next_page_number }}"> 下一页 </a> {% endif%}
+
+            {{ UserAddress.number }} / {{ UserAddress.paginator.num_pages }}</P>
+
+        {% endif %} 
+
+<script src="/static/js/jquery.provincesCity.js" type="text/javascript"></script>
+
+<script src="/static/js/provincesdata.js" type="text/javascript"></script>
+
+<script src="/static/js/validations.js" type="text/javascript"></script>
+
+<script>  
+
+//调用插件  
+
+$(function(){  
+
+    $("#address").ProvinceCity();  
+
+});  
+
+</script>
+
+        <form id="add_address_form" action="." method="POST">
+
+            {% csrf_token %}
+
+            <h1>增加地址</h1>
+
+            <div id="address">
+
+                <p></p>
+
+            </div>
+
+            <p>
+
+                <label>街道</label>{{UserAddressForm.street}}
+
+            	<label>邮编</label>{{UserAddressForm.zip_code}}
+
+                
+
+            </p>
+
+            <input type="hidden" name="province" id="id_province">
+
+            <input type="hidden" name="city" id="id_city">
+
+            <input type="hidden" name="area" id="id_area">
+
+            <p>
+
+                <input type="submit" value="增加" onclick="test()" name='add_address'>
+
+            </p>
+
+            <script type="text/javascript" src="/static/js/triplemag.js"></script>
+
+            <script>
+
+				$("#add_address_form").validator({
+
+					message: '<span></span>',
+
+					position: 'top center',
+
+					inputEvent: 'change' ,
+
+					lang: 'cn' ,
+
+					offset: [0, 20]
+
+				});
+
+            </script>
+
+        </form>
+
+    </div>
+
+</div>
+</div>
+</div>
+
+{% endblock %} 

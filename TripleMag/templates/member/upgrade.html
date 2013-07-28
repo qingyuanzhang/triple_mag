@@ -1,0 +1,47 @@
+{% extends 'member/member.html'%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block content %}
+
+<div class="content-w100">
+<div class="content-h100">
+    <a href="{%url 'member_details'%}"><h1 class="selected">会员信息查看和修改</h1></a>
+
+    <a href="{%url 'member_bonus_center'%}"><h1 class="notselected">奖金记录</h1></a>
+
+    <a href="{%url 'money_withdraw'%}"><h1 class="notselected">提现和转帐</h1></a>
+<div class="clear"></div>
+<div class="content-1of1-wrapper">
+<div class="content-1of3">
+<a href="javascript:history.back(-1)">返回上一页</a>
+<h1> 报单中心申请 </h1>
+
+
+<fieldset>
+    {%if has_exit %}
+    你已经有申请在处理中
+    {% else %}
+    <legend> 申请表 </legend>
+    <p>
+        <label>会员编号</label>   
+        <label>{{user.username}}</label>		
+    </p>
+	<p>
+    	<label>备注</label>
+        <textarea></textarea>
+    </p>
+	<p>
+	    <form action="." method="POST" >
+	    {% csrf_token %}
+        <label></label>
+        <input type="submit" value="申请"/>
+        </form>
+	</p>
+	{% endif %}
+</fieldset>
+</div>
+</div>
+</div>
+</div>
+
+{% endblock %}

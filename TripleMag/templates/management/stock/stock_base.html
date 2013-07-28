@@ -1,0 +1,754 @@
+{% extends 'management/base.html' %}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+
+{% block my-resource%} 
+
+<script type="text/javascript" src="/static/js/dateinput/jquery.tools.min.js">
+</script>
+<script type="text/javascript" src="/static/js/jsapi"></script>
+
+<script type="text/javascript" charset="utf-8">
+
+  google.load("visualization", "1", {packages:["corechart"]});
+  var ChartData = {{ChartData|safe}}
+
+  function drawChart() {
+
+    $("#chart_div").css("display","block");
+
+    var data = google.visualization.arrayToDataTable(ChartData);
+
+    var options = {
+
+      title: '股票曲线图' 
+
+    };
+
+    var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+    chart.draw(data, options);
+
+  }
+
+</script>
+
+<link rel="stylesheet" type="text/css" href="/static/css/dateinput.css">
+
+{% endblock %}
+
+{% block content%}
+
+<div class="content-w100">
+
+<div class="content-h100">
+
+<a href="{%url 'management_member_index' %}"><h1 class="{%if request.session.subject == 'manage_memeber'%}selected{%else%}notselected{%endif%}">会员与报单中心管理</h1></a>
+
+<a href="{%url 'manage_stuff_type'%}"><h1 class="{%if request.session.subject == 'manage_stuff'%}selected{%else%}notselected{%endif%}">货物管理</h1></a>
+
+<a href="{%url 'management_mall_index' %}"><h1 class="{%if request.session.subject == 'manage_mall'%}selected{%else%}notselected{%endif%}">商城管理</h1></a>
+
+<a href="{%url 'management_stock_index' %}"><h1 class="{%if request.session.subject == 'manage_stock'%}selected{%else%}notselected{%endif%}">股票管理</h1></a>
+
+<a href="{%url 'management_sys_index' %}"><h1 class="{%if request.session.subject == 'manage_sys'%}selected{%else%}notselected{%endif%}">系统管理</h1></a>
+
+<div class="clear"></div>
+
+<div class="content-1of1-wrapper">
+
+        <div class ="content-1of3">
+
+        	<h1>股票曲线图</h1>
+            <a class="red button" onclick="drawChart()" >股票曲线图</a>
+            <div id="chart_div" style="width:900px;height:500px;display:none"></div>
+
+            <div id="selling_poll">
+
+            	<h1>股票卖出池</h1>
+
+    			{%include 'stock/selling_poll.html'%}
+
+    		</div>
+
+        </div>
+
+    </div>
+</div>
+</div>
+<form id="stock-mag-form" action="." method="POST">
+
+<div class="content-w67">
+
+<div class="content-h100">
+
+<div class="clear"></div>
+
+        <div class ="content-1of3">
+
+            <div>
+
+                <input class="green button float-right" type="submit" value="设置" name="set_values" />
+
+                <h1>数值设置</h1>
+
+                <p>
+
+                    <label class="float-left label-header">今日股票价格</label>
+
+                    <input type="range" name="stock_value_now" id="id_stock_value_now" value="{{ValueSetting.stock_value_now}}" step="0.0001" min="0" >
+
+                <div class="clear"></div>
+
+                </p>
+
+                <p title="一次购买中，纳税的比例">
+
+                    <label class="float-left label-header">股票纳税比例</label>
+
+                    <input type="range" name="stock_tax_rate" value="{{ValueSetting.stock_tax_rate}}" step="0.0001" min="0" max="0.9999" id="id_stock_tax_rate">{{ValueSetting.stock_tax_rate}}
+
+                <div class="clear"></div>
+
+                </p>
+
+                <p>
+
+                    <label class="float-left label-header">回购比例</label>
+
+                    <input type="range" name="stock_repo_rate" value="{{ValueSetting.stock_repo_rate}}" step="0.0001" min="0" max="0.9999" id="id_stock_repo_rate">{{ValueSetting.stock_repo_rate}}
+
+                <div class="clear"></div>
+
+                </p>
+
+                <p>
+
+                    <label class="float-left label-header">返给上级比例</label>
+
+                    <input type="range" name="stock_ex_return_rate" value="{{ValueSetting.stock_ex_return_rate}}" step="0.0001" min="0" max="0.9999" id="id_stock_ex_return_rate">{{ValueSetting.stock_ex_return_rate}}
+
+                <div class="clear"></div>
+
+                </p>
+
+                <p>
+
+                    <label class="label-header">用户最后所得</label>
+
+                    <input type="text" id="last-get-rate" readonly="readonly" class="short" >
+
+                    </input>
+
+                    %
+
+                <div class="clear"></div>
+
+                </p>
+
+                <h2>限制设定</h2>
+
+                <p title="会员持有股票超过此值以后，无法享受拆股">
+
+                    <label class="float-left label-header">最大享有拆股数</label>
+
+                    <input type="range" name="stock_hold_max" value="{{ValueSetting.stock_hold_max}}" id="id_stock_hold_max" min="1000" max="10000000" step="1000">{{ValueSetting.stock_hold_max}}
+
+                <div class="clear"></div>
+
+                </p>
+
+                <p>
+
+                    <label class="float-left label-header">单次最少卖股</label>
+
+                    <input type="range" name="sell_min_amount" value="{{ValueSetting.sell_min_amount}}" id="id_sell_min_amount" min="1000" max="10000000" step="1000">{{ValueSetting.sell_min_amount}}
+
+                <div class="clear"></div>
+
+                </p>
+
+                <p>
+
+                    <label class="float-left label-header">单次最多卖股</label>
+
+                    <input type="range" name="sell_max_amount" value="{{ValueSetting.sell_max_amount}}" id="id_sell_max_amount" min="1000" max="10000000" step="1000">{{ValueSetting.sell_max_amount}}
+
+                <div class="clear"></div>
+
+                </p>
+
+                <p>
+
+                    <label class="float-left label-header">定向卖出基数</label>
+
+                    <input type="range" name="P2P_radix" value="{{ValueSetting.P2P_radix}}" id="id_P2P_radix" min="1000" max="10000000" step="1000">{{ValueSetting.P2P_radix}}
+
+                <div class="clear"></div>
+
+                </p>
+
+                <p>
+
+                    <label class="float-left label-header">定向最多卖出数</label>
+
+                    <input type="range" name="P2P_max" value="{{ValueSetting.P2P_max}}" id="id_P2P_max" min="100000" max="10000000" step="100000">{{ValueSetting.P2P_max}}
+
+                <div class="clear"></div>
+
+                </p>
+
+                <p title="用户得到分红奖，所需要持有的股票最小值">
+
+                    <label class="float-left label-header">参与分红最小值</label>
+
+                    <input type="range" name="stock_share_out_min_amount" value="{{ValueSetting.stock_share_out_min_amount}}" id="id_stock_share_out_min_amount" min="10000" max="10000000" step="10000">{{ValueSetting.stock_share_out_min_amount}}
+
+                <div class="clear"></div>
+
+                </p>
+
+                <h2>时间段设定</h2>
+
+                <p title="股票在卖出池中的延续时长（天），超过时长自动返回。">
+
+                    <label class="float-left label-header">卖出池延续天数</label>
+
+                    <input type="range" name="stock_selling_days" value="{{ValueSetting.stock_selling_days}}" id="id_stock_selling_days" min="1" max="60" step="1">{{ValueSetting.stock_selling_days}}
+
+                <div class="clear"></div>
+
+                </p>
+
+                <p>
+
+                    <label>股票开始时间（小时/每天）</label>
+
+                    <select id="op-start-hour">
+
+                        <option>0</option>
+
+                        <option>1</option>
+
+                        <option>2</option>
+
+                        <option>3</option>
+
+                        <option>4</option>
+
+                        <option>5</option>
+
+                        <option>6</option>
+
+                        <option>7</option>
+
+                        <option>8</option>
+
+                        <option>9</option>
+
+                        <option>10</option>
+
+                        <option>11</option>
+
+                        <option>12</option>
+
+                        <option>13</option>
+
+                        <option>14</option>
+
+                        <option>15</option>
+
+                        <option>16</option>
+
+                        <option>17</option>
+
+                        <option>18</option>
+
+                        <option>19</option>
+
+                        <option>20</option>
+
+                        <option>21</option>
+
+                        <option>22</option>
+
+                        <option>23</option>
+
+                    </select>
+
+                    点
+
+                    <select id="op-start-min">
+
+                        <option>0</option>
+
+                        <option>15</option>
+
+                        <option>30</option>
+
+                        <option>45</option>
+
+                    </select>
+
+                    分
+
+                    <input type="text" name="stock_start_time" class="hidden" value="{{ValueSetting.stock_start_time}}" id="id_stock_start_time">
+
+                </p>
+
+                <p>
+
+                    <label>股票结束时间（小时/每天）</label>
+
+                    <select id="op-end-hour">
+
+                        <option>0</option>
+
+                        <option>1</option>
+
+                        <option>2</option>
+
+                        <option>3</option>
+
+                        <option>4</option>
+
+                        <option>5</option>
+
+                        <option>6</option>
+
+                        <option>7</option>
+
+                        <option>8</option>
+
+                        <option>9</option>
+
+                        <option>10</option>
+
+                        <option>11</option>
+
+                        <option>12</option>
+
+                        <option>13</option>
+
+                        <option>14</option>
+
+                        <option>15</option>
+
+                        <option>16</option>
+
+                        <option>17</option>
+
+                        <option>18</option>
+
+                        <option>19</option>
+
+                        <option>20</option>
+
+                        <option>21</option>
+
+                        <option>22</option>
+
+                        <option>23</option>
+
+                    </select>
+
+                    点
+
+                    <select id="op-end-min">
+
+                        <option>0</option>
+
+                        <option>15</option>
+
+                        <option>30</option>
+
+                        <option>45</option>
+
+                    </select>
+
+                    分
+
+                    <input type="text" name="stock_end_time" class="hidden" value="{{ValueSetting.stock_end_time}}" id="id_stock_end_time" />
+
+                </p>
+
+                <p>
+
+                    <label>股票开始时间（星期/每周）</label>
+
+                    <select id="op-start-date">
+
+                        <option>星期一</option>
+
+                        <option>星期二</option>
+
+                        <option>星期三</option>
+
+                        <option>星期四</option>
+
+                        <option>星期五</option>
+
+                        <option>星期六</option>
+
+                        <option>星期日</option>
+
+                    </select>
+
+                    <input type="text" name="stock_start_date" class="hidden" value="{{ValueSetting.stock_start_date}}" id="id_stock_start_date">
+
+                </p>
+
+                <p>
+
+                    <label>股票结束时间（星期/每周）</label>
+
+                    <select id="op-end-date">
+
+                        <option>星期一</option>
+
+                        <option>星期二</option>
+
+                        <option>星期三</option>
+
+                        <option>星期四</option>
+
+                        <option>星期五</option>
+
+                        <option>星期六</option>
+
+                        <option>星期日</option>
+
+                    </select>
+
+                    <input type="text" name="stock_end_date" class="hidden" value="{{ValueSetting.stock_end_date}}" id="id_stock_end_date">
+
+                </p>
+
+            </div>
+
+        </div>
+
+</div>
+
+</div>
+
+<div class="content-w33">
+
+<div class="content-h50">
+
+<h2>数值</h2>
+
+        <div class ="content-2of3">
+
+            <h1>数值</h1>
+
+            <p>
+
+                <label class="label-header">今日股票价格</label>
+
+                <span class="now-price">{{ValueSetting.stock_value_now}}　</span> </p>
+
+            <p>
+
+                <label class="label-header">总成交笔数</label>
+
+{{overall_total_count}}
+            </p>
+
+            <p>
+
+                <label class="label-header">今日成交笔数</label>
+
+                {{today_total_count}}
+
+            </p>
+
+			<p>
+
+            	<label class="label-header">流通股数</label>
+
+                {{total_distribution}}
+
+            </p>
+
+			<p>
+
+            	<label class="label-header">总发行股数</label>
+
+                {{total_stock_hold}}
+
+            </p>
+
+            <p> <a href="{%url 'management_stock_record' %}">查看所有股票交易记录</a> </p>
+
+        </div>
+
+
+
+
+
+</div>
+
+<div class="content-h50">
+
+<h2>高级功能</h2>
+
+  <div class ="content-3of3">
+
+            
+
+            <h3> 封闭期设置</h3>
+
+                <input name="set" type="submit" value="设置">
+
+                {% if stock_lock_start%}
+
+                <input name="cancle" type="submit" value="取消封闭期">
+
+                {% endif %}
+
+            {% csrf_token %}
+
+            {% if stock_lock_start%}
+
+            <p class="to-modify">封闭期从{{stock_lock_start}}到{{stock_lock_end}}</p>
+
+            {% endif %}
+
+            {{ stock_lock_form.media }}
+
+            {{stock_lock_form.as_p}}
+
+            <h3>拆股
+
+                <input type="submit" name="stock_allotment" onclick="Response.Write('<script>window.location.href=window.location.href;</script>')" value="拆股">
+
+            </h3>
+
+            <p>
+
+                <label>拆股比例</label>
+
+                <input type="number" name="rate" min="1" step="1" value="2" id="id_rate" />
+
+            </p>
+
+            <p>
+
+                <input type="submit" name="stock_return_all" value="清空卖出池" />
+
+            </p>
+
+        </div>
+
+
+
+
+
+</div>
+
+</div>
+
+</form>
+
+<script>
+
+
+
+	$(document).ready(function(){
+
+		//设置日期
+
+		$.tools.dateinput.localize("cn",  {
+
+		   months:        '1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月',
+
+		   shortMonths:   '1,2,3,4,5,6,7,8,9,10,11,12',
+
+		   days:          '星期天,星期一,星期二,星期三,星期四,星期五,星期六',
+
+		   shortDays:     '七,一,二,三,四,五,六'
+
+		});
+
+		$("#id_stock_lock_start,#id_stock_lock_end").dateinput({
+
+			lang:'cn',
+
+			format: 'yyyy-mm-dd',
+
+			selectors: true ,
+
+			trigger: true,
+
+			min: -1 
+
+		});
+
+		
+
+		$("#id_stock_lock_start").data("dateinput").change(function() {
+
+			// we use it's value for the seconds input min option
+
+			$("#id_stock_lock_end").data("dateinput").setMin(this.getValue(), true);
+
+		});
+
+		
+
+		$("#id_stock_value_now:range").rangeinput({
+
+			precision: '4'
+
+		});
+
+		
+
+		$("#id_stock_ex_return_rate:range, #id_stock_repo_rate:range, #id_stock_tax_rate:range").rangeinput({
+
+			precision: '4'
+
+		});
+
+		
+
+		$("#id_stock_hold_max:range, #id_sell_min_amount:range, #id_sell_max_amount:range, #id_P2P_radix:range, #id_P2P_max:range, #id_stock_share_out_min_amount:range").rangeinput({
+
+
+
+		});
+
+		
+
+		$("#id_stock_selling_days").rangeinput() ;
+
+		
+
+		mag_startTime = document.getElementById("id_stock_start_time") ;
+
+		mag_endTime = document.getElementById("id_stock_end_time") ;
+
+		mag_startHour = document.getElementById("op-start-hour") ;
+
+		mag_startMin = document.getElementById("op-start-min") ;
+
+		mag_endHour = document.getElementById("op-end-hour") ;
+
+		mag_endMin = document.getElementById("op-end-min") ;
+
+		
+
+		mag_startHour.selectedIndex = parseInt(mag_startTime.value)/100 ;
+
+		mag_startMin.selectedIndex = parseInt(mag_startTime.value) % 100 / 15 ;
+
+		mag_endHour.selectedIndex = parseInt(mag_endTime.value)/100 ;
+
+		mag_endMin.selectedIndex = parseInt(mag_endTime.value) % 100 / 15 ;
+
+		
+
+		mag_startDate = document.getElementById("op-start-date") ;
+
+		mag_startDate.selectedIndex = parseInt(document.getElementById("id_stock_start_date").value) - 1
+
+		
+
+		mag_endDate = document.getElementById("op-end-date") ;
+
+		mag_endDate.selectedIndex = parseInt(document.getElementById("id_stock_end_date").value) - 1 ;
+
+		
+
+		mag_lastRate =  document.getElementById("last-get-rate") ;
+
+		mag_lastRate.value = Math.round
+
+			(( 1 - 
+
+				parseFloat($("#id_stock_ex_return_rate").val()) - 
+
+				parseFloat($("#id_stock_repo_rate").val()) - 
+
+				parseFloat($("#id_stock_tax_rate").val())
+
+			)* 10000) /100 ;
+
+		
+
+		//alert(str.options[str.selectedIndex].value);
+
+		
+
+		$("#op-start-hour,#op-start-min").bind("change",function()
+
+		{
+
+			mag_startTime = document.getElementById("id_stock_start_time") ;
+
+			mag_startTime.value = document.getElementById("op-start-hour").selectedIndex * 100 + document.getElementById("op-start-min").selectedIndex * 15  ;
+
+		}) ;
+
+		
+
+		$("#op-end-hour,#op-end-min").bind("change",function()
+
+		{
+
+			mag_endTime = document.getElementById("id_stock_end_time") ;
+
+			mag_endTime.value = document.getElementById("op-end-hour").selectedIndex * 100 + document.getElementById("op-end-min").selectedIndex * 15  ;
+
+		}) ;
+
+		
+
+		$("#op-start-date").bind("change",function()
+
+		{
+
+			mag_startDate = document.getElementById("id_stock_start_date") ;
+
+			mag_startDate.value = document.getElementById("op-start-date").selectedIndex + 1 ;
+
+		});
+
+		$("#op-end-date").bind("change",function()
+
+		{
+
+			mag_endDate = document.getElementById("id_stock_end_date") ;
+
+			mag_endDate.value = document.getElementById("op-end-date").selectedIndex + 1 ;
+
+		});
+
+		
+
+		$("#id_stock_ex_return_rate, #id_stock_repo_rate, #id_stock_tax_rate").change(function(event, value) {
+
+			mag_lastRate =  document.getElementById("last-get-rate") ;
+
+			mag_lastRate.value = Math.round
+
+				(( 1 - 
+
+					parseFloat($("#id_stock_ex_return_rate").val()) - 
+
+					parseFloat($("#id_stock_repo_rate").val()) - 
+
+					parseFloat($("#id_stock_tax_rate").val())
+
+				)* 10000) /100 ;
+
+		});
+
+	});
+
+</script> 
+
+{% endblock %} 

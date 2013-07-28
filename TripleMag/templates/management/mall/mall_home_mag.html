@@ -1,0 +1,30 @@
+{% extends "management/mall/mall_base.html"%}
+
+{% load i18n admin_static %}
+
+{% load url from future %}
+{% block title %}
+商城首页设置
+{% endblock %}
+{% block content-main %}
+
+<div class="content-1of1-wrapper">
+<div class="content-1of3">
+<h1>商城主页:{{Result|length}}张图片</h1>
+{% for image in Result %}
+	<p>
+		<label class="label-header"><a href="" title="<img src='/{{image.image_url.url}}' width='140px'/>">图片{{image.id}}</a></label>
+	    <a href="/mall/product/{{image.product.name}}">{{image.product.name}}</a>
+	    <a class="float-right" onclick="javascript:if(!confirm('确认删除？')){return false}" href="/mall_home_mag/{{image.id}}">删除</a>
+	</p>
+{% endfor %}
+<form action="{%url 'add_home_mag'%}" enctype="multipart/form-data" method="POST">
+	{% csrf_token %}
+	{{form.as_p}}
+    <p><i>*请保证图片大于540*366像素，多余的部分显示时会被截除</i></p>
+    <input type="submit" value="确认上传" />
+</form>
+</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "management/base.html" %}
+{% block title %}
+公告列表
+{% endblock %}
+
+{%block content-main %}
+{% load i18n admin_static %}
+{% load url from future %}
+
+<div class="content-w67">
+    <div class ="content-1of3"> 
+    	<h1>公告列表</h1>
+    	<div id="announcements">
+    	{% include "announcements/announcement_list.html"%}
+        </div>
+    </div>
+</div>
+
+<div class="content-2of3-wrapper">
+<div class ="content-1of3"> 
+{% include "management/sys/sys_right.html"%}
+</div>
+</div>
+
+<script type="text/javascript">
+function announcement_deatil(a_id){
+    $("#announcements").load("{%url 'announcements_list'%}?announcement_id="+a_id)
+}
+</script>
+
+{% endblock %}
+

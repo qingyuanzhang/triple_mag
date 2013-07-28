@@ -1,0 +1,214 @@
+{% extends "store/base.html"%}
+
+{% block title%}
+
+订货中心
+
+{% endblock %}
+
+{% load i18n %}
+
+{% load url from future %}
+
+{% block content%}
+<div class="content-w67">
+<div class="content-h100">
+<a href="{%url 'store_index' %}"><h1 class="notselected">报单中心</h1></a>
+
+<a href="{%url 'stuff_list'%}"><h1 class="selected">订货中心</h1></a>
+<div class="clear"></div>
+<div class="content-1of3-wrapper">
+
+    <div class ="content-1of3"> {%include include_template%} </div>
+
+</div>
+
+</div>
+</div>
+
+
+<div class="content-w33">
+<div class="content-h50">
+<h2>订单中心</h2>
+<div class ="content-2of3">
+
+    <ul>
+
+        <li><a href="{%url 'stuff_list'%}">货物列表</a></li>
+
+        <li><a href="{%url 'stuff_order_records'%}">我的订单</a></li>
+
+        <!--<li><a href="{%url 'store_add_address'%}">增加地址</a></li>-->
+
+    </ul>
+
+</div>
+</div>
+<div class="content-h50">
+<h2>账户详情</h2>
+   <div class ="content-3of3">
+
+        <div id="stuff_info">
+
+            <ul>
+
+                <div class="dec-money-alt">
+
+                    <h4>现金账户余额</h4>
+
+                    <span>{{UserBasic.cash}}</span> </div>
+
+                <div class="dec-money-alt">
+
+                    <h4>报单账户余额</h4>
+
+                    <span>{{UserBasic.store_order}}</span></div>
+
+
+
+                    <div class="dec-money">
+
+                        <h4>订货账户余额</h4>
+
+                        <p>{{UserBasic.store_cash}}</p></div>
+
+            </ul>
+
+        </div>
+
+    </div>
+</div>
+</div>
+
+
+
+
+<script src="/static/js/validations.js"></script>
+
+<script type="text/javascript">
+
+$(".buy").bind('click',function(){
+
+	check_total() ;
+
+	/*
+
+    num_input = $(this).parent().next()
+
+    if($(this).attr('checked') == 'checked'){
+
+        num_input.children().first().css("display", "none")
+
+        num_input.children().first().next().css("display", "block")
+
+        }
+
+        else{
+
+            num_input.children().first().css("display", "block")
+
+            num_input.children().first().next().css("display", "none")
+
+        }*/
+
+})
+
+
+
+$(":number").bind('blur',function(){
+
+    price = parseFloat($(this).attr("name"));
+
+    num = parseInt($(this).val());
+
+    $(this).parent().next().html(price*num);
+
+	check_total() ;
+
+})
+
+
+
+$("#go").click(function(){
+
+	if ( $(":checkbox[checked=checked]").length == 0 )
+
+	{
+
+		alert( "请至少选择一个货物！" ) ;
+
+		return ;
+
+	}
+
+	if ( Math.floor(parseFloat($("#total_price").html())) <= 0 )
+
+	{
+
+		alert( "货物总值为零。请修改数量" ) ;
+
+		return ;
+
+	}
+
+	if ( parseFloat("{{UserBasic.store_cash}}") < parseFloat( $("#total_price").html() ) )
+
+	{
+
+		alert( "对不起，您的余额不足，请充值！" ) ;
+
+		return ;
+
+	}
+
+    stuff_list = ""
+
+    $(":checkbox[checked=checked]").each(function(index){
+
+        stuff_list += $(this).parent().parent().find(".the_id").html()+"_"+$(this).parent().parent().find(".num").val()+"_"
+
+ alert("订货成功")
+
+        location.href="{%url 'stuff_order'%}?stuff_list="+stuff_list
+
+    })
+
+})
+
+
+
+function check_total()
+
+{
+
+	var total_number = 0 ;
+
+	$(":checkbox[checked=checked]").each(function()
+
+	{
+
+		total_number += parseFloat($(this).parent().parent().find(".the_price").html()) ;
+
+	});
+
+	total_number = Math.round(total_number * 100) / 100 ;
+
+	$("#total_price").html(total_number) ;
+
+	//alert ( total_number ) ;
+
+}
+
+
+
+$(document).ready(function(){
+
+    check_total() ;
+
+});
+
+
+
+</script> 
+
+{% endblock %} 

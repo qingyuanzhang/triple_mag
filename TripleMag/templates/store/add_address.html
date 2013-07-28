@@ -1,0 +1,33 @@
+<script src="/static/js/jquery.provincesCity.js" type="text/javascript"></script>  
+<script src="/static/js/provincesdata.js" type="text/javascript"></script>  
+<script>  
+//调用插件  
+$(function(){  
+    $("#address").ProvinceCity();  
+});
+</script>  
+<form action="." method="POST">
+{% csrf_token %}
+<h1>增加地址</h1>
+<div id="address">街道{{UserAddressForm.street}}</div>
+<span>邮编{{UserAddressForm.zip_code}} 首要地址{{UserAddressForm.is_primary}}</span>
+
+<input type="hidden" name="province" id="id_province">
+<input type="hidden" name="city" id="id_city">
+<input type="hidden" name="area" id="id_area">
+<p><input type="submit" value="增加" onclick="test()" name='add_address'>
+<input type="button" value="取消" onclick="cancle()" >
+</p>
+<script type="text/javascript" src="/static/js/triplemag.js"></script>
+<script src="/static/js/validations.js" type="text/javascript"></script>
+<script>
+$("#add_address_form").validator({
+	message: '<span></span>',
+	position: 'top center',
+	inputEvent: 'change' ,
+	lang: 'cn' ,
+	offset: [0, 20]
+});
+</script>
+</form>
+

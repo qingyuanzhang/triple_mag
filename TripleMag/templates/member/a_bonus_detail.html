@@ -1,0 +1,19 @@
+{% extends "member/bonus_base.html" %}
+
+
+{% block content-main %}
+
+<div class="content-1of1-wrapper">
+<div class="content-1of3">
+<a href="javascript:history.back(-1)">返回上一页</a>
+
+{% include 'includes/a_bonus_detail.html'%}
+{% if user.is_superuser %}
+<form action="{{url}}" method=POST>
+{% csrf_token %}
+<input type="submit" value="奖金发放">
+</form>
+{% endif %}
+</div>
+</div>
+{% endblock %}

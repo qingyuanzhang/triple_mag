@@ -1,0 +1,156 @@
+ {% load i18n admin_static %}
+{% load url from future %}
+
+{%if UserBasic.role == "MemMax"%}
+    <div class="dec-money-alt">
+        <h4>报单账户余额</h4>
+        <p class="store_order">{{UserBasic.store_order}}元</p>
+    </div>
+	{%if user.is_superuser %}
+   		<a class="orange button modalInput" rel="#dec_form">修改/充值</a>
+		<div class="modal" id="dec_form">
+            <h2>请输入充值/修改成的数额</h2>
+            <p><label>报单账户余额</label><span class="now-price">{{UserBasic.store_order}}</span>元</p>
+            <input type="text" name='store_order' id="id_store_order" />
+            <p>
+                <input type="button" value="充值" onclick="modify_acc('store_order','#id_store_order')" />
+                <input type="button" value="修改" onclick="modify_acc('change_store_order','#id_store_order')" />
+                <input type="button" class="close" value="取消" />
+            </p>
+        </div>
+	{% else %}
+        {% if UserBasic.is_blocked %}
+        <label>账户已经被冻结</label>
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+<div class="dec-money-alt" >
+ 	<h4>股票余额</h4>
+	<p class="stock_hold">
+{{UserBasic.stock_hold_0devide|add:UserBasic.stock_hold_1devide|add:UserBasic.stock_hold_2devide}}股
+	</p>
+</div>
+
+{% if user.is_superuser %}
+<!--    <input type="checkbox" value="充值" class="change" id='stock_hold'>充值或修改</input>-->
+   		<a class="orange button modalInput" rel="#stock_form">修改/充值</a>
+		<div class="modal" id="stock_form">
+            <h2>请输入充值/修改成的数额</h2>
+            <p><label>股票余额</label><span class="now-price">{{UserBasic.stock_hold_0devide|add:UserBasic.stock_hold_1devide|add:UserBasic.stock_hold_2devide}}</span>股</p>
+            <p>可以享受两次拆股的股票数量:<b>{{UserBasic.stock_hold_0devide}}</b><br />可以享受一次拆股的股票数量:<b>{{UserBasic.stock_hold_1devide}}</b><br />不能享受拆股的股票数量:<b>{{UserBasic.stock_hold_2devide}}</b></p>
+            <input type="text" name='store_order' id="id_stock" />
+            <p>
+                <input type="submit" value="充值" onclick="modify_acc('stock_hold','#id_stock')" />
+                <input type="button" class="close" value="取消" /><br />
+                <input type="submit" value="修改0次拆分账户修改为新的值" onclick="modify_acc('stock_hold_0devide','#id_stock')" /><br />
+                <input type="submit" value="修改1次拆分账户修改为新的值" onclick="modify_acc('stock_hold_1devide','#id_stock')" /><br />
+                <input type="submit" value="修改2次拆分账户修改为新的值" onclick="modify_acc('stock_hold_2devide','#id_stock')" />
+            </p>
+        </div>
+{% else %}
+    <div class="dec-money-alt">
+        <h4>可购股票的余额</h4>
+        <p>{{UserBasic.sum}}元</p>
+    </div>
+{% endif %}
+
+
+    {%if user.is_superuser %}
+    <div class="dec-money-alt">
+        <h4>现金账户余额</h4>
+        <p>{{UserBasic.cash}}元</p>
+    </div>
+   		<a class="orange button modalInput" rel="#cash_form">修改/充值</a>
+		<div class="modal" id="cash_form">
+            <h2>请输入充值/修改成的数额</h2>
+            <p><label>现金账户余额</label><span class="now-price">{{UserBasic.cash}}</span>元</p>
+            <input type="text" name='cash' id="id_cash" />
+            <p>
+                <input type="button" value="充值" onclick="modify_acc('cash','#id_cash')" />
+                <input type="button" value="修改" onclick="modify_acc('change_cash','#id_cash')" />
+                <input type="button" class="close" value="取消" />
+            </p>
+        </div>
+<!--        <input type="checkbox" value="充值" class="change" id='cash'>充值或修改</input>
+        <div class="to-modify">
+            <p>
+            	<input type="submit" value="充值" onclick="charge('cash',this,'{{UserBasic.number}}','charge')">
+                <input type="text" name='cash'>
+            </p><p>
+                <input type="submit" value="修改为新的值" onclick="charge('change_cash',this,'{{UserBasic.number}}','change')">
+            </p>
+        </div>-->
+    {% else %}
+    <div class="dec-money">
+        <h4>现金账户余额</h4>
+        <p>{{UserBasic.cash}}元</p>
+    </div>
+	{% endif %}
+
+{% if UserBasic.is_stock_XR %}
+<label>被股票除权</label>
+{% endif %}
+<script type="text/javascript">
+function modify_acc(account,the_id)
+{
+	$.ajaxSettings.cache = false ;
+	$.ajaxSettings.async = false;
+	$.getJSON("{%url 'charge_now' %}",
+	{
+		"user_number":'{{UserBasic.number}}' ,
+		"account": account,
+		"amount" : $(the_id).val()
+	},
+	function(data){
+		if(data != "-1"){
+			location.reload(true) ;
+			$(the_id).val("")
+		}
+		else
+		{
+			alert("操作失败") ;
+		}
+	}) ;
+	
+}
+/*
+
+_input= ""
+function charge(_accout,charge_this,user_number,choice){
+    account = _accout
+    amount = $(_input).val()
+
+    $.getJSON("{%url 'charge_now' %}",
+            {"user_number":user_number,"account":account,"amount":amount},
+            function(data) {
+				if(data != "0"){
+					location.reload() 
+				}
+				else
+				{
+					alert("操作失败")
+				}
+            }
+    )
+}
+$(".change").click(function(){
+    var check_box = $(this) ; 
+    var change_field = $(this).attr('id') ;
+    var after_change = "p."+change_field ;
+    var to_clear = "input[name='"+change_field+"']" ;
+    if($(this).attr('checked') == 'checked'){
+        $(this).next().show()  
+    }
+    else{
+        $(this).next().hide()
+        //$(to_clear).val("")
+        //check_box.attr('checked')=false
+    }
+    var _t= $(this).attr("id")
+    _input = "input[name="+_t+"]" 
+})*/
+
+</script>
+
+

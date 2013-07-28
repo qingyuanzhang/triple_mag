@@ -1,0 +1,258 @@
+{% extends "management/mall/mall_base.html"%}
+
+{% load i18n admin_static %}
+{%block my-resource%}
+{% load i18n %}
+{% load url from future %}
+{% endblock %}
+{% load url from future %}
+{% block title %}
+商品目录管理
+{% endblock %}
+{% block content-main %}
+<link rel="stylesheet" type="text/css" href="/static/css/dateinput.css">
+<div class="content-1of1-wrapper">
+    <div class ="content-1of3">
+        <h1>{%if product%}修改商品{%else%}添加商品{% endif%}</h1>
+        <form action="{%url 'manage_product'%}?p_id={{p_id}}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div>
+                <h2>基础信息</h2>
+                <p>
+                    <label class="label-header float-left" for="id_father_catagory">父类型</label>
+                    {{ProductForm.father_catagory}}</p>
+                <div class="clear"></div>
+                <p>
+                    <label class="label-header float-left" for="id_name">产品名</label>
+                    {{ProductForm.name}}</p>
+                <div class="clear"></div>
+                <p>
+                    <label class="label-header float-left" for="id_image_url">首要图片</label>
+                    {{ProductForm.image_url}}</p>
+                <div class="clear"></div>
+                <p>
+                <label class="label-header" for="id_image_url">次要图片</label>
+                <input type="file" id="id_upload" name="upload"/>
+                <div id="instructions" width="200px">
+                </div>
+                <div>
+                    {% for image in image_url %}
+                    
+                    <input type=hidden name='product_image' value='{{image.image_url.url}}'>
+                    <img width="200px" name='product_image' src='{{image.image_url.url}}'>
+                    <a href=javascript:void(0) onclick=delete_img(this)>删除</a>
+                    {% endfor %}
+                    <div class="clear"></div>
+                </div>
+                <div class="clear"></div>
+                </p>
+                <p>
+                    <label class="label-header float-left" for="id_brand">品牌</label>
+                    {{ProductForm.brand}}</p>
+                <div class="clear"></div>
+                <p>
+                    <label class="label-header float-left" for="id_produced_at">产地</label>
+                    {{ProductForm.produced_at}}</p>
+                <div class="clear"></div>
+                <p>
+                    <label class="label-header float-left" for="id_package">包装</label>
+                    {{ProductForm.package}}</p>
+                <div class="clear"></div>
+                <p>
+                    <label class="label-header float-left" for="id_color">颜色和尺寸</label>
+                    <input type="button" value="增加" id="id_color_button"></p>
+                    
+                <div id="id_color">
+                {%for ColorSize in MallProdCombn%}
+                <p><span>颜色</span><input type="text" name="color" value="{{ColorSize.color}}"><span>尺寸</span><input type="text" name="size" value="{{ColorSize.size}}"><input type="button" value="删除" id="id_color_delete" onclick="delete_color(this)"></p>
+                {% endfor %}
+                </div>                
+                <div class="clear"></div>
+                <p>
+                    <label class="label-header float-left" for="id_after_sales">售后服务</label>
+                    {{ProductForm.after_sales}}</p>
+                <div class="clear"></div>
+                <p>
+                    <label class="label-header float-left" for="id_tip">注意事项</label>
+                    {{ProductForm.tip}}</p>
+                <div class="clear"></div>
+                
+                <p>
+                    {%if ProductForm.recommender.errors %}
+                    {{ProductForm.recommender.errors}}
+                    {% endif %}
+                    <label class="label-header float-left" for="id_recommender">
+                        推荐人
+                    </label>
+                    <input id="id_recommender" type="text" name="recommender" maxlength="8" 
+                        value={{product.recommender.number}}>
+                    <span class="helptext">
+                        {{product.recommender.name}}
+                    </span>
+                </p>
+<!--                <p>-->
+<!--                    {%if ProductForm.recommender.errors %}-->
+<!--                    {{ProductForm.recommender.errors}}-->
+<!--                    {% endif %}-->
+<!--                    <label class="label-header float-left" for="id_recommender">推荐人</label>-->
+<!--                    {{ProductForm.recommender}} <span class="helptext">显示用户姓名</span></p>-->
+            </div>
+            <div>
+                <h2>详情</h2>
+                <p>
+                    <label class="label-header float-left" for="id_details">商品信息</label>
+                    <textarea id="id_details" rows="10" cols="40" name="details">{{product.details}}</textarea>
+                    <input type="file" id="adv_image" name="upload" value="上传图片"/>
+                    <div class="clear"></div>
+                </p>
+            </div>
+            <div id="range_inputs">
+                <p>
+                    <label class="label-header float-left" for="id_total_num">总量</label>
+                    <input type="range" name="total_num" value="{%if not product %}1{%else%}{{product.total_num}}{%endif%}" min="1" step="1" max="1000000" id="id_total_num">
+                    <div class="clear"></div>
+                </p>
+                <p>
+                    <label class="label-header float-left" for="id_price_normal">市场价</label>
+                    <input type="range" name="price_normal" value="{%if not product %}0{%else%}{{product.price_normal}}{%endif%}" min="0" step="0.01" max="1000000" id="id_price_normal"><div class="clear"></div>
+                </p>
+                <p>
+                    <label class="label-header float-left" for="id_price_VIP">商城价格</label>
+                    <input type="range" name="price_VIP" value="{%if not product %}0{%else%}{{product.price_VIP}}{%endif%}" min="0" step="0.01" max="1000000" id="id_price_VIP"><div class="clear"></div>
+                </p>
+                <p>
+                    <label class="label-header float-left" for="id_grade">积分</label>
+                    <input type="range" name="grade" value="{%if not product %}0{%else%}{{product.grade}}{%endif%}" min="0" step="1" max="100000000" id="id_grade"><div class="clear"></div>
+                </p>
+                <p>
+                    <label class="label-header float-left" for="id_bonus_stock">赠股</label>
+                    <input type="range" name="bonus_stock" value="{%if not product %}0{%else%}{{product.bonus_stock}}{%endif%}" min="0" step="1" max="100000000" id="id_bonus_stock"><div class="clear"></div>
+                </p>
+                <p class="hidden">
+                    <label class="label-header float-left" for="id_extra_price">运输额外费用</label>
+                    <input type="range" name="extra_price" value="{%if not product %}0{%else%}{{product.extra_price}}{%endif%}" min="0" step="0.01" max="10000" id="id_extra_price"><div class="clear"></div>
+                </p>
+            </div>
+            <div id="promo">
+                <p>
+                    <label class="label-header float-left" for="id_is_promoted">是否被促销</label>
+                    {{ProductForm.is_promoted}}
+                <div class="clear"></div>
+                </p>
+                <div class="{%if product.is_promoted%}show{%else%}hidden{%endif%}" id="hidden_promo">
+                    <p>
+                        <label class="label-header float-left" for="id_price_promotions">促销价格</label>
+                        <input type="range" name="price_promotions" value="{%if not product.is_promoted %}0{%else%}{{product.price_promotions}}{%endif%}" min="1" step="0.01"max="10000" id="id_price_promotions"><div class="clear"></div>
+                    </p>
+                    <p>
+                        <label class="label-header float-left" for="id_start_time">开始时间</label>
+                        <input type="text" name="start_time" id="id_start_time" min="-1" value="{%if product.is_promoted %}{{product.start_time|date:'Y-m-d'}}{%endif%}"><div class="clear"></div>
+                    </p>
+                    <p>
+                        <label class="label-header float-left" for="id_end_time">结束时间</label>
+                        <input type="text" name="end_time" id="id_end_time" min="-1" value="{%if product.is_promoted %}{{product.end_time|date:'Y-m-d'}}{%endif%}"><div class="clear">
+                        </div>
+                    </p>
+                </div>
+            </div>
+            {% if False %}
+            {{ ProductForm.media }}
+            {{ ProductForm.as_p }}
+            {% endif %}
+            <input type="submit" value="{%if product %}修改{%else%}增加{%endif%}" name="product" />
+<!--            <input type="file" name="file_upload" id="file_upload" />-->
+        </form>
+    </div>
+</div>
+<script type="text/javascript" src="/static/js/dateinput/jquery.tools.min.js"></script> 
+<script type="text/javascript">
+$("#id_is_promoted").click(function(){
+	if ( $(this).attr("checked") == "checked" )
+	{
+		$("#hidden_promo").show() ;
+		
+	}
+	else
+	{
+		$("#hidden_promo").hide() ;
+	
+	}
+});
+
+$.tools.dateinput.localize("cn",  {
+   months:        '1月,2月,3月,4月,5月,6月,7月,8月,9月,10月,11月,12月',
+   shortMonths:   '1,2,3,4,5,6,7,8,9,10,11,12',
+   days:          '星期天,星期一,星期二,星期三,星期四,星期五,星期六',
+   shortDays:     '七,一,二,三,四,五,六'
+});
+$("#id_start_time,#id_end_time").dateinput({
+	lang:'cn',
+	format: 'yyyy-mm-dd',
+	selectors: true
+	
+});
+
+$("#id_start_time").data("dateinput").change(function() {
+	// we use it's value for the seconds input min option
+	$("#id_end_time").data("dateinput").setMin(this.getValue(), true);
+});
+$("#id_color_button").click(function (){
+
+    $("#id_color").append("<p><span>颜色</span><input type=\"text\" name=\"color\"><span>尺寸</span><input type=\"text\" name=\"size\"><input type=\"button\" value=\"删除\" id=\"id_color_delete\" onclick=\"delete_color(this)\"></p>")
+})
+function delete_color(_this){
+    $(_this).parent().remove();
+}
+$("#range_inputs input:range,#id_price_promotions").rangeinput();
+
+</script>
+<script type="text/javascript" src="/static/js/tiny_mce.js"></script>
+<script type="text/javascript">
+tinyMCE.init({
+	mode : "textareas",
+	theme:	"advanced",
+	language:'zh-cn',
+    relative_urls : false,
+    convert_urls : false,
+	plugins : "autolink,lists,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template,wordcount,advlist,autosave",
+
+// Theme options
+	theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,fontsizeselect,|,cut,copy,paste,pastetext,pasteword,|,search,replace,|",
+	theme_advanced_buttons2 : "bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,|,insertdate,inserttime,|,forecolor,backcolor" ,
+	'theme_advanced_toolbar_location' : 'top',
+	'theme_advanced_toolbar_align' : 'left', 
+});
+</script>
+{% include "mall/upload_image.html" %}
+<link rel="stylesheet" type="text/css" href="/static/js/uploadify/uploadify.css">
+<script type="text/javascript" src="/static/js/uploadify/jquery.uploadify-3.1.js"></script>
+<script type="text/javascript">
+    $(document).ready(function(){
+        //批量上传按钮
+        $('#adv_image').uploadify ({
+            'swf'		: '/static/js/uploadify/uploadify.swf',
+            'uploader' 	: '/rt/upload_image/', 
+            'cancelImage' : '/static/js/uploadify/uploadify-cancel.png',
+            'buttonClass' : 'btn',
+            'checkExisting' : false,
+            'removeCompleted': true,
+            'fileTypeExts'   : '*.jpg;*.gif;*.png',
+            'multi'		: true,
+            'auto'    : true,
+            'buttonText': '添加图片',
+            'onUploadSuccess' : function (file, data, response) {
+                 tinyMCE.execCommand("mceInsertContent",false,"<img width=\"200px\" src=\"{{ STATIC_URL }}images\/"+data+"\"/>") 
+            }
+        });
+        $("#id_recommender").bind("blur",function()
+        {
+         var help_text = $(this).next()
+        $.getJSON("{%url 'get_user_name' %}", {"user_number":$(this).val()},function (data){
+                help_text.html(data)
+            }
+        )
+        })
+    })
+</script>
+
+{% endblock %}

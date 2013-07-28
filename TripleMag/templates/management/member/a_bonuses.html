@@ -1,0 +1,37 @@
+{% extends "management/base.html"%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block title %}
+产品销售奖金发放
+{% endblock%}
+{% block content-main %}
+<div class="content-1of3-wrapper">
+<div class ="content-1of3">
+{% if not BonusDetails %}
+没有要发放的奖金
+{% else %}
+{%include 'includes/a_bonus_detail.html'%}
+<!--<form action="{%url 'a_bonus_settlement' %}" method="POST">-->
+<!--{% csrf_token %}-->
+<!--<input type="submit" value="奖金结算" >-->
+<!--</form>-->
+<form action="." method="POST">
+{% csrf_token %}
+<input type="submit" value="奖金发放" >
+</form>
+{% endif %}
+</div>
+</div>
+<div class="content-2of3-wrapper">
+<div class ="content-2of3"> 
+
+<ul>
+    <h1>奖金中心</h1>
+    <li><a href="/management/a_bonus_counter/">每期奖金查看</a></li>
+    <li><a href="{%url 'management_a_bonus_detail' %}">奖金明细查看</a></li>
+</ul>
+</div>
+
+</div>
+
+{% endblock %}

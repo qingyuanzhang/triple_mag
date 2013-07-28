@@ -1,0 +1,48 @@
+{% extends "management/mall/mall_base.html"%}
+{% load i18n admin_static %}
+{% load url from future %}
+
+{% block content-main%}
+<div class="content-1of1-wrapper">
+<div class="content-1of3">
+<h1>商城公告</h1>
+{%if management_notice_mall%}
+<table id="result_list">
+        <tr>
+            <td scope="col" class="sortable">
+                        标题
+            </td>
+            <td scope="col" class="sortable">
+                        发布时间
+            </td>
+            <td scope="col" class="sortable">
+                        操作
+            </td>
+        </tr>
+        {% for anouc in management_notice_mall %}
+            <tr class="row1">
+                <td>
+                    <a  onclick="announcement_deatil('{{Announcement.id}}')">
+                        {{anouc.title}}
+                    </a>
+                </td>
+                <td class="nowrap">
+                    {{anouc.creation_date|date:"Y.m.d"}}
+                </td>
+                <td>
+                    <!--<a href="{%url 'manage_announcement'%}?choice=change&p_id={{Announcement.id}}" class="green button">-->修改<!--</a>-->
+                    <a href="" class="red button">删除</a>
+                </td>
+            </tr>
+        {% endfor %}
+</table>
+{% endif %}
+<form action="{%url 'add_notice' %}" enctype="multipart/form-data" method="POST">
+{{form.as_p}}
+<input type="submit" value="发布" >
+</form>
+<div>
+</div>
+</div>
+
+{% endblock %}

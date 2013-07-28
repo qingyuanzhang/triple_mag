@@ -1,0 +1,8 @@
+{% load i18n admin_static %}
+{% load url from future %}
+<a href="javascript:history.back(-1)">返回上一页</a>
+<div><label>标题</label>{{announcements.title}}</div>
+<div><label>发布时间</label>{{announcements.creation_date}}</div>
+<div><label>公告内容</label>{{announcements.content|safe}}</div>
+<!--<div><label>发布人</label>{{announcements.creator}}</div>-->
+

@@ -1,0 +1,91 @@
+{% extends "management/mall/mall_base.html"%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block title %}
+商品列表
+{% endblock %}
+
+{% block content-main %}
+
+<div class="content-1of1-wrapper">
+    <div class ="content-1of3">
+    	<h1>商品列表
+        </h1>
+        
+        <table>
+        	<tr>
+            	<td>
+                	类目一
+                </td>
+            	<td>
+                	类目二
+                </td>
+            	<td>
+                	类目三
+                </td>
+                <td>
+                	商品名
+                </td>
+                <td>
+                	商城价格
+                </td>
+                <td>
+                	赠股
+                </td>
+                <td>
+                	积分
+                </td>
+                <td>
+                	是否促销
+                </td>
+                <td>
+                	操作
+                </td>
+            </tr>
+            {% for good in products %}
+            <tr>
+            	<td>
+                	<a href="/mall/channel/{{good.catagroy}}">{{good.catagroy}}</a>
+                </td>
+            	<td>
+                	<a href="/mall/channel/{{good.catagroy}}#{{good.catagroy1}}">{{good.catagroy1}}</a>
+                </td>
+            	<td>
+        			<a href="/mall/channel/{{good.catagroy}}/#{{good.catagroy2}}">{{good.catagroy2}}</a>
+                </td>
+                {%if not good.image_url%}
+                <td><a href="/mall/product/{{good.name}}">{{good.name}}</a></td>
+                {%else %}
+                <td>
+                    <a href="/mall/product/{{good.name}}" title="<img src='/{{good.image_url.url}}' width='100px' />">{{good.name}}</a>
+                </td>
+                {% endif%}
+                <td>
+                	{{good.price_VIP}}
+                </td>
+                <td>
+                	{{good.bonus_stock}}
+                </td>
+                <td>
+                	{{good.grade}}
+                </td>
+                <td>
+                	{% if good.is_promoted %}
+                   	<a href="" title="从{{good.start_time}}到{{good.end_time}}">是</a>
+                    {% else %}
+                    	否
+                    {% endif %}
+                </td>
+                <td>
+                	<a href="{%url 'manage_product'%}?p_id={{good.id}}">修改</a>|
+                    <a onclick="javascript:if(!confirm('确认删除？')){return false}" href="/mall_management/delete_product/{{good.id}}">删除</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,126 @@
+ {% extends 'mall/site-base.html'%}
+{% load url from future %}
+{% load i18n %}
+
+{% block content %}
+<div id="pic-board">
+    <div class="images">
+        <!-- first slide -->
+        {% if index_picture %}
+            {% for picture in index_picture%}
+                <div class="hidden">
+                    <a href="/mall/product/{{picture.product.name}}">
+                    <img src="/{{picture.image_url.url}}">
+                    </a>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="hidden">
+                <a href="">
+                <img src="/static/img/no-pic-dash.png">
+                </a>
+            </div>
+        {% endif %}
+
+    </div>
+    <div class='clear'>
+    </div>
+   
+    <div class="slidetabs">
+        {% if index_picture %}
+        {% for picture in index_picture %}
+            <a href="#" class=""></a>
+        {% endfor %}
+        {% else %}
+            <a href="#" class="current"></a>
+        {% endif %}
+    </div>
+</div>
+<script language="JavaScript">
+	$(window).bind('load', function() {
+		$(".slidetabs").data("slideshow").play();
+	});
+
+  $(function() {
+      $(".slidetabs").tabs(".images > div", {
+
+    // enable "cross-fading" effect
+    effect: 'fade',
+    fadeOutSpeed: "slow",
+    // start from the beginning after the last tab
+    rotate: true
+
+    // use the slideshow plugin. It accepts its own configuration
+    }).slideshow({
+    
+    interval:5000
+    }
+);
+    });
+</script>
+<div id="right-board">
+    <div id="accordion">
+        <h2>推广</h2>
+        <div class="hidden right-board-contents"> {%for ad in index_ad %} <a href=/mall/product/{{ad.product.name}}><img src=/{{ad.image_url.url}}></a> {% endfor %} </div>
+        <h2>公告</h2>
+        <div class="right-board-contents">
+        {% for notice in mall_notice%}
+<li><h3><a title="{{notice.title}}" href="{%url 'mall_notice'%}?n_id={{notice.id}}">{{notice.title}}</a></h3></li>
+        {% endfor %} </div>
+        
+    </div>
+    <script>
+    $("#accordion").tabs(
+        "#accordion div.right-board-contents",
+        {tabs: 'h2', effect: 'slide', initialIndex: null}
+    );
+    </script> 
+
+</div>
+<div class="long-board display_item">
+    <h3 class="underl"><img src="/static/img/mainh1_new.png"/></h3>
+    <ul>
+        {% for NewProduct in new_product %}
+        
+        <li><a href="/mall/product/{{NewProduct.name}}"><span>{{NewProduct.name}}<br/>
+        	{%if not NewProduct.is_promoted %}
+            <b>￥{{NewProduct.price_VIP}}</b>
+            {% else %}
+            <b>￥{{NewProduct.price_promotions}}</b>
+            {% endif %}
+            </span> <img src="/{{NewProduct.image_url}}"  width="140px" ></a></li>
+        {% endfor %}
+        <div class="clear"></div>
+    </ul>
+</div>
+<div class="long-board display_item">
+    <h3 class="underl"><img src="/static/img/mainh1_best.png"/></h3>
+    <ul>
+        {% for HotProduct in hot_product %}
+        <li><a href="/mall/product/{{HotProduct.name}}"><span>{{HotProduct.name}}<br/>
+        	{%if not HotProduct.is_promoted %}
+            <b>￥{{HotProduct.price_VIP}}</b>
+            {% else %}
+            <b>￥{{HotProduct.price_promotions}}</b>
+            {% endif %}
+            </span> <img src="/{{HotProduct.image_url}}" width=140px class="thumbimage"></a> </li>
+         {% endfor %}
+        <div class="clear"></div>
+    </ul>
+</div>
+<div class="long-board display_item">
+    <h3 class="underl"><img src="/static/img/mainh1_sale.png"/></h3>
+    <ul>
+        {% for PromotionProduct in promotion_product %}
+        <li> <a href="/mall/product/{{PromotionProduct.name}}"> <span>{{PromotionProduct.name}}<br/>
+        	{%if not PromotionProduct.is_promoted %}
+            <b>￥{{PromotionProduct.price_VIP}}</b>
+            {% else %}
+            <b>￥{{PromotionProduct.price_promotions}}</b>
+            {% endif %}
+            </span> <img src="/{{PromotionProduct.image_url}}" width=140px class="thumbimage"> </a> </li>
+        {% endfor %}
+        <div class="clear"></div>
+    </ul>
+</div>
+{% endblock %} 

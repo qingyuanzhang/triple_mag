@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+{% load i18n admin_static %}
+
+        {% load url from future %}
+
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<title>人太易康</title>
+
+<link href="/static/styles.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript" src="/static/js/jquery.js"></script>
+
+<script src="/static/js/jquery.tools.min.js"></script>
+
+    <style type="text/css">
+
+
+    #mall-nav a{
+
+    color: white;
+
+    font-size: 16px;
+
+    margin-right: 1em;
+
+    line-height: 36px;
+
+    }
+.content-h100 {
+border: 1px solid #90AC29;
+}
+</style>
+{% block my-resource %}
+
+        {% endblock %}
+
+</head>
+
+
+
+<body>
+
+<div id="container">
+
+    <div id="mall-banner">
+
+        <div class="wrap"> {%include 'mall/top_bar.html'%} </div>
+
+    </div>
+
+    <div class="wrap">
+
+        <div id="mall-header">
+
+            <div id="header-row">
+
+                <a href="/"><img id="mall-logo" src="/static/img/header.png" /></a>
+
+                {% block title-pic%}
+
+                {% endblock %}
+
+            </div>
+
+            <div class="clear"></div>
+
+        </div>
+
+    </div>
+
+    <div id="mall-nav">
+
+        <div class="wrap">
+
+            <a href="{%url 'rt_index'%}">|　人太易购</a>
+
+            <a href="{%url 'apps_index'%}">|　我的人太网</a>|　
+
+        </div>
+
+    </div>
+
+    <div class="wrap">
+
+        <div id="main-block">
+
+            <div class="content-w100">
+
+            <div class="content-h100">
+
+                <!--
+
+                <p id="goods-type-chain"> 
+
+                    
+
+                    {% if not user.is_active %}
+
+                         <a href="javascript:void(0)" onclick="javascript:goURL('{%url 'user_account_login' %}?nextUrl=')">
+
+                            ０登录
+
+                        </a>»
+
+                    {% endif %}
+
+                    <a href="{%url 'rt_index'%}">１.首页</a>» 
+
+                    	<a href={%url 'cart'%}>２购物车</a>» 
+
+                    
+
+                    {% if user.is_active %}
+
+                    	{% if request.session.in_cart_num > 0 %}
+
+                        <a>３确认地址</a>» 
+
+                        <a>４确认订单</a>» 
+
+                        <a href="/mall/user/my_order/?page=1">５我的订单</a> 
+
+                        {% endif %}
+
+                    {% endif %}
+
+
+
+                </p>
+
+                -->
+
+                {% block main-block%}
+
+                {% endblock %}
+
+            </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- end .container -->
+
+{%include "footer.html"%}
+
+</body>
+
+</html>

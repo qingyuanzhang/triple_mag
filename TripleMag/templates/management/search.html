@@ -1,0 +1,155 @@
+{% extends 'management/base.html'%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block content-main %}
+<div class="content-1of1-wrapper">
+    <div class="content-1of3">
+        <h1>选择搜索条件</h1>
+        <p>填入用户编号
+            <input type="text"  name="number" id="number">
+            <input type="submit" value="搜索" name="search" onclick="to_search()">
+        </p>
+        <p>
+            <label>角色<span>
+                <input type="checkbox" name="role">
+                </span></label>
+            <label>身份证号<span>
+                <input type="checkbox" name="id_card_number">
+                </span></label>
+            <label>固定电话<span>
+                <input type="checkbox" name='phone'>
+                </span></label>
+            <label>手机<span>
+                <input type="checkbox" name='mobile'>
+                </span></label>
+            <label>性别<span>
+                <input type="checkbox" name="gender">
+                </span></label>
+            <label>注册日期<span>
+                <input type="checkbox" name="start_date">
+                </span></label>
+            <label>QQ<span>
+                <input type="checkbox" name="QQ">
+                </span></label>
+            <label>开户银行<span>
+                <input type="checkbox" name="bank_name">
+                </span></label>
+            <label>银行帐号<span>
+                <input type="checkbox" name="bank_account_id">
+                </span></label>
+            <label>开户姓名<span>
+                <input type="checkbox" name="bank_account_name">
+                </span></label>
+        <p>
+            <label>现金账户余额<span>
+                <input type="checkbox" name="cash">
+                </span></label>
+            <label>报单账户余额<span>
+                <input type="checkbox" name="store_order">
+                </span></label>
+            <label>订货账户余额<span>
+                <input type="checkbox" name="store_cash" >
+                </span></label>
+            <label>重复消费账户余额<span>
+                <input type="checkbox" name="stock_repeat">
+                </span></label>
+            <label>回购账户余额<span>
+                <input type="checkbox" name="stock_rebuy">
+                </span></label>
+            <label>总股票持有量<span>
+                <input type="checkbox" name="stock_hold">
+                </span></label>
+        </p>
+        <p>
+            <label>个人商城积分<span>
+                <input type="checkbox" name="mall_single_score">
+                </span></label>
+            <label>商城团队积分<span>
+                <input type="checkbox" name="mall_team_score">
+                </span></label>
+            <label>A区累计业绩<span>
+                <input type="checkbox" name="store_total_money_A">
+                </span></label>
+            <label>B区累计业绩<span>
+                <input type="checkbox" name="store_total_money_B">
+                </span></label>
+            <label>产品销售业绩累积值<span>
+                <input type="checkbox" name="sum_declare">
+                </span></label>
+            <label>产品销售回购奖累积值<span>
+                <input type="checkbox" name="sum_bonus_recost">
+                </span></label>
+        </p>
+        <p>
+            <label>零次拆股股数<span>
+                <input type="checkbox" name="stock_hold_0devide">
+                </span></label>
+            <label>一次拆股股数<span>
+                <input type="checkbox"name="stock_hold_1devide">
+                </span></label>
+            <label>二次拆股股数<span>
+                <input type="checkbox" name="stock_hold_2devide">
+                </span></label>
+            <label>可以被拆股股数<span>
+                <input type="checkbox" name="can_devide">
+                </span></label>
+            <label>股票享受拆股封顶值<span>
+                <input type="checkbox" name="stock_hold_max">
+                </span></label>
+            <label>所在区块<span>
+                <input type="checkbox" name="contact_area">
+                </span></label>
+            <!--<label>代理等级<span><input type="checkbox" name="level"></span></label>-->
+            <label>金额<span>
+                <input type="checkbox" name="money">
+                </span></label>
+            <label>小区<span>
+                <input type="checkbox" name="low_percentage">
+                </span></label>
+            <label>日封顶<span>
+                <input type="checkbox" name="day_max">
+                </span></label>
+            <label>启动资金<span>
+                <input type="checkbox" name="init_money">
+                </span></label>
+        </p>
+        {% if UserBasic%}
+        <table>
+            <tr> {%for x in L%}
+                <td>{{x}}</td>
+                {% endfor %} </tr>
+            {%for x in search_result%}
+            <tr> {%for i in x%}
+                <td>{{i}}</td>
+                {% endfor %} </tr>
+            {%endfor%}
+        </table>
+        <a href="{%url 'out_put_csv'%}">
+        <input type="button" value="导出文件" >
+        </a> {% endif %} </div>
+</div>
+<script type="text/javascript">
+_content = []
+ $('input[type=checkbox]').click(function(){//或者change(function(){}); 
+        name = $(this).attr("name")
+        
+        
+        if($(this).attr('checked')=='checked'){
+            _content.push(name)
+        }else{
+            $.each(content,function(key,val){
+            if(name==val){
+               _content.splice(key,1)
+
+            }
+            
+            })
+        }
+   });  
+function to_search(){
+    var number = $("#number").val()
+    var content = _content.toString()
+    location.href="{%url 'search_fuc'%}?to_search=search&number="+number+"&content="+content
+}
+</script> 
+{% endblock %} 

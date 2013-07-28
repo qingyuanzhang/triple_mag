@@ -1,0 +1,43 @@
+{% load i18n %}
+{% load url from future %}
+{% if not stuff %}
+<h1>没有货物</h1>
+{%else%}
+<h1>货物列表</h1>
+<table>
+    <tr>
+        <td>选择</td>
+        <td>类型</td>
+        <td>名称</td>
+        <td>单价</td>
+        <td>数量</td>
+        <td>总价</td>
+    </tr>
+    {% for Stuff in stuff%}
+    <tr>
+        <td><input type="checkbox" name="{{Stuff.id}}" class="buy"></td>
+        {%if Stuff.type.detail %}
+        <td title="<h3>简介</h3>{{Stuff.type.detail}}"> {%else%}
+        <td> {%endif %}
+            {{Stuff.type}} </td>
+        {%if  Stuff.picture%}
+        <td title="<h3>图片</h3>{%if Stuff.picture%}<img src='/{{Stuff.picture.url}}'class='small-img'>{%else%} 无图片{%endif%}" href="{%url 'stuff_info'%}?stuff_id={{Stuff.id}}"> {%else%}
+
+        <td> {%endif %}  {{Stuff.name}}</td>
+        <td>{{Stuff.price_single}}</td>
+        <td>
+            <input type="number" value="1" min="0" name="{{Stuff.price_single}}" class="num short" /></td>
+        <td class="the_price">{{Stuff.price_single}}</td>
+        <td class="the_id hidden">{{Stuff.id}}</td>
+    </tr>
+    {%endfor%}
+</table>
+<p> {% if stuff.has_previous %} <a class="page_next" id = "page_up"  href="?page={{ stuff.previous_page_number }}"> 上一页 </a> {% endif %}
+    {% if stuff.has_next %} <a class="page_next" id = "page_down" href="?page={{ stuff.next_page_number }}"> 下一页 </a> {% endif%}
+    {{ stuff.number }} / {{ stuff.paginator.num_pages }} </P>
+<p>
+    <label class="label-header">总金额</label>
+    ￥<span id="total_price" class="now-price">0.0</span>
+    <input class="red button float-right" type="button" value="购买" id="go"　/>
+</p>
+{% endif %} 

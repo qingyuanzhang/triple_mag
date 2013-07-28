@@ -1,0 +1,51 @@
+    <h1>货物类型列表</h1>
+    {% if not stuff_type%}
+    没有货物类型
+    
+    {% else %}
+    <table>
+    <tr>
+    <td>操作</td>
+    <td>类型名称</td>
+    <td>类型简介</td>
+    </tr>
+    {% for StuffType in stuff_type %}
+    <tr>
+    <td><input class="modalInput" type="submit" rel="#type_deletion" value="删除" >
+    <input type="submit" value = "修改" onclick="change_stuff_type('{{StuffType.id}}')">
+    <div class="modal" id="type_deletion">
+          <h2>提示</h2>
+          <p>
+                删除该类型可能导致此下的货物及含有该货物的订单项目被删除，确认吗？
+          </p>
+        
+          <!-- yes/no buttons -->
+          <p>
+            <button class="close" onclick="return del_stuff_type('{{StuffType.id}}',this)"> 是的 </button>
+            <button class="close"> 取消 </button>
+          </p>
+	</div>
+    </td>
+    <td>{{StuffType.name}}</td>
+    <td>{{StuffType.detail}}</td>
+    </tr>
+    {% endfor %}
+    </table>
+    <p>
+    <a href="?page=1">首页</a>
+    
+    {% if stuff_type.has_previous %}
+    <a class="page_next" id = "page_up"  href="?page={{ stuff_type.previous_page_number }}">
+                    上一页
+    </a>
+    {% endif %}
+    {% if stuff_type.has_next %}
+    <a class="page_next" id = "page_down" href="?page={{ stuff_type.next_page_number }}">
+        下一页
+    </a>
+    {% endif%}
+    {{ stuff_type.number }} / {{ stuff_type.paginator.num_pages }}
+    
+    <a href="?page={{ stuff_type.paginator.num_pages }}">尾页</a>
+    </P>
+    {% endif %}

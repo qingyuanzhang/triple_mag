@@ -1,0 +1,47 @@
+{% extends 'member/member.html'%}
+{% load i18n admin_static %}
+{% load url from future %}
+{% block content%}
+
+<div class="content-w67">
+<div class="content-h100">
+  <a href="{%url 'member_details'%}"><h1 class="notselected">会员信息查看和修改</h1></a>
+
+
+        <a href="{%url 'member_bonus_center'%}"><h1 class="notselected">奖金记录</h1></a>
+        <a href="{%url 'money_withdraw'%}"><h1 class="selected">提现和转帐</h1></a>
+<div class="clear"></div>
+{%include include_template %} 
+</div>
+</div>
+<div class="content-w33">
+<div class="content-h50">
+<h2>提现和转帐</h2>
+        <ul>
+            <li> <a href="{%url 'money_withdraw'%}">提现登记</a></li>
+            <li><a href="{%url 'money_trans'%}">内部转帐</a></li>
+            <li><a href="{%url 'money_trans_records' %}">转帐记录</a></li>
+            <li><a href="{%url 'money_withdraw_record'%}">提现记录</a></li>
+        </ul>
+</div>
+<div class="content-h50">
+<h2>账户信息</h2>
+{%include 'includes/account.html'%} 
+</div>
+</div>
+
+
+
+
+
+
+<!--<div class="content-2of3-wrapper">-->
+<!--    <div class ="content-2of3">-->
+
+<!--    </div>-->
+<!--    <div class ="content-3of3"> {%include 'includes/account.html'%} </div>-->
+<!--</div>-->
+<!--<div class="content-1of3-wrapper">-->
+<!--    <div class ="content-1of3"> {%include include_template %} </div>-->
+<!--</div>-->
+{% endblock %} 

@@ -1,0 +1,27 @@
+{% extends 'mall/login-base.html'%}
+
+{% load url from future %}
+{% load i18n %}
+
+{% block main-block %}
+<!--<div id="login-block">-->
+
+
+    <h1>我的收藏</h1>
+	<div class="display_item">
+    	<h2>{{collections|length}}个收藏</h2>
+    	<ul>
+        	{% for prod in collections %}
+        	<li>
+	        <a href="{%url 'my_collections'%}?c_id={{prod.id}}">取消收藏</a>
+                <a href="/mall/product/{{prod.product.name}}">
+                <span>{{prod.product.name}}<br/><b>￥{{prod.product.price_VIP}}</b></span>
+                <img src="/{{prod.product.image_url}}" width="140px" class="thumbimage" />
+                <br/>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+<!--</div>-->
+{% endblock %}

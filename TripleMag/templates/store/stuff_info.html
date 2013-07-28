@@ -1,0 +1,35 @@
+{% extends "store/base.html"%}
+{% block title%}
+货物详情
+{% endblock%}
+{% block content-main %}
+<div class="content-1of1-wrapper">
+<div class="content-1of3">
+<a href="javascript:history.back(-1)">返回上一页</a>
+    <h1>货物详情</h1>
+<!--    <div><label>货物编号：</label><label>{{Stuff.id}}</label></div>-->
+    <p>
+    <label class="label-header">货物名称</label>{{Stuff.name}}
+    </p>
+    <p>
+    <label class="label-header">货物单价</label><span class="now-price">￥{{Stuff.price_single}}</span>
+    </p>
+    <p><label class="label-header">货物类型</label>{{Stuff.type}}
+    
+    </p>
+    <p><label class="label-header">货物类型简介</label>{{Stuff.type.detail}}
+    
+    </p>
+    {%if Stuff.picture%}
+    <p>
+    	<label class="label-header">货物图片</label>
+    	<img src="/{{Stuff.picture.url}}">
+    </p>
+    {%endif%}
+    
+    <p>
+    	<label class="label-header">货物简介</label>{{Stuff.detail}}
+    </p>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends 'mall/login-base-for-real.html' %}
+{% load i18n admin_static %}
+{% load url from future %}
+
+{% block title-pic %}
+<img src="/static/img/register.jpg" />
+{% endblock %}
+
+{%block my-resource %} 
+<style>
+
+#main-block{
+    background: url("/static/img/new_user_bg.jpg");
+    background-position: 50% 84%;
+}
+
+</style>
+<script src="/static/js/jquery.provincesCity.js" type="text/javascript"></script> 
+<script src="/static/js/provincesdata.js" type="text/javascript"></script> 
+<script src="/static/js/triplemag.js" type="text/javascript"></script>
+<script src="/static/js/validations.js"></script>
+<script>  
+//调用插件  
+$(function(){  
+    $("#address").ProvinceCity();  
+});  
+function register(){
+    /*alert($("selecteq(1)").val())*/
+    $("#id_proxy_province").val($("selecteq(0)").val())
+    $("#id_proxy_city").val($("selecteq(1)").val())
+    $("#id_proxy_area").val($("selecteq(2)").val())
+}
+function change_number(){
+            $.ajaxSettings.cache = false ;
+
+	        $.ajaxSettings.async = false;
+    $.getJSON("{%url 'change_number'%}",function(data){
+        $("#id_number").val(data)
+    })
+}
+$(document).ready(function(){
+	$("#id_number").attr("readonly","readonly")
+	$("#id_recommending").bind("blur",function()
+	{
+		help_text = $(this).next()
+		$.getJSON("{%url 'get_user_name' %}", {"user_number":$(this).val()},function (data){
+				help_text.html(data)
+			}
+		)
+	})
+		
+	$("#register_form").validator({
+		message: '<span></span>',
+		position: 'top center',
+		inputEvent: 'change' ,
+		lang: 'cn' ,
+		offset: [0, -40]
+	});
+})
+</script> 
+{% endblock %}
+
+{% block main-block%}
+<form id="register_form" action="." method="POST">
+	<div id="div-regist" class="float-right fence_purple">
+        {% csrf_token %}
+        <div>
+            <p>
+                {% if error %}
+                <div class="to-modify">{{error}}</div>
+                {% endif %}
+
+                <label for="id_number"> 编号 </label>
+                {{form.number}}*</p>
+                <input type="button" value="换一张" onclick="change_number()">
+    	        <span style="color:red">用于登录帐号，请注意保存</span>
+            <p>
+                <label for="id_name"> 昵称 </label>
+                {{form.name}}*</p>
+            <p>
+                <label for="id_password_1nd"> 一级密码 </label>
+                {{form.password_1nd}}*</p>
+            <p>
+                <label for="id_password1_again"> 一级密码确认 </label>
+                {{form.password1_again}}*</p>
+            <p>
+                <label for="id_password_2nd"> 二级密码 </label>
+                {{form.password_2nd}}*</p>
+            <p>
+                <label for="id_password2_again"> 二级密码确认 </label>
+                {{form.password2_again}}*</p>
+            <p title="如果没有人推荐你成为这里的会员，这里可以留空。">
+                <label for="id_recommending"> 推荐人编号 </label>
+                {{form.recommending}}
+            </p>
+            <p>
+                <label for="id_gender"> 性别 </label>
+                {{form.gender}}*</p>
+            <p>
+                <label for="id_phone"> 固定电话 </label>
+                {{form.phone}} </p>
+            <p>
+                <label for="id_mobile"> 手机 </label>
+                {{form.mobile}} </p>
+            <p>
+                <label for="id_QQ"> QQ号 </label>
+                {{form.QQ}} </p>
+        </div>
+        <input class="button orange float-right" onclick="register()" type="submit" value="注册">
+        <br />
+    </div>
+    <div class="clear"> </div>
+</form>
+{% endblock %} 
