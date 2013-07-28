@@ -1,14 +1,14 @@
 # -*- coding: utf8 -*-
-import sys,threading
+import sys, threading
 reload(sys) # Python2.5 初始化后会删除 sys.setdefaultencoding 这个方法，我们需要重新载入 
 sys.setdefaultencoding('utf-8') 
 
-from django.shortcuts import render_to_response, get_object_or_404,HttpResponseRedirect,HttpResponse,render
+from django.shortcuts import render_to_response, get_object_or_404, HttpResponseRedirect, HttpResponse, render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_protect
 from django.template import RequestContext
-from django.db.models import F,Q
+from django.db.models import F, Q
 from django.db.models import Count
 from django.http import Http404
 from django.conf import settings
@@ -21,21 +21,22 @@ import json
 from datetime import *
 import MySQLdb
 import time
-from TripleMag.apps.decorators import get_user_basic,admin_required,admin_or_store_required
+from TripleMag.apps.decorators import get_user_basic, admin_required, admin_or_store_required
 from TripleMag.apps.member.models import *
 from TripleMag.apps.mall.forms import ProductForm
 from TripleMag.apps.management.forms import *
-from TripleMag.apps.money.models import cash_withdraw, bonus_unpaid,bonus_declare_record,day_perform_record as day_perform_records,bonus_mall_record,store_declare_record
+from TripleMag.apps.money.models import cash_withdraw, bonus_unpaid, bonus_declare_record, day_perform_record as day_perform_records, bonus_mall_record, store_declare_record
 from TripleMag.apps.management.sql_view import WithDrawView
-from TripleMag.apps.management.models import member_lv_money,file_upload,value_setting,mall_level,mall_summit
+from TripleMag.apps.management.models import member_lv_money, file_upload, value_setting, mall_level, mall_summit
 from TripleMag.apps.store.forms import AddressForm
-from TripleMag.apps.store.models import stuff_type,stuff
-from TripleMag.apps.views import CallProc,PaginatorFuc,stock_line_chart,out_put_csv
+from TripleMag.apps.store.models import stuff_type, stuff
+from TripleMag.apps.views import CallProc, PaginatorFuc, stock_line_chart, out_put_csv
 from TripleMag.apps.stock.models import selling_poll
 from announcements.forms import AnnouncementAdminForm
 from announcements.models import Announcement
 from TripleMag.apps.stock.models import trend_record
 from django.db import connection
+from django.db import transaction
 from django.utils.translation import ugettext_lazy as _, ugettext
 
 from notification.models import *
@@ -52,13 +53,13 @@ def index(request, **kwargs):
     管理员界面各种首页
     """
     template_name = "management/base.html"
-    notices = Notice.objects.notices_for(request.user, on_site=True,unseen=True)
+    notices = Notice.objects.notices_for(request.user, on_site=True, unseen=True)
     
     request.session['subject'] = ""
     ctx = {
         "notices": notices
     }
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
     
 @login_required
 @admin_required
@@ -74,20 +75,20 @@ def member(request, **kwargs):
     """
 #    return render_to_response(template_name,RequestContext(request,ctx))
     request.session['subject'] = 'manage_memeber'
-    return render(request,template_name)
+    return render(request, template_name)
 @login_required
 @admin_required
 def member_void(request, **kwargs):
     """
     空点会员列表
     """
-    MemVoid = user_basic.objects.filter(is_void = True).order_by("-id")
+    MemVoid = user_basic.objects.filter(is_void=True).order_by("-id")
     template_name = "management/member/member_void.html"
-    MemVoid = PaginatorFuc(request,MemVoid,number=20)
+    MemVoid = PaginatorFuc(request, MemVoid, number=20)
     ctx = {
         "mem_void":MemVoid
     }
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 @login_required
 @admin_required
 def sys_index(request, **kwargs):
@@ -99,7 +100,7 @@ def sys_index(request, **kwargs):
         "h1":"欢迎来到系统设置首页"
     }
     request.session['subject'] = 'manage_sys'
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 
 
 @login_required
@@ -123,7 +124,7 @@ def stock_index(request, **kwargs):
     call_proc = CallProc()
     cursor = connection.cursor()
 
-    cursor.callproc("get_stock_statistics",('','','','',))
+    cursor.callproc("get_stock_statistics", ('', '', '', '',))
     cursor.execute('select @_get_stock_statistics_0')
     overall_total_count = cursor.fetchone()[0]
 
@@ -150,7 +151,7 @@ def stock_index(request, **kwargs):
             stock_lock_form = StockLockForm(request.POST)
             if stock_lock_form.is_valid():
                 ValueSetting.stock_lock_start = stock_lock_form.cleaned_data['stock_lock_start']
-                lock_days = stock_lock_form.cleaned_data['stock_lock_end']-stock_lock_form.cleaned_data['stock_lock_start']
+                lock_days = stock_lock_form.cleaned_data['stock_lock_end'] - stock_lock_form.cleaned_data['stock_lock_start']
                 ValueSetting.stock_locked_days = lock_days.days
                 ValueSetting.save()
         elif 'stock_allotment' in request.POST:
@@ -160,17 +161,17 @@ def stock_index(request, **kwargs):
                 rate = stock_allotment_form.cleaned_data['rate']
                 
                 proc_name = "stock_allotment"
-                call_proc.CallProcFuc_1(proc_name,rate)
+                call_proc.CallProcFuc_1(proc_name, rate)
         elif 'stock_return_all' in request.POST:
             proc_name = "stock_return_all"
             call_proc.CallProcFuc_0(proc_name)
         elif 'set_stock_price' in request.POST:
-            stock_value_form  = StockSetValueForm(request.POST)
+            stock_value_form = StockSetValueForm(request.POST)
             if stock_value_form.is_valid():
                 ValueSetting.stock_value_now = Decimal(stock_value_form.cleaned_data['stock_value_now'])
                 ValueSetting.save()
         elif 'set_values' in request.POST:
-            stock_set_values_form = StockValuesForm(request.POST,Value_Setting = ValueSetting)
+            stock_set_values_form = StockValuesForm(request.POST, Value_Setting=ValueSetting)
             if stock_set_values_form.is_valid():
                 print 'dghhh'
                 stock_set_values_form.save()
@@ -183,7 +184,7 @@ def stock_index(request, **kwargs):
         stock_lock_start = None
         stock_lock_end = None
     
-    ctx={
+    ctx = {
         "stock_lock_form":stock_lock_form,
         "stock_lock_start": stock_lock_start,
         "stock_lock_end": stock_lock_end,
@@ -200,7 +201,7 @@ def stock_index(request, **kwargs):
     }
     cursor.close()
     connection.close()
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 
 @login_required
 @admin_required
@@ -209,14 +210,14 @@ def mall_index(request, **kwargs):
     商城设置首页
     """
     template_name = 'management/mall/mall_base.html'
-    ctx ={
+    ctx = {
         '':''
     }
 
 
     request.session['subject'] = 'manage_mall'
-    return render_to_response(template_name,RequestContext(request,ctx))
-    
+    return render_to_response(template_name, RequestContext(request, ctx))
+
 @login_required    
 @admin_or_store_required
 def add_member(request, **kwargs):
@@ -225,23 +226,23 @@ def add_member(request, **kwargs):
     """
     template_name = kwargs.pop("template_name")
     role = kwargs.pop("role")
-    ValueSetting = value_setting.objects.defer("password_1nd","password_2nd").get(id = 1)
+    ValueSetting = value_setting.objects.defer("password_1nd", "password_2nd").get(id=1)
     Level = member_lv_money.objects.all()
-    Adding = kwargs.pop("Mem",None)
-    error=""
+    Adding = kwargs.pop("Mem", None)
+    error = ""
 #    print roleUserBasic
     if request.method == "POST":
-        basic_form = UserForm(request.POST,user = request.user)
-        advanced_form = MemberForm(request.POST,user = request.user,role=request.POST.get("role"))
+        basic_form = UserForm(request.POST, user=request.user)
+        advanced_form = MemberForm(request.POST, user=request.user, role=request.POST.get("role"))
         address_form = AddressForm(request.POST)
         money_enough = True
         if basic_form.is_valid() and advanced_form.is_valid() and address_form.is_valid():
             try:
-                _Level = Level.filter(level = advanced_form.cleaned_data['level'])[0]
+                _Level = Level.filter(level=advanced_form.cleaned_data['level'])[0]
             except:
                 raise Http404
             if role == "MemMax":
-                if Adding.store_order<_Level.money:
+                if Adding.store_order < _Level.money:
                     money_enough = False
                     error = "您的余额不足"
             if money_enough:
@@ -250,23 +251,23 @@ def add_member(request, **kwargs):
                 password = basic_form.cleaned_data['password_1nd']
                 email = ""
                 #存储用户名和密码
-                user = User.objects.create_user(username, email,password)
+                user = User.objects.create_user(username, email, password)
 
-                UserBasic = user_basic(user = user,password_1nd = user.password)
+                UserBasic = user_basic(user=user, password_1nd=user.password)
                 #存储用户的基本信息
-                basic_form = UserForm(request.POST,user = request.user, instance = UserBasic)
+                basic_form = UserForm(request.POST, user=request.user, instance=UserBasic)
                 basic_form.password_1nd = user.password
                 basic_form.save()
-                UserAddress = user_address(user = UserBasic,is_primary = True)
-                address = AddressForm(request.POST,instance = UserAddress)
+                UserAddress = user_address(user=UserBasic, is_primary=True)
+                address = AddressForm(request.POST, instance=UserAddress)
 
     #            UserBasic.save()
                 #存储推荐人
-                recommending_number =  basic_form.cleaned_data['recommending']
+                recommending_number = basic_form.cleaned_data['recommending']
                 if recommending_number:
                     UserRecommender = user_recommender()
-                    UserRecommender.recommended = user_basic.objects.get(id = UserBasic.id)
-                    UserRecommender.recommending = user_basic.objects.get(number = recommending_number)
+                    UserRecommender.recommended = user_basic.objects.get(id=UserBasic.id)
+                    UserRecommender.recommending = user_basic.objects.get(number=recommending_number)
                     UserRecommender.save()
                 
     #            print basic_form.role
@@ -277,7 +278,7 @@ def add_member(request, **kwargs):
                     UserContactor = user_contactor()
                     UserContactor.contacted = UserBasic
                     UserContactor.contact_area = advanced_form.cleaned_data['contact_area']
-                    UserContactor.contacting = user_basic.objects.get(number = contacting_number)
+                    UserContactor.contacting = user_basic.objects.get(number=contacting_number)
                     UserContactor.save()
 
                 #存储会员信息
@@ -303,7 +304,7 @@ def add_member(request, **kwargs):
                 UserMidMem.save()
                 if not UserBasic.is_void:
                     call_proc = CallProc()
-                    call_proc.CallProcFuc_1("member_new",UserBasic.id)
+                    call_proc.CallProcFuc_1("member_new", UserBasic.id)
                 #存储报单中心信息
                 if basic_form.cleaned_data['role'] == "MemMax":
                     UserMaxMan = user_max_mem()
@@ -315,30 +316,30 @@ def add_member(request, **kwargs):
                         UserMaxMan.is_central = False
     #                    UserCentralUsual =user_central_usual()
                         user_central = advanced_form.cleaned_data['user_central']
-                        if user_central:
-                            UBasic = user_basic.objects.filter(number = user_central)[0]
-                            user_mid = user_mid_mem.objects.get(user = UBasic)
-                            UMax = user_max_mem.objects.filter(user_mid = user_mid)[0]
-                            
-                            user_central_usual.objects.create(user_central = UMax,user_usual=UserMaxMan)
                         UserMaxMan.save()
+                        if user_central:
+                            UBasic = user_basic.objects.filter(number=user_central)[0]
+                            user_mid = user_mid_mem.objects.get(user=UBasic)
+                            UMax = user_max_mem.objects.filter(user_mid=user_mid)[0]
+                            
+                            user_central_usual.objects.create(user_central=UMax, user_usual=UserMaxMan)
+                        
     #                UserMaxMan.save()
 
                 #报单中心添加会员
                 if role == "MemMax":
     #                try:
-                    UserAdder = user_adder(adding = Adding, added = UserBasic)
+                    UserAdder = user_adder(adding=Adding, added=UserBasic)
                     Adding.store_order -= _Level.money
-                    UMid =  user_mid_mem.objects.get(user = Adding)
-                    UserMaxMem = user_max_mem.objects.get(user_mid = UMid )
-                    StoreDeclareRecord = store_declare_record(max = UserMaxMem,amount = _Level.money)
+                    UMid = user_mid_mem.objects.get(user=Adding)
+                    UserMaxMem = user_max_mem.objects.get(user_mid=UMid)
+                    StoreDeclareRecord = store_declare_record(max=UserMaxMem, amount=_Level.money)
                     Adding.store_cash += _Level.money
                     StoreDeclareRecord.save()
                     Adding.save()
                     UserAdder.save()
                     return HttpResponseRedirect(reverse('store_index'))
                 return HttpResponseRedirect(reverse('management_member_index'))
-
     else:
         basic_form = UserForm()
         advanced_form = MemberForm()
@@ -372,24 +373,24 @@ def search_member(request, **kwargs):
     查询会员信息
     """
     #视图来实现，装饰器来判读用户身份输出相应的UserInfo
-    query =request.GET.get("query",None)
+    query = request.GET.get("query", None)
     role = request.GET.get("role")
     current_role = "所有用户"
     if query:
-        UserBasic = user_basic.objects.filter(Q(number__icontains = query) | Q(name__icontains = query)).order_by("-id")
+        UserBasic = user_basic.objects.filter(Q(number__icontains=query) | Q(name__icontains=query)).order_by("-id")
     else:   
         UserBasic = user_basic.objects.all().order_by("-id")
     print role
     if role:
         if role == "MemMin":
-            UserBasic = user_basic.objects.filter(Q(role__icontains = "MemMin") | Q(role__icontains = "MemVIP")).order_by("-id")
-            current_role="商城用户"
-        elif role=="MemMax":
+            UserBasic = user_basic.objects.filter(Q(role__icontains="MemMin") | Q(role__icontains="MemVIP")).order_by("-id")
+            current_role = "商城用户"
+        elif role == "MemMax":
             current_role = "报单中心"
-            UserBasic = user_basic.objects.filter(role__icontains = role).order_by("-id")
-        elif role=="MemMid":
-            current_role="会员"        
-            UserBasic = user_basic.objects.filter(role__icontains = role).order_by("-id")
+            UserBasic = user_basic.objects.filter(role__icontains=role).order_by("-id")
+        elif role == "MemMid":
+            current_role = "会员"        
+            UserBasic = user_basic.objects.filter(role__icontains=role).order_by("-id")
     cursor = connection.cursor()  
     cursor.execute("select * from V_DELETABLE") 
     
@@ -397,7 +398,7 @@ def search_member(request, **kwargs):
     UserMidMem = user_mid_mem.objects.all()
     for UBasic in UserBasic:
         try:
-            UMidMem = UserMidMem.get(user = UBasic)
+            UMidMem = UserMidMem.get(user=UBasic)
             UBasic.level = UMidMem.level.name
         except:
             UBasic.level = "无"
@@ -413,7 +414,7 @@ def search_member(request, **kwargs):
         template_name = "management/member/user_info.html"
         
         
-    UserBasic = PaginatorFuc(request,UserBasic,number=20)
+    UserBasic = PaginatorFuc(request, UserBasic, number=20)
     ctx = {
         'user_info':UserBasic,
         'role':role,
@@ -432,10 +433,10 @@ def delete_member(request, **kwargs):
     """
     UserNumber = request.GET.get("user_number")
 
-    UserBasic = user_basic.objects.defer("id").filter(number = UserNumber)
+    UserBasic = user_basic.objects.defer("id").filter(number=UserNumber)
     print UserBasic[0].id
     cursor = connection.cursor()
-    cursor.execute('delete from member_user_basic where id = %s',UserBasic[0].id)
+    cursor.execute('delete from member_user_basic where id = %s', UserBasic[0].id)
 #    print UserBasic
 #    cursor.commit()
     connection.connection.commit()
@@ -470,7 +471,7 @@ def upgrade_appl_info(request, **kwargs):
     查看报单中心申请
     """
     template_name = "management/member/upgrade_appl.html"
-    UserAppl = member_mid_upgrade_record.objects.filter(state = "wait").order_by("apply_time")
+    UserAppl = member_mid_upgrade_record.objects.filter(state="wait").order_by("apply_time")
     
     ctx = {
         'user_appl': UserAppl
@@ -488,12 +489,12 @@ def application(request, **kwargs):
     UserModifyRecord = user_modify_record.objects.filter(state="wait").order_by('-time')
     
     #提现申请
-    CashWithDraw = cash_withdraw.objects.filter(state = "wait").order_by("-time_start")
+    CashWithDraw = cash_withdraw.objects.filter(state="wait").order_by("-time_start")
     for c_withdraw in CashWithDraw:
         c_withdraw.amount = c_withdraw.amount
     #会员升级申请
-    UserAppl = member_mid_upgrade_record.objects.filter(state = "wait").order_by("apply_time")
-    MinUpgradAppl = min_upgrade_record.objects.filter(state = "wait").order_by("time")
+    UserAppl = member_mid_upgrade_record.objects.filter(state="wait").order_by("apply_time")
+    MinUpgradAppl = min_upgrade_record.objects.filter(state="wait").order_by("time")
     ctx = {
         'user_appl': UserAppl,
         "user_modify_record":UserModifyRecord,
@@ -513,7 +514,7 @@ def deal_memmin_upgrade_appl(request, **kwargs):
     choice = request.GET.get("choice")
     appl_id = request.GET.get("appl_id")
     try:
-        MinUpgradAppl = min_upgrade_record.objects.get(id = appl_id)
+        MinUpgradAppl = min_upgrade_record.objects.get(id=appl_id)
     except:
         raise Http404
     if choice == "allow":
@@ -525,11 +526,11 @@ def deal_memmin_upgrade_appl(request, **kwargs):
         MinUpgradAppl.state = "sure"
         MinUpgradAppl.user.save()
         extra_context = "恭喜你成为了商城VIP"
-        notification.send(MinUpgradAppl.user.user,"vip_appl",extra_context,True, request.user)
+        notification.send(MinUpgradAppl.user.user, "vip_appl", extra_context, True, request.user)
     elif choice == "reject":
         MinUpgradAppl.state = "deny"
         extra_context = "很抱歉你的VIP申请被拒绝"
-    notification.send(MinUpgradAppl.user.user,"vip_appl",extra_context,True, request.user)
+    notification.send(MinUpgradAppl.user.user, "vip_appl", extra_context, True, request.user)
     MinUpgradAppl.save()
     return HttpResponseRedirect(reverse("management_application"))
 @login_required       
@@ -540,17 +541,17 @@ def allow_appl(request, **kwargs):
     为会员开通申请
     """
     UserBasic = kwargs.pop("UserBasic")
-    choice=request.GET.get("choice")
-    UserAppl = member_mid_upgrade_record.objects.filter(user = UserBasic)[0]
+    choice = request.GET.get("choice")
+    UserAppl = member_mid_upgrade_record.objects.filter(user=UserBasic)[0]
 #    try:
-    if choice=="allow":
+    if choice == "allow":
 
         store_style = request.GET.get("store_style")
         UserBasic.role = "MemMax"
         UserBasic.save()
         UserAppl.state = "sure"
-        UserMidMem = user_mid_mem.objects.filter(user = UserBasic)[0]
-        UserMaxMan = user_max_mem(user_mid = UserMidMem)
+        UserMidMem = user_mid_mem.objects.filter(user=UserBasic)[0]
+        UserMaxMan = user_max_mem(user_mid=UserMidMem)
 
         if (store_style == "中心店"):
             UserMaxMan.is_central = True
@@ -559,23 +560,23 @@ def allow_appl(request, **kwargs):
 
         UserMaxMan.save()
         extra_context = "你的报单中心已经开通，重新登录后即可生效"
-    elif choice=="reject":
+    elif choice == "reject":
         UserAppl.state = "wait"
         extra_context = "你的报单中心申请失败"
     UserAppl.grant_time = datetime.datetime.now()
 
     UserAppl.save()
-    notification.send(UserBasic.user,"store_appl_success_notice",extra_context,True, request.user)
+    notification.send(UserBasic.user, "store_appl_success_notice", extra_context, True, request.user)
     data = '1'
 #    except:
 #        data = '0'
     
-    return HttpResponse(json.dumps(data),mimetype="application/json")
+    return HttpResponse(json.dumps(data), mimetype="application/json")
     
 @login_required           
 @admin_required
 @get_user_basic
-def allow_or_reject(request,choices=None,user_number=None, **kwargs):
+def allow_or_reject(request, choices=None, user_number=None, **kwargs):
     """
     为会员开通或拒绝会员的报单中心申请
     """
@@ -585,7 +586,7 @@ def allow_or_reject(request,choices=None,user_number=None, **kwargs):
     
 @login_required               
 @admin_required
-def manage_stuff_type(request,**kwargs):
+def manage_stuff_type(request, **kwargs):
     """
     管理货物类型
     """
@@ -598,11 +599,11 @@ def manage_stuff_type(request,**kwargs):
         "stuff_type": StuffType,
         'include_template': include_template
     }
-    return render_to_response(template_name,RequestContext(request, ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
     
 @login_required                                    
 @admin_required
-def add_stuff_type(request,**kwargs):
+def add_stuff_type(request, **kwargs):
     """
     添加货物类型
     """
@@ -611,7 +612,7 @@ def add_stuff_type(request,**kwargs):
     include_template = 'includes/add_stuff_type.html'
     
     if request.method == "POST":
-        form = StuffTypeForm(request.POST,request.FILES)
+        form = StuffTypeForm(request.POST, request.FILES)
         
         if form.is_valid():
             form.save()
@@ -624,7 +625,7 @@ def add_stuff_type(request,**kwargs):
         'form': form,
         'include_template': include_template
     }
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
     
 @login_required       
 @admin_required
@@ -632,17 +633,17 @@ def del_stuff_type(request, **kwargs):
     """
     删除货物类型
     """
-    stuff_type_id = request.GET.get('stuff_type_id',None )
+    stuff_type_id = request.GET.get('stuff_type_id', None)
     try:    
-        StuffType = stuff_type.objects.get(id = stuff_type_id)
+        StuffType = stuff_type.objects.get(id=stuff_type_id)
         StuffType.delete()
         data = '1'
     except:
         data = '0'
-    return HttpResponse(json.dumps(data),mimetype="application/json")
+    return HttpResponse(json.dumps(data), mimetype="application/json")
 @login_required       
 @admin_required
-def change_stuff_type(request,**kwargs):
+def change_stuff_type(request, **kwargs):
     """
     修改货物类型信息
     """
@@ -669,7 +670,7 @@ def change_stuff_type(request,**kwargs):
         try:
             stuff_type_id = int(stuff_type_id)
             
-            StuffType = stuff_type.objects.get(id = stuff_type_id)
+            StuffType = stuff_type.objects.get(id=stuff_type_id)
             
             request.session['StuffType'] = StuffType
             form = StuffType
@@ -680,7 +681,7 @@ def change_stuff_type(request,**kwargs):
     ctx = {
         "StuffType":form
     }
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 @admin_required
 def manage_stuff(request, **kwargs):
     """
@@ -697,7 +698,7 @@ def manage_stuff(request, **kwargs):
         'include_template': include_template
     }
     
-    return render_to_response(template_name,RequestContext(request, ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
     
 @admin_required
 def add_stuff(request, **kwargs):
@@ -708,7 +709,7 @@ def add_stuff(request, **kwargs):
     include_template = "includes/add_stuff.html"
     
     if request.method == "POST":
-        form = StuffForm(request.POST,request.FILES)
+        form = StuffForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             success_url = reverse("manage_stuff")
@@ -716,25 +717,25 @@ def add_stuff(request, **kwargs):
     else:
         form = StuffForm
         
-    ctx ={
+    ctx = {
         'form':form,
         'include_template': include_template
     }
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
     
 @admin_required
 def del_stuff(request, **kwargs):
     """
     删除货物
     """
-    stuff_id = request.GET.get('stuff_id',None )
+    stuff_id = request.GET.get('stuff_id', None)
     try:    
-        Stuff = stuff.objects.get(id = stuff_id)
+        Stuff = stuff.objects.get(id=stuff_id)
         Stuff.delete()
         data = '1'
     except:
         data = '0'
-    return HttpResponse(json.dumps(data),mimetype="application/json")
+    return HttpResponse(json.dumps(data), mimetype="application/json")
     
 @admin_required
 def change_stuff(request, **kwargs):
@@ -753,14 +754,14 @@ def change_stuff(request, **kwargs):
         detail = request.POST.get('detail')
         picture = request.POST.get('picture')
         if name != Stuff.name:
-            print 'ssss',name
+            print 'ssss', name
             Stuff.name = name
         if detail != Stuff.detail:
             Stuff.detail = detail
         if picture != Stuff.picture:
             Stuff.picture == picture
         if new_type != Stuff.type:
-            StuffType = stuff_type.objects.get(id = new_type)
+            StuffType = stuff_type.objects.get(id=new_type)
             Stuff.type = StuffType
         if total_num != Stuff.total_num:
             Stuff.total_num = total_num
@@ -778,7 +779,7 @@ def change_stuff(request, **kwargs):
         try:
             stuff_id = int(stuff_id)
             StuffType = stuff_type.objects.all()
-            Stuff = stuff.objects.get(id = stuff_id)
+            Stuff = stuff.objects.get(id=stuff_id)
             request.session['Stuff'] = Stuff
         except:
             print '111111111'    
@@ -786,10 +787,10 @@ def change_stuff(request, **kwargs):
             "Stuff": Stuff,
             "stuff_type": StuffType
         }
-        return render_to_response(template_name,RequestContext(request,ctx))
+        return render_to_response(template_name, RequestContext(request, ctx))
 @admin_required
 @get_user_basic
-def charge(request, user_number=None,**kwargs):
+def charge(request, user_number=None, **kwargs):
     """
     给会员充值
     """
@@ -802,7 +803,7 @@ def charge(request, user_number=None,**kwargs):
                       )
 @admin_required
 @get_user_basic            
-def to_charge(request,**kwargs):
+def to_charge(request, **kwargs):
     """
     给会员充值 ajax
     """
@@ -812,33 +813,33 @@ def to_charge(request,**kwargs):
     amount = request.GET.get("amount")
 
     try:
-        amount =  Decimal(amount)
+        amount = Decimal(amount)
         if account == "cash":
             UserBasic.cash = UserBasic.cash + amount
-            extra_context = "你的现金账户冲入"+str(amount)+"元"
+            extra_context = "你的现金账户冲入" + str(amount) + "元"
             data = UserBasic.cash
             UserBasic.save()
-            notification.send(UserBasic.user, "charge_notice",extra_context,True, request.user)
+            notification.send(UserBasic.user, "charge_notice", extra_context, True, request.user)
 
         elif account == "stock_hold":
-            extra_context = "你的股票自有账户冲入"+str(amount)+"股"
+            extra_context = "你的股票自有账户冲入" + str(amount) + "股"
             amount = int(amount)
             #调用存储过程函数
             call_proc = CallProc()
-            call_proc.CallProcFuc_2("stock_recharge",UserBasic.id,amount)
-            UBasic= user_basic.objects.get(id = UserBasic.id)
+            call_proc.CallProcFuc_2("stock_recharge", UserBasic.id, amount)
+            UBasic = user_basic.objects.get(id=UserBasic.id)
             data = UBasic.stock_hold_0devide + UBasic.stock_hold_1devide + UBasic.stock_hold_2devide
-            notification.send(UserBasic.user, "charge_notice",extra_context,True, request.user)
+            notification.send(UserBasic.user, "charge_notice", extra_context, True, request.user)
 
         elif account == "store_order":
-            extra_context = "你的报单账户账户冲入"+str(amount)+"元"
-            UserBasic.store_order= UserBasic.store_order + amount
+            extra_context = "你的报单账户账户冲入" + str(amount) + "元"
+            UserBasic.store_order = UserBasic.store_order + amount
             data = UserBasic.store_order
             print data
             UserBasic.save()
             print data
             
-            notification.send(UserBasic.user, "charge_notice",extra_context,True, request.user)
+            notification.send(UserBasic.user, "charge_notice", extra_context, True, request.user)
         elif account == "change_cash":
             UserBasic.cash = amount
             data = UserBasic.cash
@@ -865,7 +866,7 @@ def to_charge(request,**kwargs):
         data = '-1'
         extra_context = "充值失败"
 
-    return HttpResponse(data,mimetype="application/json")
+    return HttpResponse(data, mimetype="application/json")
     
 @admin_required 
 def withdraw_appl(request, **kwargs):
@@ -874,10 +875,10 @@ def withdraw_appl(request, **kwargs):
     """
     template_name = "management/member/withdraw_appl.html"
     
-    CashWithDraw = cash_withdraw.objects.filter(state = "wait").order_by("-time_start")
+    CashWithDraw = cash_withdraw.objects.filter(state="wait").order_by("-time_start")
     test = cash_withdraw.objects.all()
 
-    ctx ={
+    ctx = {
         'withdraw_appl': CashWithDraw
     }
     return render_to_response(template_name, RequestContext(request, ctx))
@@ -889,7 +890,7 @@ def deal_withdraw_appl(request, **kwargs):
     """ 
     choice = request.GET.get("choice")
     withdraw_id = request.GET.get("withdraw_id")
-    CashWithDraw = cash_withdraw.objects.get(id = withdraw_id)
+    CashWithDraw = cash_withdraw.objects.get(id=withdraw_id)
     
     try:
         if choice == "允许":
@@ -908,14 +909,14 @@ def deal_withdraw_appl(request, **kwargs):
             CashWithDraw.save()
             extra_context = "提现被拒绝"
             label = "withdraw_failed_notice"
-        notification.send(CashWithDraw.user.user, label ,extra_context,True, request.user)
+        notification.send(CashWithDraw.user.user, label , extra_context, True, request.user)
         data = '1'
     except:
         data = '0'
-    return HttpResponse(json.dumps(data),mimetype="application/json")
+    return HttpResponse(json.dumps(data), mimetype="application/json")
     
 @admin_required
-def withdraw_record(request,querys=None,**kwargs):
+def withdraw_record(request, querys=None, **kwargs):
     """
     用户的提现记录
     """
@@ -924,11 +925,11 @@ def withdraw_record(request,querys=None,**kwargs):
     except:
         query = ["all"]
     query_result = {
-        "number": WithDrawView.objects.get(number__contains = query[1]),
-        "name": WithDrawView.objects.filter(name__contains = query[1]),
-        "time_start": WithDrawView.objects.filter(time_start_range(query[1],query[2])),
-        "time_authorize": WithDrawView.objects.filter(time_authorize_rang(query[1],query[2])),
-        "state": WithDrawView.objects.filter(state = query[1]),
+        "number": WithDrawView.objects.get(number__contains=query[1]),
+        "name": WithDrawView.objects.filter(name__contains=query[1]),
+        "time_start": WithDrawView.objects.filter(time_start_range(query[1], query[2])),
+        "time_authorize": WithDrawView.objects.filter(time_authorize_rang(query[1], query[2])),
+        "state": WithDrawView.objects.filter(state=query[1]),
         "all": WithDrawView.objects.all()
     }
     
@@ -950,16 +951,16 @@ def mem_appl_manage(request):
     ctx = {
         "user_modify_record":UserModifyRecord
     }
-    return render_to_response(template,RequestContext(request,ctx))
+    return render_to_response(template, RequestContext(request, ctx))
     
 @admin_required   
-def del_appl(request,**kwargs):
+def del_appl(request, **kwargs):
     """
     处理用户的请求
     """
     record_id = request.GET.get('record_id')
     choice = request.GET.get("choice")
-    UserModifyRecord = user_modify_record.objects.get(id = record_id)
+    UserModifyRecord = user_modify_record.objects.get(id=record_id)
     print UserModifyRecord.state
 #        except:
 #            data = '1'
@@ -975,7 +976,7 @@ def del_appl(request,**kwargs):
             UserModifyRecord.user.name = UserModifyRecord.name
         if UserModifyRecord.bank_name:
             print '2'
-            UserModifyRecord.user.bank_name =  UserModifyRecord.bank_name
+            UserModifyRecord.user.bank_name = UserModifyRecord.bank_name
         if UserModifyRecord.bank_account_id:
             UserModifyRecord.user.bank_account_id = UserModifyRecord.bank_account_id 
         if UserModifyRecord.bank_account_name:
@@ -983,7 +984,7 @@ def del_appl(request,**kwargs):
             UserModifyRecord.user.bank_account_name = UserModifyRecord.bank_account_name
         if UserModifyRecord.id_card_num:
             UserModifyRecord.user.id_card_number = UserModifyRecord.id_card_num
-        UserModifyRecord.state="sure"
+        UserModifyRecord.state = "sure"
         UserModifyRecord.save()
         UserModifyRecord.user.save()
         extra_context = "信息修改成功"
@@ -995,8 +996,8 @@ def del_appl(request,**kwargs):
         extra_context = "信息修改被拒绝"
         
         data = '1'
-    notification.send(UserModifyRecord.user.user, "change_info_failed_notice",extra_context,True, request.user)
-    return HttpResponse(json.dumps(data),mimetype="application/json")
+    notification.send(UserModifyRecord.user.user, "change_info_failed_notice", extra_context, True, request.user)
+    return HttpResponse(json.dumps(data), mimetype="application/json")
     
 @admin_required
 @get_user_basic    
@@ -1027,11 +1028,11 @@ def change_state(request, **kwargs):
             extra_context = "账户被冻结"
             label = "not_blocked_notice"
         UserBasic.save()
-        notification.send(UserBasic.user, label ,extra_context,True, request.user)
+        notification.send(UserBasic.user, label , extra_context, True, request.user)
         data = '1'
     except:
         data = '0'
-    return HttpResponse(json.dumps('1'),mimetype="application/json")
+    return HttpResponse(json.dumps('1'), mimetype="application/json")
     
 @admin_required   
 def charge(request, **kwargs):
@@ -1041,7 +1042,7 @@ def charge(request, **kwargs):
     query = request.GET.get("query", None)
     if query:
         template_name = "management/member/charge_user_info.html"
-        UserBasic = user_basic.objects.filter(Q(number__contains = query) | Q(name__contains = query))
+        UserBasic = user_basic.objects.filter(Q(number__contains=query) | Q(name__contains=query))
 
     else:
         template_name = "management/member/charge.html" 
@@ -1061,7 +1062,7 @@ def bank_info(request, **kwargs):
     query = request.GET.get("query", None)
     if query:
         template_name = "management/member/bank_info_table.html"
-        UserBasic = user_basic.objects.filter(Q(number__contains = query) | Q(name__contains = query))
+        UserBasic = user_basic.objects.filter(Q(number__contains=query) | Q(name__contains=query))
 
     else:
         template_name = "management/member/bank_info.html" 
@@ -1091,7 +1092,7 @@ def upload_file(request, **kwargs):
     ctx = {
         "form": form
     }
-    return render_to_response(template_name,RequestContext(request, ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 
 @login_required
 @admin_required
@@ -1102,14 +1103,14 @@ def public_announcements(request, **kwargs):
     template_name = "announcements/public_announcement.html"
     user = request.user
     if request.method == "POST":
-        announcement = Announcement(creator = user, members_only= True)
+        announcement = Announcement(creator=user, members_only=True)
         form = AnnouncementAdminForm(request.POST, instance=announcement)
 
         if form.is_valid():
             form.save()
             extra_context = "有新的公司公告"
-            users = User.objects.exclude(id = request.user.id)
-            notification.send(users,"announcement_notice",extra_context,True, request.user)
+            users = User.objects.exclude(id=request.user.id)
+            notification.send(users, "announcement_notice", extra_context, True, request.user)
             return HttpResponseRedirect(reverse("announcements_list"))
     else:
         form = AnnouncementAdminForm
@@ -1118,7 +1119,7 @@ def public_announcements(request, **kwargs):
         "form": form
     }
     
-    return render_to_response(template_name, RequestContext(request,ctx))    
+    return render_to_response(template_name, RequestContext(request, ctx))    
         
 def announcements_list(request, **kwargs):
     """
@@ -1126,7 +1127,7 @@ def announcements_list(request, **kwargs):
     """
     announcement_id = request.GET.get("announcement_id")
 
-    if announcement_id==None:
+    if announcement_id == None:
         template_name = kwargs.pop("template_name")
         announcements = Announcement.objects.all().order_by("-creation_date")
         ctx = {
@@ -1135,7 +1136,7 @@ def announcements_list(request, **kwargs):
             }
     else:
         template_name = "announcements/announcement_detail.html"
-        announcements = Announcement.objects.get(id = announcement_id)
+        announcements = Announcement.objects.get(id=announcement_id)
         print announcements
         ctx = {
             "announcements": announcements
@@ -1176,7 +1177,7 @@ def announcements_list(request, **kwargs):
 #    return render_to_response(template_name, RequestContext(request ,ctx))
 @login_required
 @admin_required
-def a_bonus_settlement(request ,**kwargs): 
+def a_bonus_settlement(request , **kwargs): 
     """
     A网奖金结算
     """   
@@ -1217,30 +1218,30 @@ def c_bonus_settlement(request, **kwargs):
 
 #    return render_to_response(template_name, RequestContext(request ,ctx))
 
-def a_bonus_counter(request,**kwargs):
+def a_bonus_counter(request, **kwargs):
     """
     每期的奖金记录
     """
     
     Counter = None
-    counter = request.GET.get('counter',None)
+    counter = request.GET.get('counter', None)
     bonus_style = kwargs.pop("bonus_style")
     if request.is_ajax() :
 
         if bonus_style == "a_bonus":
             template_name = "includes/counter_detail.html"
-            BonusRecords = bonus_declare_record.objects.filter(counter = counter).order_by("-id")
-            csv_fuc(request,BonusRecords)
+            BonusRecords = bonus_declare_record.objects.filter(counter=counter).order_by("-id")
+            csv_fuc(request, BonusRecords)
         elif bonus_style == "c_bonus":
             template_name = "includes/c_counter_detail.html"
-            BonusRecords = bonus_mall_record.objects.filter(counter = counter).order_by("-id")
-            csv_fuc_c(request,BonusRecords)
-        BonusRecords = PaginatorFuc(request,BonusRecords,number=20)
+            BonusRecords = bonus_mall_record.objects.filter(counter=counter).order_by("-id")
+            csv_fuc_c(request, BonusRecords)
+        BonusRecords = PaginatorFuc(request, BonusRecords, number=20)
         ctx = {
             'BonusRecords':BonusRecords,
             'counter':counter
         }
-        return render_to_response(template_name,RequestContext(request,ctx))
+        return render_to_response(template_name, RequestContext(request, ctx))
 #        template_name = "includes/counter_detail.html"
 #        template_name = request.GET.get("template_name")
     else:
@@ -1248,25 +1249,25 @@ def a_bonus_counter(request,**kwargs):
         if bonus_style == "a_bonus":
             Counter = bonus_declare_record.objects.values('counter').annotate(Count('counter')).order_by("-counter")
             include_template = 'includes/counter_detail.html'
-            Counter = PaginatorFuc(request,Counter)
+            Counter = PaginatorFuc(request, Counter)
             try:
                 counter = Counter[0]['counter']
             except:
                 counter = 0
-            BonusRecords = bonus_declare_record.objects.filter(counter = counter).order_by("-id")
-            csv_fuc(request,BonusRecords)
+            BonusRecords = bonus_declare_record.objects.filter(counter=counter).order_by("-id")
+            csv_fuc(request, BonusRecords)
         elif bonus_style == "c_bonus":
             Counter = bonus_mall_record.objects.values('counter').annotate(Count('counter')).order_by("-counter")
             include_template = 'includes/c_counter_detail.html'
-            Counter = PaginatorFuc(request,Counter)
+            Counter = PaginatorFuc(request, Counter)
             try:
                 counter = Counter[0]['counter']
             except:
                 counter = 0
-            BonusRecords = bonus_mall_record.objects.filter(counter = counter).order_by("-id")
-            csv_fuc_c(request,BonusRecords)
+            BonusRecords = bonus_mall_record.objects.filter(counter=counter).order_by("-id")
+            csv_fuc_c(request, BonusRecords)
             
-        BonusRecords = PaginatorFuc(request,BonusRecords,number=20)
+        BonusRecords = PaginatorFuc(request, BonusRecords, number=20)
 #    detail_paginator = Paginator(BonusRecords, 10)
 #    try:
 #        detail_page = int(request.GET.get('detail_page', '1'))
@@ -1290,13 +1291,13 @@ def a_bonus_counter(request,**kwargs):
         "Counters": Counter,
         'include_template':include_template
         }
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 
-def csv_fuc(request,BonusRecords):
+def csv_fuc(request, BonusRecords):
     """
     CSV文件导出函数
     """
-    Content = ['期数','用户编号','用户姓名','报单费','组织奖','回本奖','互助奖','抽税','重复消费','到账统计','奖金发放时间']
+    Content = ['期数', '用户编号', '用户姓名', '报单费', '组织奖', '回本奖', '互助奖', '抽税', '重复消费', '到账统计', '奖金发放时间']
     Result = []
     counter = 0
     for R in BonusRecords:
@@ -1329,18 +1330,18 @@ def csv_fuc(request,BonusRecords):
         Result.append(result)
         counter = R.counter
     if request.user.is_superuser:
-        file_name = "第%s期A网奖金记录"%(str(counter))
+        file_name = "第%s期A网奖金记录" % (str(counter))
     else:
         now = datetime.datetime.now()
-        file_name = "第A网奖金记录%s"%(str(now))
+        file_name = "第A网奖金记录%s" % (str(now))
     request.session['Content'] = Content
     request.session['Result'] = Result
     request.session['file_name'] = file_name
-def csv_fuc_c(request,BonusRecords):
+def csv_fuc_c(request, BonusRecords):
     """
     C网奖金记录
     """
-    Content = ['用户编号','用户姓名','零售奖','同级奖','推荐奖','代理奖','抽税','到账总计','奖金发放时间']
+    Content = ['用户编号', '用户姓名', '零售奖', '同级奖', '推荐奖', '代理奖', '抽税', '到账总计', '奖金发放时间']
     Result = []
     counter = 0
     number = ""
@@ -1368,34 +1369,34 @@ def csv_fuc_c(request,BonusRecords):
         counter = R.counter
         Result.append(result)
     if request.user.is_superuser:
-        file_name = "第%s期C网奖金记录"%(str(counter))
+        file_name = "第%s期C网奖金记录" % (str(counter))
     else:
         now = datetime.datetime.now()
-        file_name = "第C网奖金记录%s"%(str(now))
+        file_name = "第C网奖金记录%s" % (str(now))
     request.session['Content'] = Content
     request.session['Result'] = Result
     request.session['file_name'] = file_name
 @login_required
 @admin_required
-def counter_detail(request ,**kwargs):
+def counter_detail(request , **kwargs):
     """
     每期奖金明细
     """
     template_name = "includes/counter_detail.html"
     Counter = kwargs.pop("counter")
-    CounterDetail = bonus_declare_record.objects.filter(counter = Counter).order_by("-id")
+    CounterDetail = bonus_declare_record.objects.filter(counter=Counter).order_by("-id")
     
 @admin_required
 def bonus_detail(request, **kwargs):
     """
     奖金发放 
     """
-    BonusDetail = bonus_unpaid.objects.filter(paid = False)
+    BonusDetail = bonus_unpaid.objects.filter(paid=False)
     template_name = "management/member/bonus_detail.html"
     ctx = {
         "BonusDetails":BonusDetail
     }
-    return render_to_response(template_name, RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 @login_required
 @get_user_basic
 def day_perform_record(request, **kwargs):
@@ -1410,18 +1411,18 @@ def day_perform_record(request, **kwargs):
             if not end_time:
                 DayPerformRecord = day_perform_records.objects.filter(date__gte=start_time).order_by("-date").order_by("-date")
             else:
-                DayPerformRecord = day_perform_records.objects.filter(date__range=(start_time,end_time)).order_by("-date").order_by("-date")
+                DayPerformRecord = day_perform_records.objects.filter(date__range=(start_time, end_time)).order_by("-date").order_by("-date")
         else:
             DayPerformRecord = day_perform_records.objects.all().order_by("-date")
     else:
         if start_time:
-            DayPerformRecord = day_perform_records.objects.filter(date__range=(start_time,end_time)).order_by("-date").order_by("-date")
+            DayPerformRecord = day_perform_records.objects.filter(date__range=(start_time, end_time)).order_by("-date").order_by("-date")
         else:
-            UserBasic = user_basic.objects.defer(None).filter(user = request.user)[0]
-            UserMidMem = user_mid_mem.objects.filter(user = UserBasic)[0]
-            DayPerformRecord = day_perform_records.objects.filter(mid = UserMidMem)
+            UserBasic = user_basic.objects.defer(None).filter(user=request.user)[0]
+            UserMidMem = user_mid_mem.objects.filter(user=UserBasic)[0]
+            DayPerformRecord = day_perform_records.objects.filter(mid=UserMidMem)
     Result = []
-    request.session['Content'] = ['编号','姓名','日期','A区业绩值','B区业绩值']
+    request.session['Content'] = ['编号', '姓名', '日期', 'A区业绩值', 'B区业绩值']
     for R in DayPerformRecord:
         result = []
         result.append(R.mid.user.number)
@@ -1433,7 +1434,7 @@ def day_perform_record(request, **kwargs):
         Result.append(result)
     request.session['Result'] = Result
     request.session['file_name'] = "每日报单值"
-    DayPerformRecord = PaginatorFuc(request,DayPerformRecord)
+    DayPerformRecord = PaginatorFuc(request, DayPerformRecord)
         
     ctx = {
         "day_perform_record": DayPerformRecord,
@@ -1442,7 +1443,7 @@ def day_perform_record(request, **kwargs):
         "out_put_name":"每日业绩导出"
     }
     
-    return render_to_response(template_name, RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
     
 @login_required
 def recommender(request, **kwargs):
@@ -1450,7 +1451,7 @@ def recommender(request, **kwargs):
     管理员查看3代推荐人
     """
     user = request.user
-    UserBasic = user_basic.objects.defer('id',"name","number").all()
+    UserBasic = user_basic.objects.defer('id', "name", "number").all()
     user_number = request.GET.get("user_number")
     recommender_first = {}
     recommender_second = {}
@@ -1461,35 +1462,35 @@ def recommender(request, **kwargs):
     
     cursor = connection.cursor()
     if user.is_superuser or user.first_name == "finance":
-        UBasic = UserBasic.filter(number = user_number)[0]
+        UBasic = UserBasic.filter(number=user_number)[0]
         template_name = "management/member/recommender.html"
     else:
-        UBasic = UserBasic.filter(user = user)[0]
+        UBasic = UserBasic.filter(user=user)[0]
         template_name = "member/recommender.html"
     request.session['recommender_name'] = UBasic.name
 #        cursor.execute("select * from V_REC_GEN3 where  = %s",UBasic.id)
     #第一代推荐人关系
-    UserRecommender = user_recommender.objects.filter(recommending = UBasic)
+    UserRecommender = user_recommender.objects.filter(recommending=UBasic)
     #第二代推荐人关系
     
     for URecommender in UserRecommender:
-        print URecommender.recommended.id,'test'
-        cursor.execute("select * from V_REC_GEN2 where son = %s",URecommender.recommended.id)
+        print URecommender.recommended.id, 'test'
+        cursor.execute("select * from V_REC_GEN2 where son = %s", URecommender.recommended.id)
         result = cursor.fetchall()
 #        cursor.close()
 #        connection.close()
         print result
         for r in result:
-            _recommender_second={}
+            _recommender_second = {}
             try:
                 _recommender_second['father'] = UserBasic.get(id=r[1])
             except:
                 _recommender_second['father'] = None
             try:
-                _recommender_second['son'] = UserBasic.get(id = r[2])
+                _recommender_second['son'] = UserBasic.get(id=r[2])
             except:
                 _recommender_second['son'] = None
-            cursor.execute("select * from V_REC_GEN3 where grandson = %s",r[2])
+            cursor.execute("select * from V_REC_GEN3 where grandson = %s", r[2])
             _result = cursor.fetchall()
             for _r in _result:
 
@@ -1512,13 +1513,13 @@ def recommender(request, **kwargs):
 #    recommender_list = []
     
 #    recommender_list = recommender_display(recommender,3)
-    ctx={
+    ctx = {
         "recommender_first":recommender_first,
         "recommender_second":recommender_second,
         "recommender_third":recommender_third,
         "UserBasic":UBasic
     }
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
     
 #def recommender_display(recommender,i):
 #    """
@@ -1550,15 +1551,15 @@ def a_bonus_detail(request, **kwargs):
     template_name = kwargs.pop("template_name")
     UserBasic = kwargs.pop("UserBasic")
     bonus_style = kwargs.pop("bonus_style")
-    _paid = request.GET.get("paid",0)
+    _paid = request.GET.get("paid", 0)
     paid = False
     if _paid == '0':
-        print _paid,'dddd'
-        paid =False
+        print _paid, 'dddd'
+        paid = False
     elif _paid == '1':
-        print _paid,'dddd'
+        print _paid, 'dddd'
         paid = True
-    sub_website = kwargs.pop("sub_website","")
+    sub_website = kwargs.pop("sub_website", "")
     if request.method == "POST":
         if bonus_style == "a_bonus":
             try:
@@ -1573,29 +1574,29 @@ def a_bonus_detail(request, **kwargs):
 #            try:
             proc_name = "pay_cweb"
             call_proc = CallProc()
-            print proc_name,'test'
+            print proc_name, 'test'
             call_proc.CallProcFuc_0(proc_name)
             result = "结算成功"
             print result 
             HttpResponseRedirect(reverse('management_member_index'))
 #            except:
             result = "结算失败"
-    if request.user.is_superuser or request.user.first_name=="finance":
+    if request.user.is_superuser or request.user.first_name == "finance":
         if bonus_style == "a_bonus":
-            BonusDetail = bonus_unpaid.objects.filter(type__in=['comhelp','recost','declare','group'],paid=paid).order_by("-id")
-            csv_a_detail(request,BonusDetail,file_name="产品销售奖金明细")
+            BonusDetail = bonus_unpaid.objects.filter(type__in=['comhelp', 'recost', 'declare', 'group'], paid=paid).order_by("-id")
+            csv_a_detail(request, BonusDetail, file_name="产品销售奖金明细")
         elif bonus_style == "c_bonus":
-            BonusDetail = bonus_unpaid.objects.filter(type__in=['retail','summit','recommend','agent'],paid=paid).order_by("-id")
-            csv_a_detail(request,BonusDetail,file_name="商城奖金明细")
+            BonusDetail = bonus_unpaid.objects.filter(type__in=['retail', 'summit', 'recommend', 'agent'], paid=paid).order_by("-id")
+            csv_a_detail(request, BonusDetail, file_name="商城奖金明细")
     else:
-        UserBasic = user_basic.objects.filter(user = request.user)[0]
+        UserBasic = user_basic.objects.filter(user=request.user)[0]
         if bonus_style == "a_bonus":
-            BonusDetail = bonus_unpaid.objects.filter(to_user = UserBasic,type__in=['comhelp','recost','declare','group'],paid=paid).order_by("-id")
-            csv_a_detail(request,BonusDetail,file_name="产品销售奖金明细")
+            BonusDetail = bonus_unpaid.objects.filter(to_user=UserBasic, type__in=['comhelp', 'recost', 'declare', 'group'], paid=paid).order_by("-id")
+            csv_a_detail(request, BonusDetail, file_name="产品销售奖金明细")
         elif bonus_style == 'c_bonus':
-            BonusDetail = bonus_unpaid.objects.filter(type__in=['retail','summit','recommend','agent'],to_user = UserBasic,paid=paid).order_by("-id")
-            csv_a_detail(request,BonusDetail,file_name="商城奖金明细")
-    BonusDetail = PaginatorFuc(request,BonusDetail,number=20)
+            BonusDetail = bonus_unpaid.objects.filter(type__in=['retail', 'summit', 'recommend', 'agent'], to_user=UserBasic, paid=paid).order_by("-id")
+            csv_a_detail(request, BonusDetail, file_name="商城奖金明细")
+    BonusDetail = PaginatorFuc(request, BonusDetail, number=20)
     ctx = {
         "BonusDetails": BonusDetail,
         'UserBasic': UserBasic,
@@ -1603,13 +1604,13 @@ def a_bonus_detail(request, **kwargs):
         'bonus_style':bonus_style,
         'paid':paid
     }
-    return render_to_response(template_name, RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 
-def csv_a_detail(request,BonusDetail,file_name=None):
+def csv_a_detail(request, BonusDetail, file_name=None):
     """
     奖金明细文件导出
     """
-    Content = ['用户编号',"用户姓名",'奖金类型','奖金数额','触发奖金用户编号','触发奖金用户姓名','奖金是否发放','奖金发放时间']
+    Content = ['用户编号', "用户姓名", '奖金类型', '奖金数额', '触发奖金用户编号', '触发奖金用户姓名', '奖金是否发放', '奖金发放时间']
     Result = []
     name = ""
     number = ""
@@ -1618,7 +1619,7 @@ def csv_a_detail(request,BonusDetail,file_name=None):
         try:
             number = R.to_user.number
         except:
-            number="***"
+            number = "***"
         try:
             name = R.to_user.name
         except:
@@ -1639,7 +1640,7 @@ def csv_a_detail(request,BonusDetail,file_name=None):
             result.append("--")
         Result.append(result)
     
-    file_name = file_name+str(datetime.datetime.now())
+    file_name = file_name + str(datetime.datetime.now())
     request.session['file_name'] = file_name
     request.session['Content'] = Content
     request.session['Result'] = Result
@@ -1650,12 +1651,12 @@ def function_switch(request, **kwargs):
     """
     功能开关
     """
-    error = request.GET.get("warnings","")
+    error = request.GET.get("warnings", "")
     print error
     password_form = Password1stForm()
-    ValueSetting = value_setting.objects.defer("switch_member_login",'switch_stock',
-                                                'switch_store_declare','switch_mall','switch_mall_sign_in').get(id=1)
-    function_choose = request.GET.get('function_choose',None)
+    ValueSetting = value_setting.objects.defer("switch_member_login", 'switch_stock',
+                                                'switch_store_declare', 'switch_mall', 'switch_mall_sign_in').get(id=1)
+    function_choose = request.GET.get('function_choose', None)
 
     if function_choose:
         if function_choose == "switch_member_login_f":
@@ -1686,44 +1687,44 @@ def function_switch(request, **kwargs):
         "error":error,
         'password_form':password_form
     }
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
     
 @login_required
 @admin_required
-def a_web_value_setting(request,**kwargs):
+def a_web_value_setting(request, **kwargs):
     """
     A网数值设定
     """
     
     template_name = "management/sys/a_web_value_setting.html"
-    ValueSetting = value_setting.objects.defer("password_1nd",'password_2nd','withdraw_rate','declare_central_rate',
-                                                'declare_normal_rate','bonus_tax_rate','repo_rate','recost_rate',
-                                                'comhelp_rate','comhelp_1st_min','comhelp_2nd_min',
+    ValueSetting = value_setting.objects.defer("password_1nd", 'password_2nd', 'withdraw_rate', 'declare_central_rate',
+                                                'declare_normal_rate', 'bonus_tax_rate', 'repo_rate', 'recost_rate',
+                                                'comhelp_rate', 'comhelp_1st_min', 'comhelp_2nd_min',
                                                 'comhelp_3rd_min',).get(id=1)
     MemberLvMoney = member_lv_money.objects.all()
     
     if request.method == "POST":
-        a_web_value_setting_form = AWebValueSettingForm(request.POST,ValueSetting = ValueSetting)
-        Money = request.POST.getlist("money",None)
-        DayMax = request.POST.getlist("day_max",None)
-        LowPercentage = request.POST.getlist("low_percentage",None)
+        a_web_value_setting_form = AWebValueSettingForm(request.POST, ValueSetting=ValueSetting)
+        Money = request.POST.getlist("money", None)
+        DayMax = request.POST.getlist("day_max", None)
+        LowPercentage = request.POST.getlist("low_percentage", None)
         i = 0
         for MLvMoney in MemberLvMoney:
             MLvMoney.money = Money[i]
             MLvMoney.day_max = DayMax[i]
             MLvMoney.low_percentage = LowPercentage[i]        
-            i+=1
+            i += 1
             MLvMoney.save()
         if a_web_value_setting_form.is_valid():
             return HttpResponseRedirect(reverse("a_web_value_setting"))
     else:
         a_web_value_setting_form = AWebValueSettingForm()
     
-    ctx={
+    ctx = {
         'MemberLvMoney':MemberLvMoney,
         'ValueSetting':ValueSetting
     }
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
     #--------------------------
     #Function switch
 @login_required
@@ -1734,45 +1735,45 @@ def c_web_value_setting(request, **kwargs):
     """
     #运输方式和费用的json文件
     trans_expenses = ""
-    ValueSetting = value_setting.objects.defer("grade_summit",'mall_VIP_threshold','mall_love_rate','mall_car_rate',
-                                                'mall_house_rate','mall_travel_rate','mall_share_rate',
-                                                'mall_proxy_rate','mall_recommend_rate','mall_proxy_prov',
-                                                'mall_proxy_city','mall_proxy_area','mall_tax_rate').get(id=1)
+    ValueSetting = value_setting.objects.defer("grade_summit", 'mall_VIP_threshold', 'mall_love_rate', 'mall_car_rate',
+                                                'mall_house_rate', 'mall_travel_rate', 'mall_share_rate',
+                                                'mall_proxy_rate', 'mall_recommend_rate', 'mall_proxy_prov',
+                                                'mall_proxy_city', 'mall_proxy_area', 'mall_tax_rate').get(id=1)
                                                 
     management_mall_level = mall_level.objects.all()
     management_mall_summit = mall_summit.objects.all()
 #    with open('/home/hump/TripleMag-env/TripleMag/TripleMag/static/js/transportation_expenses.json','r') as f:
 #        trans_expenses = json.load(f)     
-    with open('/home/rtyk/webapps/triple_mag/TripleMag/TripleMag/static/js/transportation_expenses.json','r') as f:
+    with open('/home/rtyk/webapps/triple_mag/TripleMag/TripleMag/static/js/transportation_expenses.json', 'r') as f:
         trans_expenses = json.load(f)     
 #    
 #    f = json.loads(open("/home/hump/TripleMag-env/TripleMag/TripleMag/static/js/transportation_expenses.json"))
 #    data = f.read()
 #    print data
     if request.method == "POST":
-        c_web_value_setting_form = CWebValueSettingForm(request.POST,ValueSetting =  ValueSetting)
-        MinScore = request.POST.getlist("min_score",None)
-        MaxScore = request.POST.getlist("max_score",None)
-        TresholdValue = request.POST.getlist("threshold_value",None)
-        GainRate =request.POST.getlist("gain_rate",None)
-        SummitNum = request.POST.getlist("summit_num",None)
+        c_web_value_setting_form = CWebValueSettingForm(request.POST, ValueSetting=ValueSetting)
+        MinScore = request.POST.getlist("min_score", None)
+        MaxScore = request.POST.getlist("max_score", None)
+        TresholdValue = request.POST.getlist("threshold_value", None)
+        GainRate = request.POST.getlist("gain_rate", None)
+        SummitNum = request.POST.getlist("summit_num", None)
         print SummitNum
-        DayMax = request.POST.getlist("day_max",None)
-        print DayMax,'thsss'
+        DayMax = request.POST.getlist("day_max", None)
+        print DayMax, 'thsss'
         i = 0
         for MallLevel in management_mall_level:
             MallLevel.min_score = MinScore[i]
             MallLevel.max_score = MaxScore[i]
             MallLevel.threshold_value = TresholdValue[i]
             MallLevel.gain_rate = GainRate[i]
-            i +=1
+            i += 1
             MallLevel.save()
         i = 0
         for MallSummit in management_mall_summit:
             MallSummit.summit_num = SummitNum[i]
             MallSummit.bonus_percent = DayMax[i]
             print DayMax[i]
-            i +=1
+            i += 1
             MallSummit.save()
         if c_web_value_setting_form.is_valid():
             return HttpResponseRedirect(reverse("c_web_value_setting"))
@@ -1788,25 +1789,25 @@ def c_web_value_setting(request, **kwargs):
         "trans_expense":trans_expenses
         
     }
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
     
 @login_required
 @admin_required
-def contacting_chart(request,**kwargs):
+def contacting_chart(request, **kwargs):
     """
     查看接点人的业绩图
     """
     user_id = request.GET.get("user_id")
     user_number = request.GET.get("user_number")
-    UBasic = user_basic.objects.defer("name",'is_void').all()
+    UBasic = user_basic.objects.defer("name", 'is_void').all()
     if user_id:
         try:
-            UserBasic = UBasic.get(id = user_id)
+            UserBasic = UBasic.get(id=user_id)
         except:
             raise Http404
     if user_number:
         try:
-            UserBasic = UBasic.get(number = user_number)
+            UserBasic = UBasic.get(number=user_number)
             user_id = UserBasic.id
         except:
             raise Http404
@@ -1815,8 +1816,8 @@ def contacting_chart(request,**kwargs):
     cursor = connection.cursor()
     template_name = "management/member/conactor.html"
     proc_name = "get_contactor_information"
-    call_proc.CallProcFuc_1(proc_name,user_id)
-    chart_data="["
+    call_proc.CallProcFuc_1(proc_name, user_id)
+    chart_data = "["
     cursor.execute('select * from t_cont_info')
     result = cursor.fetchall()
     print result
@@ -1826,36 +1827,36 @@ def contacting_chart(request,**kwargs):
         for r in result:
             
             my_id = int(r[0])
-            _UserBasic = UBasic.get(id = my_id)
+            _UserBasic = UBasic.get(id=my_id)
             
             try:
                 father_id = int(r[1])
             except:
                 father_id = None
             _data = ""
-            _data += "[{v:\'"+str(r[2])+"\', f: \'" + str(r[4]) + "<br /><a href=\"/management/contacting_chart/?user_id="+str(r[0])+"\">"+str(r[2])
+            _data += "[{v:\'" + str(r[2]) + "\', f: \'" + str(r[4]) + "<br /><a href=\"/management/contacting_chart/?user_id=" + str(r[0]) + "\">" + str(r[2])
             if _UserBasic.is_void:
                 _data += "</a><br />空点会员"
 
-            _data += "</a><br />A区<b class=\"color_em_purple\">"+str(r[5])
-            _data += "</b>|B区<b class=\"color_em_purple\">"+str(r[6])+"</b><br />总业绩<b class=\"color_em_purple\">"+str(r[7])+"</b>"
+            _data += "</a><br />A区<b class=\"color_em_purple\">" + str(r[5])
+            _data += "</b>|B区<b class=\"color_em_purple\">" + str(r[6]) + "</b><br />总业绩<b class=\"color_em_purple\">" + str(r[7]) + "</b>"
 
             _data += "<br />" + str(r[8]) + "级代理'},"
             try:
                 father_number = c[father_id]
-                _data += "\'"+father_number+"\',\'"+str(r[3])+"区\'],"
+                _data += "\'" + father_number + "\',\'" + str(r[3]) + "区\'],"
             except:
-                _data += "\'\',\'"+str(r[3])+"区\'],"
+                _data += "\'\',\'" + str(r[3]) + "区\'],"
             c[my_id] = r[2]
             chart_data += _data
 #    chart_data = chart_data[:-1]
 
-    chart_data +="]"
+    chart_data += "]"
     print chart_data
     ctx = {
         "chart_data":chart_data
     }
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 
 @login_required
 @admin_required
@@ -1865,19 +1866,19 @@ def clean_data(request, **kwargs):
     """
     password_1st = request.POST.get("password_1st")
     user = request.user
-    password_form = Password1stForm(request.POST,user = user)
+    password_form = Password1stForm(request.POST, user=user)
     if password_form.is_valid():
         proc_name = "Reset_all"
         call_proc = CallProc()
         call_proc.CallProcFuc_0(proc_name)
-        url=reverse("function_switch")+"?warnings=清空数据成功"
+        url = reverse("function_switch") + "?warnings=清空数据成功"
         return HttpResponseRedirect(url)
     ctx = {
         'password_form':password_form
     }
     template_name = 'management/sys/function_switch.html'
     
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
     
 @login_required
 @admin_required
@@ -1909,7 +1910,7 @@ def manage_announcement(request, **kwargs):
     from announcements.models import Announcement
 
     if request.method == "POST":
-        announcement = request.session.get('announcement',None)
+        announcement = request.session.get('announcement', None)
         if announcement:
             announcement.title = request.POST.get('title')
             announcement.content = request.POST.get('content')
@@ -1919,19 +1920,19 @@ def manage_announcement(request, **kwargs):
             raise Http404
         
     else:
-        p_id =request.GET.get("p_id")
+        p_id = request.GET.get("p_id")
         choice = request.GET.get('choice')
         print choice
         template_name = "announcements/change_announcement.html"
-        announcement = Announcement.objects.get(id = p_id)
-        if choice=="change":
+        announcement = Announcement.objects.get(id=p_id)
+        if choice == "change":
             print 'dddd'
             request.session['announcement'] = announcement
             
             content = announcement.content
             title = announcement.title
             print content
-        elif choice=='del':      
+        elif choice == 'del':      
             announcement.delete()
             return HttpResponseRedirect(reverse('announcements_list'))
     ctx = {
@@ -1939,7 +1940,7 @@ def manage_announcement(request, **kwargs):
         'title':title
     }
 #            
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 
 @login_required
 @admin_required
@@ -1947,8 +1948,8 @@ def file_change(request, **kwargs):
     """
     资料删除和修改
     """
-    choice = request.GET.get("choice",None)
-    f_id = request.GET.get("f_id",None)    
+    choice = request.GET.get("choice", None)
+    f_id = request.GET.get("f_id", None)    
     template_name = "management/sys/file_change.html"
     if request.method == "POST":
         change = False
@@ -1960,7 +1961,7 @@ def file_change(request, **kwargs):
             change = True
             File.title = title
         if url and File.url != url:
-            print url,'test'
+            print url, 'test'
             change = True
             File.url = url
         if detail and File.detail != detail:
@@ -1979,7 +1980,7 @@ def file_change(request, **kwargs):
             ctx = {
                 'File':File
             }
-            return render_to_response(template_name,RequestContext(request,ctx))
+            return render_to_response(template_name, RequestContext(request, ctx))
         else:
             File.delete()
             return HttpResponseRedirect(reverse("management_file_list"))
@@ -1991,7 +1992,7 @@ def message_del(request, **kwargs):
     留言版删除
     """
     m_id = request.GET.get("message")
-    Message = get_object_or_404(message,pk=m_id)
+    Message = get_object_or_404(message, pk=m_id)
     Message.delete()
     return HttpResponseRedirect(reverse("admin_messages"))
 
@@ -2004,7 +2005,7 @@ def search_fuc(request, **kwargs):
     """
     data = ""
     template_name = "management/search.html"
-    choice = request.GET.get("to_search",None)
+    choice = request.GET.get("to_search", None)
     UserBasic = ""
     search_result = []
     L = []
@@ -2057,19 +2058,19 @@ def search_fuc(request, **kwargs):
     'init_money':'启动资金'
     }
     
-    if choice=='search':
+    if choice == 'search':
         sql = ""
         UserBasic = user_basic.objects.defer('number').all()
         print request.GET
         cursor = connection.cursor()
-        content = request.GET.get("content",None)
+        content = request.GET.get("content", None)
         print content
-        user_number = request.GET.get("number",None)
-        L = ['编号','姓名','推荐人','接点人','添加者','中心店编号','空点','股票除权','冻结','是否是中心店','是否享受分红']
+        user_number = request.GET.get("number", None)
+        L = ['编号', '姓名', '推荐人', '接点人', '添加者', '中心店编号', '空点', '股票除权', '冻结', '是否是中心店', '是否享受分红']
         if content:
-            sql = "select number,name,recommending_id,contacting_ID,adding_ID,user_central_id,is_void,is_stock_XR,is_blocked,is_central,can_share_out,%s from V_SUPER_USER_INFO" %(content)
+            sql = "select number,name,recommending_id,contacting_ID,adding_ID,user_central_id,is_void,is_stock_XR,is_blocked,is_central,can_share_out,%s from V_SUPER_USER_INFO" % (content)
         else:
-            sql =  "select number,name,recommending_id,contacting_ID,adding_ID,user_central_id,is_void,is_stock_XR,is_blocked,is_central,can_share_out from V_SUPER_USER_INFO" 
+            sql = "select number,name,recommending_id,contacting_ID,adding_ID,user_central_id,is_void,is_stock_XR,is_blocked,is_central,can_share_out from V_SUPER_USER_INFO" 
         if user_number:
             sql += " where number= '%s'" % user_number
         print sql
@@ -2080,40 +2081,40 @@ def search_fuc(request, **kwargs):
         result = cursor.fetchall()
         for r in result:
             _result = []
-            for i in range(0,len(r)):
+            for i in range(0, len(r)):
                 a = r[i]
                 if i == 2:
                     try:
-                        a = UserBasic.get(id = a).number
+                        a = UserBasic.get(id=a).number
 #                        a = UserRecommender
                     except:
                         a = "无"
                 if i == 3:
                     try:
-                        a = UserBasic.get(id = a).number
+                        a = UserBasic.get(id=a).number
                     except:
                         a = "无"
                 if i == 4:
                     try:
-                        a = UserBasic.get(id = a).number
+                        a = UserBasic.get(id=a).number
 #                        r[i] = Adding.number
                     except:
                         a = "管理员"
                 if i == 5:
                     try:
-                        a = UserBasic.get(id = a).number
+                        a = UserBasic.get(id=a).number
 #                        r[5] = UserBasic.number
                     except:
                         a = "无"
-                if i == 6 or i==7 or i==8 or i==9 or i==10:
-                    if a==0:
-                        a="否"
+                if i == 6 or i == 7 or i == 8 or i == 9 or i == 10:
+                    if a == 0:
+                        a = "否"
                     else:   
-                        a="是"
-                if a=="M":
-                    a="男"
-                elif a=="F":
-                    a="女"
+                        a = "是"
+                if a == "M":
+                    a = "男"
+                elif a == "F":
+                    a = "女"
                 _result.append(a)
             search_result.append(_result)
         content = content.split(",")
@@ -2124,9 +2125,9 @@ def search_fuc(request, **kwargs):
             except:
                 break
 #        print search_result
-        file_name =str(datetime.datetime.now())
+        file_name = str(datetime.datetime.now())
         print file_name
-        UserBasic = PaginatorFuc(request,search_result)
+        UserBasic = PaginatorFuc(request, search_result)
         request.session['Content'] = L
         request.session['Result'] = search_result
         request.session['file_name'] = file_name
@@ -2144,7 +2145,7 @@ def search_fuc(request, **kwargs):
         'info_dict':info_dict
     }
     
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 
 
 @login_required
@@ -2154,12 +2155,12 @@ def reset_password(request, **kwargs):
     重置用户密码
     """
     from django.contrib.auth.hashers import (check_password, make_password, is_password_usable, UNUSABLE_PASSWORD)
-    u_id = request.GET.get("u_id",None)
+    u_id = request.GET.get("u_id", None)
     print u_id
     try:
-        UserBasic = user_basic.objects.defer("password_1nd","user",'password_2nd').get(id = u_id)
+        UserBasic = user_basic.objects.defer("password_1nd", "user", 'password_2nd').get(id=u_id)
         print UserBasic
-        ValueSetting = value_setting.objects.defer('password_1nd','password_2nd').all()[0]
+        ValueSetting = value_setting.objects.defer('password_1nd', 'password_2nd').all()[0]
         UserBasic.user.set_password(ValueSetting.password_1nd)
         UserBasic.password_1nd = UserBasic.user.password
         UserBasic.password_2nd = make_password(ValueSetting.password_2nd)
@@ -2168,7 +2169,7 @@ def reset_password(request, **kwargs):
         data = '1'
     except:
         data = '0'
-    return HttpResponse(json.dumps(data),mimetype="application/json")
+    return HttpResponse(json.dumps(data), mimetype="application/json")
     
 @login_required
 @admin_required
@@ -2182,17 +2183,17 @@ def extracting_rate(request, **kwargs):
     call_proc = CallProc()
 
     if not bonus_style:
-        proc_name ="get_extracting_rate_20130428"
+        proc_name = "get_extracting_rate_20130428"
         call_proc.CallProcFuc_0(proc_name)
         cursor = connection.cursor()
     
-        Content = ['A网业绩','A网总奖金','A网拨出率','开始日期','结束日期','结算发放日期']
+        Content = ['A网业绩', 'A网总奖金', 'A网拨出率', '开始日期', '结束日期', '结算发放日期']
         cursor.execute('select * from t_extracting_rate_A_new order by pay_day desc')    
     else:
         proc_name = "get_extracting_rate"
         call_proc.CallProcFuc_0(proc_name)
         cursor = connection.cursor()
-        Content = ['C网业绩','C网总奖金','C网拨出率','日期']
+        Content = ['C网业绩', 'C网总奖金', 'C网拨出率', '日期']
         cursor.execute('select * from t_extracting_rate_C ORDER BY month DESC')    
     ExtractingRate = cursor.fetchall()
     ExtractingRate = list(ExtractingRate)
@@ -2203,16 +2204,16 @@ def extracting_rate(request, **kwargs):
             if(type(eData) is datetime.date):
                 eData = eData.strftime("%Y.%m.%d")
 	_ExtractingRate.append(e)
-    ExtractingRate = PaginatorFuc(request,ExtractingRate)
+    ExtractingRate = PaginatorFuc(request, ExtractingRate)
     template_name = "management/member/extracting_rate.html"
     request.session['Content'] = Content
     request.session['Result'] = _ExtractingRate
-    request.session['file_name'] = "%s拨出率统计"%(str(datetime.datetime.now()))
+    request.session['file_name'] = "%s拨出率统计" % (str(datetime.datetime.now()))
     ctx = {
         'ExtractingRate':ExtractingRate,
         'bonus_style':bonus_style
     }        
-    return render_to_response(template_name,RequestContext(request,ctx))
+    return render_to_response(template_name, RequestContext(request, ctx))
 @login_required
 @admin_required 
 def management_login_mem(request, **kwargs):
@@ -2221,12 +2222,12 @@ def management_login_mem(request, **kwargs):
     """
     from django.contrib.auth import authenticate, login, logout
     user_id = request.GET.get("user_number")
-    UserBasic = user_basic.objects.get(id = user_id)
+    UserBasic = user_basic.objects.get(id=user_id)
 
 #    request.session['password_2nd'] 
     UserBasic.user.backend = 'django.contrib.auth.backends.ModelBackend'
 
-    login(request,UserBasic.user)
+    login(request, UserBasic.user)
     request.session['role'] = UserBasic.role
     request.session['password_2nd'] = True
     
